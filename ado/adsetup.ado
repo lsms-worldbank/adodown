@@ -1,17 +1,43 @@
 cap program drop   adsetup
     program define adsetup
 
-    syntax, folder(string) [packagename(string) author(string) yesall debug]
+    syntax, folder(string) [packagename(string) author(string) yesconfirm debug]
+
+
+
+    ****************************************************
+    * Test input - except package meta information
+
+    local folderstd	= subinstr(`"`folder'"',"\","/",.)
+    mata : st_numscalar("r(dirExist)", direxists("`folderstd'"))
+    if `r(dirExist)' == 0  {
+      noi di as error `"{phang}The folder used in folder(`folder') does not exist.{p_end}"'
+      error 99
+      exit
+    }
+
+    //TODO: test when yesconfirm can be used
+
+    ****************************************************
+    * Set up locals used accross the command
 
     * Locals pointing to all folders to be setup
-    local folders "ado dev mdhlp stlhp tests vignettes"
+    local folders "ado dev mdhlp sthlp tests vignettes"
 
     * Locals pointing to all template files to be used
     foreach fld of local folders {
-      local ad_f_read_`fld'  "adtemplate_`fld'_README.md"
+      local ad_templates "`ad_templates' ad-`fld'-README.md"
     }
-    local ad_f_pkg "adtemplate_package.pkg"
-    local ad_f_toc "adtemplate_stata.toc"
+    local ad_templates "`ad_templates' ad-package.pkg"
+    local ad_templates "`ad_templates' ad-stata.toc"
+
+    * Template root url
+    local branch "main"
+    local gh_account_repo "kbjarkefur/adodown-stata"
+    local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
+    local template_url "`repo_url'/`branch'/ado/templates"
+
+
 
     *****************************************************
     * Handle package meta information
@@ -45,12 +71,49 @@ cap program drop   adsetup
     *****************************************************
     * Test that package can be created
 
+    * Test that folders to be created does not already exist
+    local folder_error 0
+    foreach fld of local folders {
+      if !missing("`debug'") noi di as text "testfolder create: `folderstd'/`fld'"
+      mata : st_numscalar("r(dirExist)", direxists("`folderstd'/`fld'"))
+      if `r(dirExist)' == 1  {
+        noi di as error `"{phang}A folder with the name ("`folderstd'/`fld'") already exists.{p_end}"'
+        local folder_error 1
+      }
+    }
+    if (`folder_error' == 1) {
+      error 99
+      exit
+    }
 
+    * Get all templates and store in temporary files
+    foreach ad_t of local ad_templates {
+
+      * Get tempfile name from template name
+      template_parser, template("`ad_t'")
+      local tempfile = "`r(t_tempfile)'"
+
+      if !missing("`debug'") noi di as text `"Get file: `template_url'/`ad_t''"
+
+
+      tempfile `tempfile'
+      cap copy "`template_url'/`ad_t'" ``tempfile'', replace
+
+      if _rc == 631 {
+        noi di as error "{pstd}This command only works with an internet connection, and you do not seem to have an internet connection. {it:(Offline mode will be implemented.)}{p_end}""
+        error 631
+        exit
+      }
+      else if _rc {
+        copy "`template_url'/`ad_t'" ``tempfile'', replace
+      }
+      if !missing("`debug'") noi di as text `"  Saved in ``tempfile''"
+    }
 
 
     *****************************************************
     * Confirm meta data
-    if missing("`yesall'") {
+    if missing("`yesconfirm'") {
       local confirm_col 55
       noi di as text "{pstd}Please confirm all package meta information:{p_end}"
       noi di as text ""
@@ -71,6 +134,23 @@ cap program drop   adsetup
 
     *****************************************************
     * Create template
+
+
+    foreach ad_t of local ad_templates {
+
+        template_parser, template("`ad_t'")
+        local t_tempfile "`r(t_tempfile)'"
+        local t_folder   "`r(t_folder)'"
+        local t_file     "`r(t_file)'"
+
+        * If not already created, create folder
+        mata : st_numscalar("r(dirExist)", direxists("`folderstd'/`t_folder'"))
+        if `r(dirExist)' == 0 mkdir "`folderstd'/`t_folder'"
+        *Copy file to location
+        copy ``t_tempfile'' "`folderstd'/`t_folder'/`t_file'"
+
+        if !missing("`debug'") noi di as text `"File created: `t_folder'/`t_file'"
+    }
 
 
 end
@@ -131,6 +211,7 @@ cap program drop   inputprompter
 
 end
 
+* Test input provided either through syntax or prompt
 cap program drop   inputconfirm
     program define inputconfirm, rclass
 
@@ -183,5 +264,38 @@ cap program drop   inputconfirm
         if ("`case'" == "prompt") noi di "{pstd}Invalid input. You entered: [`userinput']. Try again.{p_end}"
       }
    }
+
+end
+
+* Prompting for each input
+cap program drop   template_parser
+    program define template_parser, rclass
+
+    syntax, template(string)
+
+    local template = subinstr("`template'","ad-","",1)
+
+    * Create the tempfile name
+    local t_tempfile = "`template'"
+    local t_tempfile = subinstr("`t_tempfile'","-","_",.)
+    local t_tempfile = subinstr("`t_tempfile'",".","_",.)
+    * Return tempfile name
+    return local t_tempfile     "`t_tempfile'"
+    return local t_tempfile_len = strlen("`t_tempfile'") // Needed to check that name is len<32
+
+    * Get file name and folder path
+    local dash_index = strpos(strreverse("`template'"),"-")  // Get pos of last hyphen from end
+    local t_file     = substr("`template'",1-`dash_index',.) // Get string after pos of last hyphen
+    local t_len      = strlen("`t_tempfile'")
+    * If the template name has folders, parse and prep that part
+    if (`dash_index' > 0) {
+        local t_folder   = substr("`template'",1,`t_len'-`dash_index') // Get string up to last hyphen
+        local t_folder   = subinstr("`t_folder'","-","/",.) // Convert remaining hyphen to slashes
+    }
+    else local t_folder ""
+    
+    * Return template file name and its folder path
+    return local t_file     "`t_file'"
+    return local t_folder   "`t_folder'"
 
 end

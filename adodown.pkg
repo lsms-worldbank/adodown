@@ -3,12 +3,4 @@ v 0.1
 d adodown
 d This package automates creating and managing Stata packages.
 f /ado/adsetup.ado
-f /dev/templates/ad-package.pkg
-f /dev/templates/ad-stata.toc
-f /dev/templates/ad-ado-README.md
-f /dev/templates/ad-dev-README.md
-f /dev/templates/ad-mdhlp-README.md
-f /dev/templates/ad-sthlp-README.md
-f /dev/templates/ad-tests-README.md
-f /dev/templates/ad-vignettes-README.md
 e
