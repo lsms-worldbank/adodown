@@ -1,7 +1,14 @@
 cap program drop   adsetup
     program define adsetup
 
-    syntax, folder(string) [packagename(string) author(string) yesconfirm debug]
+    syntax, folder(string) [ ///
+      name(string) ///
+      author(string) ///
+      description(string) ///
+      url(string) ///
+      yesconfirm ///
+      debug ///
+      ]
 
 
 
@@ -37,14 +44,15 @@ cap program drop   adsetup
     local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
     local template_url "`repo_url'/`branch'/ado/templates"
 
-
+    * Meta information types
+    local inputtypes name author url description
 
     *****************************************************
     * Handle package meta information
 
     * Test inputs provided passed in syntax
     local allsyntaxinputok "TRUE"
-    foreach inputtype in packagename author {
+    foreach inputtype of local inputtypes {
       if !missing("``inputtype''") {
         inputconfirm syntax `inputtype' "``inputtype''"
         if "`r(inputok)'" == "FALSE" {
@@ -60,13 +68,19 @@ cap program drop   adsetup
     }
 
     * Handle user inputs
-    userinputs, packagename("`packagename'") author("`author'") `debug'
+    * Prepare params name("`name'") author("`author'") url("`url'") etc.
+    foreach inputtype of local inputtypes {
+      local useinp_params "`useinp_params' `inputtype'("``inputtype''")"
+    }
+    userinputs, `debug' `useinp_params'
     if "`r(inputbreak)'" == "TRUE" {
       error 1
       exit
     }
-    if missing("`packagename'") local packagename `r(packagename)'
-    if missing("`author'")      local author `r(author)'
+    foreach inputtype of local inputtypes {
+      if missing("``inputtype''") local `inputtype' `r(`inputtype')'
+    }
+
 
     *****************************************************
     * Test that package can be created
@@ -92,13 +106,11 @@ cap program drop   adsetup
       * Get tempfile name from template name
       template_parser, template("`ad_t'")
       local tempfile = "`r(t_tempfile)'"
-
-      if !missing("`debug'") noi di as text `"Get file: `template_url'/`ad_t''"
-
-
       tempfile `tempfile'
-      cap copy "`template_url'/`ad_t'" ``tempfile'', replace
 
+      * Get file from GitHub repo and store in temporary file
+      if !missing("`debug'") noi di as text `"Get file: `template_url'/`ad_t''"
+      cap copy "`template_url'/`ad_t'" ``tempfile'', replace
       if _rc == 631 {
         noi di as error "{pstd}This command only works with an internet connection, and you do not seem to have an internet connection. {it:(Offline mode will be implemented.)}{p_end}""
         error 631
@@ -117,8 +129,10 @@ cap program drop   adsetup
       local confirm_col 55
       noi di as text "{pstd}Please confirm all package meta information:{p_end}"
       noi di as text ""
-      noi di as text "{pmore}Stata package name: {inp:`packagename'}{p_end}"
+      noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
       noi di as text "{pmore}Package author name(s): {inp:`author'}{p_end}"
+      noi di as text "{pmore}Package description: {inp:`name'}{p_end}"
+      noi di as text "{pmore}Package URL (for example repo): {inp:`author'}{p_end}"
       noi di as text ""
 
       global adinp_confirmation ""
@@ -134,7 +148,6 @@ cap program drop   adsetup
 
     *****************************************************
     * Create template
-
 
     foreach ad_t of local ad_templates {
 
@@ -152,6 +165,8 @@ cap program drop   adsetup
         if !missing("`debug'") noi di as text `"File created: `t_folder'/`t_file'"
     }
 
+    noi di as res `"{pstd}Package template successfully created at: `folder' {p_end}"'
+
 
 end
 
@@ -159,26 +174,40 @@ end
 cap program drop   userinputs
     program define userinputs, rclass
 
-    syntax, [packagename(string) author(string) debug]
+    syntax, [name(string) author(string) description(string) url(string) debug]
 
-    if (missing("`packagename'") | missing("`author'")) {
+    if (missing("`name'") | missing("`author'") | missing("`description'") | missing("`url'")) {
 
-      noi di as txt "{pstd}Please enter the package meta information needed to set up this package template:{p_end}"
+      noi di as txt "{pstd}Please enter the package meta information needed to set up this package template. Type BREAK to cancel.{p_end}"
 
       local inputbreak "FALSE"
 
       * Ask for package name
-      if missing("`packagename'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("packagename") inputprompt("Type name of Stata package:") `debug'
+      if missing("`name'") & "`inputbreak'" == "FALSE" {
+        inputprompter, inputtype("name") inputprompt("Enter name of Stata package:") `debug'
         local inputbreak "`r(inputbreak)'"
-        return local packagename "`r(verifiedinput)'"
+        return local name "`r(verifiedinput)'"
       }
 
       * Ask for author name
       if missing("`author'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("author") inputprompt("Type name of author(s):")
+        inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
         local inputbreak "`r(inputbreak)'"
         return local author "`r(verifiedinput)'"
+      }
+
+      * Ask for author name
+      if missing("`description'") & "`inputbreak'" == "FALSE" {
+        inputprompter, inputtype("description") inputprompt("Enter package description:")
+        local inputbreak "`r(inputbreak)'"
+        return local description "`r(verifiedinput)'"
+      }
+
+      * Ask for author name
+      if missing("`url'") & "`inputbreak'" == "FALSE" {
+        inputprompter, inputtype("url") inputprompt("Enter package URL (for example GitHub repo):")
+        local inputbreak "`r(inputbreak)'"
+        return local url "`r(verifiedinput)'"
       }
 
       return local inputbreak "`inputbreak'"
@@ -231,7 +260,7 @@ cap program drop   inputconfirm
       return local inputbreak "FALSE"
 
       * Test package name
-      if "`inputtype'" == "packagename" {
+      if "`inputtype'" == "name" {
           * Test one word
           if `: word count `userinput'' != 1 {
             noi di as error "{pstd}The package name may only include one word.{p_end}"
@@ -246,6 +275,16 @@ cap program drop   inputconfirm
 
       * Test author name
       else if "`inputtype'" == "author" {
+        //No tests for author - included as placeholder for future tests
+      }
+
+      * Test description
+      else if "`inputtype'" == "description" {
+        //No tests for author - included as placeholder for future tests
+      }
+
+      * Test URL
+      else if "`inputtype'" == "url" {
         //No tests for author - included as placeholder for future tests
       }
 
@@ -293,7 +332,7 @@ cap program drop   template_parser
         local t_folder   = subinstr("`t_folder'","-","/",.) // Convert remaining hyphen to slashes
     }
     else local t_folder ""
-    
+
     * Return template file name and its folder path
     return local t_file     "`t_file'"
     return local t_folder   "`t_folder'"
