@@ -3,8 +3,9 @@ cap program drop   adsetup
 
     syntax, folder(string) [ ///
       name(string) ///
-      author(string) ///
       description(string) ///
+      author(string) ///
+      contact(string) ///
       url(string) ///
       yesconfirm ///
       debug ///
@@ -35,6 +36,7 @@ cap program drop   adsetup
     foreach fld of local folders {
       local ad_templates "`ad_templates' ad-`fld'-README.md"
     }
+    local ad_templates "`ad_templates' ad-dev-description.txt"
     local ad_templates "`ad_templates' ad-package.pkg"
     local ad_templates "`ad_templates' ad-stata.toc"
 
@@ -45,7 +47,7 @@ cap program drop   adsetup
     local template_url "`repo_url'/`branch'/ado/templates"
 
     * Meta information types
-    local inputtypes name author url description
+    local inputtypes name description author contact url
 
     *****************************************************
     * Handle package meta information
@@ -74,6 +76,7 @@ cap program drop   adsetup
     }
     userinputs, `debug' `useinp_params'
     if "`r(inputbreak)'" == "TRUE" {
+      noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
       error 1
       exit
     }
@@ -130,9 +133,10 @@ cap program drop   adsetup
       noi di as text "{pstd}Please confirm all package meta information:{p_end}"
       noi di as text ""
       noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
+      noi di as text "{pmore}Package description: {inp:`description'}{p_end}"
       noi di as text "{pmore}Package author name(s): {inp:`author'}{p_end}"
-      noi di as text "{pmore}Package description: {inp:`name'}{p_end}"
-      noi di as text "{pmore}Package URL (for example repo): {inp:`author'}{p_end}"
+      noi di as text "{pmore}Contact information: {inp:`contact'}{p_end}"
+      noi di as text "{pmore}Package URL (for example repo): {inp:`url'}{p_end}"
       noi di as text ""
 
       global adinp_confirmation ""
@@ -140,7 +144,7 @@ cap program drop   adsetup
         noi di as txt `"{pstd}Enter "Y" to confirm and create the package template or enter "BREAK" to abort."', _request(adinp_confirmation)
       }
       if upper("${adinp_confirmation}") == "BREAK" {
-        noi di as txt "{pstd}Package template aborted - nothing was created.{p_end}"
+        noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
         error 1
         exit
       }
@@ -149,9 +153,15 @@ cap program drop   adsetup
     *****************************************************
     * Create template
 
+    * Populate the pkg tempfile
+    populate_pkg, pkg_template(`package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'")
+
+    * Populate the toc tempfile
+    populate_toc, toc_template(`stata_toc') name("`name'")
+
     foreach ad_t of local ad_templates {
 
-        template_parser, template("`ad_t'")
+        template_parser, template("`ad_t'") name("`name'")
         local t_tempfile "`r(t_tempfile)'"
         local t_folder   "`r(t_folder)'"
         local t_file     "`r(t_file)'"
@@ -174,11 +184,11 @@ end
 cap program drop   userinputs
     program define userinputs, rclass
 
-    syntax, [name(string) author(string) description(string) url(string) debug]
+    syntax, [name(string) description(string) author(string) contact(string)   url(string) debug]
 
-    if (missing("`name'") | missing("`author'") | missing("`description'") | missing("`url'")) {
+    if (missing("`name'") | missing("`description'") | missing("`author'") | missing("`contact'") | missing("`url'")) {
 
-      noi di as txt "{pstd}Please enter the package meta information needed to set up this package template. Type BREAK to cancel.{p_end}"
+      noi di as txt `"{pstd}Please enter the package meta information needed to set up this package template. Type "BREAK" to cancel.{p_end}"'
 
       local inputbreak "FALSE"
 
@@ -189,14 +199,7 @@ cap program drop   userinputs
         return local name "`r(verifiedinput)'"
       }
 
-      * Ask for author name
-      if missing("`author'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
-        local inputbreak "`r(inputbreak)'"
-        return local author "`r(verifiedinput)'"
-      }
-
-      * Ask for author name
+      * Ask for description
       if missing("`description'") & "`inputbreak'" == "FALSE" {
         inputprompter, inputtype("description") inputprompt("Enter package description:")
         local inputbreak "`r(inputbreak)'"
@@ -204,6 +207,20 @@ cap program drop   userinputs
       }
 
       * Ask for author name
+      if missing("`author'") & "`inputbreak'" == "FALSE" {
+        inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
+        local inputbreak "`r(inputbreak)'"
+        return local author "`r(verifiedinput)'"
+      }
+
+      * Ask for contact
+      if missing("`contact'") & "`inputbreak'" == "FALSE" {
+        inputprompter, inputtype("contact") inputprompt("Enter contact information:")
+        local inputbreak "`r(inputbreak)'"
+        return local contact "`r(verifiedinput)'"
+      }
+
+      * Ask for package url
       if missing("`url'") & "`inputbreak'" == "FALSE" {
         inputprompter, inputtype("url") inputprompt("Enter package URL (for example GitHub repo):")
         local inputbreak "`r(inputbreak)'"
@@ -273,19 +290,24 @@ cap program drop   inputconfirm
           }
       }
 
+      * Test description
+      else if "`inputtype'" == "description" {
+        //No tests for description - included as placeholder for future tests
+      }
+
       * Test author name
       else if "`inputtype'" == "author" {
         //No tests for author - included as placeholder for future tests
       }
 
-      * Test description
-      else if "`inputtype'" == "description" {
-        //No tests for author - included as placeholder for future tests
+      * Test contact information
+      else if "`inputtype'" == "contact" {
+        //No tests for contact - included as placeholder for future tests
       }
 
       * Test URL
       else if "`inputtype'" == "url" {
-        //No tests for author - included as placeholder for future tests
+        //No tests for url - included as placeholder for future tests
       }
 
       else {
@@ -310,7 +332,7 @@ end
 cap program drop   template_parser
     program define template_parser, rclass
 
-    syntax, template(string)
+    syntax, template(string) [name(string)]
 
     local template = subinstr("`template'","ad-","",1)
 
@@ -333,8 +355,122 @@ cap program drop   template_parser
     }
     else local t_folder ""
 
+    * Update the
+    if (!missing("`name'") & "`t_file'" == "package.pkg") {
+      local t_file "`name'.pkg"
+    }
+
     * Return template file name and its folder path
     return local t_file     "`t_file'"
     return local t_folder   "`t_folder'"
 
+end
+
+* Populating the tempfile
+cap program drop   populate_pkg
+    program define populate_pkg, rclass
+
+    syntax, pkg_template(string) name(string) description(string) author(string) contact(string) url(string)
+
+    * Initiate the tempfile handlers and tempfiles needed
+    tempname pkg_read pkg_write
+    tempfile pkg_output
+
+    * Open template to read from and new tempfile to write to
+    file open `pkg_read'  using `pkg_template', read
+    file open `pkg_write' using `pkg_output'  , write
+
+    * Read first line
+    file read `pkg_read' line
+
+    * Write lines as-is until section
+    local section "write_asis"
+    while r(eof)==0 {
+
+
+        if "`line'" == "*** version" local section "write_asis"
+        if "`line'" == "*** name" {
+            local section "write_custom"
+            file write `pkg_write' "`macval(line)'" _n "d `name'" _n
+        }
+        if "`line'" == "*** description" {
+            local section "write_custom"
+            file write `pkg_write' "`macval(line)'" _n "d `description'" _n "d" _n
+        }
+        if "`line'" == "*** stata" {
+            local section "write_custom"
+            file write `pkg_write' "`macval(line)'" _n "d Version: Stata 14.1" _n "d" _n
+        }
+        if "`line'" == "*** author" {
+            local section "write_custom"
+            file write `pkg_write' "`macval(line)'" _n "d Author: `author'" _n
+        }
+        if "`line'" == "*** contact" {
+            local section "write_custom"
+            file write `pkg_write' "`macval(line)'" _n "d Contact: `contact'" _n
+        }
+        if "`line'" == "*** url" {
+            local section "write_custom"
+            file write `pkg_write' "`macval(line)'" _n "d URL: `url'" _n "d" _n
+        }
+        if "`line'" == "*** date" {
+            local section "write_custom"
+            local date: display %tdCCYYNNDD `= date("`c(current_date)'","DMY")'
+            file write `pkg_write' "`macval(line)'" _n "d Distribution-Date: `date'" _n "d" _n
+        }
+        if "`line'" == "*** adofiles" local section "write_asis"
+        if "`line'" == "*** helpfiles" local section "write_asis"
+        if "`line'" == "*** ancillaryfiles" local section "write_asis"
+        if "`line'" == "*** end" local section "write_asis"
+
+        * Write as-is sections
+        if "`section'" == "write_asis" file write `pkg_write' "`macval(line)'" _n
+
+        * Read next line
+        file read `pkg_read' line
+    }
+    file close `pkg_read'
+    file close `pkg_write'
+
+    * Overwrite the template tempfiel with the populated file
+    copy `pkg_output' `pkg_template', replace
+end
+
+cap program drop   populate_toc
+    program define populate_toc, rclass
+
+    syntax, toc_template(string) name(string)
+
+    * Initiate the tempfile handlers and tempfiles needed
+    tempname toc_read toc_write
+    tempfile toc_output
+
+    * Open template to read from and new tempfile to write to
+    file open `toc_read'  using `toc_template', read
+    file open `toc_write' using `toc_output'  , write
+
+    * Read first line
+    file read `toc_read' line
+
+    * Write lines as-is until section
+    local section "write_asis"
+    while r(eof)==0 {
+
+        if "`line'" == "*** version" local section "write_asis"
+        if "`line'" == "*** packages" {
+            local section "write_custom"
+            file write `toc_write' "`macval(line)'" _n "p `name'" _n _n
+        }
+
+        * Write as-is sections
+        if "`section'" == "write_asis" file write `toc_write' "`macval(line)'" _n
+
+        * Read next line
+        file read `toc_read' line
+    }
+    file close `toc_read'
+    file close `toc_write'
+
+    * Overwrite the template tempfiel with the populated file
+    copy `toc_output' `toc_template', replace
 end

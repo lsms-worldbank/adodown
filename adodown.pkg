@@ -1,6 +1,29 @@
 * This package file is generated in the adodown workflow. Do not edit directly.
-v 0.1
-d adodown
-d This package automates creating and managing Stata packages.
-f /ado/adsetup.ado
+*** version
+v 0.0
+*** name
+d mypackage
+*** description
+d mydescription
+d
+*** stata
+d Version: Stata 14.1
+d
+*** author
+d Author:
+*** contact
+d Contact: test@mail.com
+*** url
+d URL: https://github.com/kbjarkefur/adodown-stata
+d
+*** date
+d Distribution-Date: 20230724
+d
+*** adofiles
+f ado/adsetup.ado
+*** helpfiles
+
+*** ancillaryfiles
+
+*** end
 e
