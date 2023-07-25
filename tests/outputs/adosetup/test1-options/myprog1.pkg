@@ -1,0 +1,29 @@
+* This package file is generated in the adodown workflow. Do not edit directly.
+*** version
+v 0.0
+*** name
+d myprog1
+*** description
+d My awesome Stata tool
+d
+*** stata
+d Version: Stata 14.1
+d
+*** author
+d Author: John Doe
+*** contact
+d Contact: jdoe@worldbank.org
+*** url
+d URL: https://github.com/worldbank-lsms/adodown
+d
+*** date
+d Distribution-Date: 20230725
+d
+*** adofiles
+
+*** helpfiles
+
+*** ancillaryfiles
+
+*** end
+e
