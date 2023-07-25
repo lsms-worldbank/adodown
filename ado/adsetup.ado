@@ -42,7 +42,7 @@ cap program drop   adsetup
 
     * Template root url
     local branch "main"
-    local gh_account_repo "kbjarkefur/adodown-stata"
+    local gh_account_repo "lsms-worldbank/adodown"
     local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
     local template_url "`repo_url'/`branch'/ado/templates"
 
@@ -104,6 +104,7 @@ cap program drop   adsetup
     }
 
     * Get all templates and store in temporary files
+    noi di as res "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
     foreach ad_t of local ad_templates {
 
       * Get tempfile name from template name

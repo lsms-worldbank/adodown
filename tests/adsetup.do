@@ -7,21 +7,11 @@
     local ado   "`clone'/ado"
     local tests "`clone'/tests"
     local adsetup_out "`tests'/outputs/adosetup"
-
-    * install ietoolkit as this test files use ieboilstart's adopath feature
-    cap which ietoolkit
-    if _rc == 111 {
-        ssc install ietoolkit, replace
-    }
     
-    * Load commands installed in "`tests'/testado"
-    ieboilstart, version(15) adopath("`tests'/testado", strict)
+    * Load the command directly from the ado file
+    run "`clone'/ado/adsetup.ado"
+    * Load utility functions that delete old test putput and set up folders
     run "`tests'/test_utils.do"
-    
-    * Describe the content in the adodown.pkg file and then install the files
-    net describe adodown , from("`clone'") 
-    net install  adodown , from("`clone'") replace
-
 
     *********
     * Test 1 - passing all package meta information in options
@@ -39,7 +29,7 @@
         url("https://github.com/worldbank-lsms/adodown") ///
         contact("jdoe@worldbank.org")
     
-        
+       
     *********
     * Test 2 - manually enter all package meta information
 
