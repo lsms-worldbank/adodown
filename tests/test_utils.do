@@ -1,7 +1,7 @@
 * This file can delete all your folders on your computer if used incorrectly.
 
-cap program drop ie_recurse_rmdir
-	program define ie_recurse_rmdir
+cap program drop rec_rmdir
+	program define rec_rmdir
 
 qui {
 	syntax , folder(string) [DRYrun okifnotexist]
@@ -46,7 +46,7 @@ qui {
 		*Use the command on each subfolder to this folder (if any)
 		foreach dir of local dlist {
 			*Recursive call on each subfolder
-			noi ie_recurse_rmdir , folder(`"`folderStd'/`dir'"') `automatic' `dryrun'
+			noi rec_rmdir , folder(`"`folderStd'/`dir'"') `automatic' `dryrun'
 		}
 
 		*REmove all files
@@ -73,8 +73,8 @@ end
 * passed then the command creates folder1 if it does not exists, and then
 * folder2 if it does not exists and then folder3 if it does not exist
 
-cap program drop ie_recurse_mkdir
-	program define ie_recurse_mkdir
+cap program drop rec_mkdir
+	program define rec_mkdir
 
 qui {
 	syntax, folder(string) [dryrun]
@@ -99,7 +99,7 @@ qui {
 		local thisFolder = substr(`"`folder'"', (-1 * `lastSlash')+1 ,.)
 
 		*Recursively make sure that the partent folders and its parent folders exists
-		noi ie_recurse_mkdir , folder(`"`parentFolder'"') `dryrun'
+		noi rec_mkdir , folder(`"`parentFolder'"') `dryrun'
 
 		*Create this folder as the parent folder is ceratain to exist now
 		if missing("`dryrun'") {

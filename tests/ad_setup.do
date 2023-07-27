@@ -24,8 +24,8 @@
 
     * Set up the folders needed for ths
     local test1_fldr "`ad_setup_out'/test1-options"
-    ie_recurse_rmdir, folder("`test1_fldr'") okifnotexist //Delete existing test results
-    ie_recurse_mkdir, folder("`test1_fldr'")              //Make sure folder exists
+    rec_rmdir, folder("`test1_fldr'") okifnotexist //Delete existing test results
+    rec_mkdir, folder("`test1_fldr'")              //Make sure folder exists
 
     * Run ad_setup with all required info specified in options
     ad_setup, folder("`test1_fldr'") yesconfirm ///
