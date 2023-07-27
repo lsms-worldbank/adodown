@@ -1,8 +1,8 @@
-cap program drop   COMMANDNAME
-    program define COMMANDNAME
+cap program drop   ADCOMMANDNAME
+    program define ADCOMMANDNAME
 
     syntax ,
 
     //TODO : implement command here
-    
+
 end
