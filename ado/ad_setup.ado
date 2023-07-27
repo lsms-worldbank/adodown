@@ -104,7 +104,7 @@ cap program drop   ad_setup
     }
 
     * Get all templates and store in temporary files
-    noi di as res "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
+    noi di as text "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
     foreach ad_t of local ad_templates {
 
       * Get tempfile name from template name
@@ -176,7 +176,11 @@ cap program drop   ad_setup
         if !missing("`debug'") noi di as text `"File created: `t_folder'/`t_file'"
     }
 
-    noi di as res `"{pstd}Package template successfully created at: `folder' {p_end}"'
+    qui ad_command create `name', folder("`folder'") pkgname("`name'")
+
+    noi di as res `"{pstd}Package template for package {inp:`name'} successfully created at: `folder' {p_end}"'
+
+
 
 
 end
