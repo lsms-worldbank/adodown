@@ -125,7 +125,8 @@ cap program drop   ad_command
     }
 
     *******************************************************
-    * Check if files exists for this command already and throw errors
+    *******************************************************
+    * Carry out subcommand create
 
     if ("`scmd'" == "create") {
 
@@ -220,11 +221,84 @@ cap program drop   ad_command
       *Write package file
       copy "`pkg_out'" "`folderstd'/`pkgname'.pkg", replace
 
-      noi di as res "{pstd}Command `cname' was succesfully added to package `pkgname'{p_end}"
+      noi di as res "{pstd}Command {it:`cname'} was succesfully added to package {it:`pkgname'}.{p_end}"
 
     }
 
+    *******************************************************
+    *******************************************************
+    * Carry out subcommand remove
 
+    if ("`scmd'" == "remove") {
 
+      *******************
+      * Update package file in tempfile
+      tempfile pkg_out
+      tempname pkg_read pkg_write
 
+      * Open template to read from and new tempfile to write to
+      file open `pkg_read'  using "`folderstd'/`pkgname'.pkg", read
+      file open `pkg_write' using `pkg_out', write
+
+      * Read first line
+      file read `pkg_read' line
+      while r(eof)==0 {
+        * Replace placeholder with command name
+
+        if (strpos("`macval(line)'","f ado/`cname'.ado")) {
+          // Do not copy line to be removed
+        }
+        else if (strpos("`macval(line)'","f sthlp/`cname'.sthlp")) {
+          // Do not copy line to be removed
+        }
+        else {
+          file write `pkg_write' "`macval(line)'" _n
+        }
+
+        * Read next line
+        file read `pkg_read' line
+      }
+
+      file close `pkg_write'
+      file close `pkg_read'
+
+      **************************
+      * Prompt users that files will be deleted
+
+      noi di as text "{pstd}{red:Warning:} The follwing files for command {inp:`cname'} are about to be deleted:{p_end}"
+      noi di as text "{pstd}- `adof'{p_end}"
+      noi di as text "{pstd}- `mdhf'{p_end}"
+      if ("`sthf_exists'" == "TRUE") {
+        noi di as text "{pstd}- "``sth'f'"}{p_end}"
+      }
+      noi di ""
+      noi di as text "{pstd}And files associated with the command {inp:`cname'} will be removed from the {inp:`pkgname'.pkg} file. {p_end}"
+      noi di as text ""
+
+      global adremove_confirmation ""
+      while (upper("${adremove_confirmation}") != "Y" & upper("${adremove_confirmation}") != "BREAK") {
+        noi di as txt `"{pstd}Enter "Y" to confirm or enter "BREAK" to abort."', _request(adremove_confirmation)
+      }
+      if upper("${adremove_confirmation}") == "BREAK" {
+        noi di as txt "{pstd}Removal aborted - nothing was changed.{p_end}"
+        error 1
+        exit
+      }
+
+      **************************
+      * Remove the command
+
+      * Delete files associated with this command
+      rm "`adof'"
+      rm "`mdhf'"
+      if ("`sthf_exists'" == "TRUE") {
+        rm "`sthf'"
+      }
+
+      *Copy updated tempfile to package file
+      copy "`pkg_out'" "`folderstd'/`pkgname'.pkg", replace
+
+      noi di as res "{pstd}Command {it:`cname'} was succesfully removed from package {it:`pkgname'}.{p_end}"
+
+    }
 end
