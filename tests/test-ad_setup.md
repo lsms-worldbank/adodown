@@ -1,6 +1,6 @@
-# Test command adsetup
+# Test command ad_setup
 
-The only thing needed to run the test is to open file `adodown\tests\adsetup.do` and edit the root path at the top of the folder to point to the clone in your file system.
+The only thing needed to run the test is to open file `adodown\tests\ad_setup.do` and edit the root path at the top of the folder to point to the clone in your file system.
 
 ```
 * AS root path

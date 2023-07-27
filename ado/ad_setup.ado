@@ -1,5 +1,5 @@
-cap program drop   adsetup
-    program define adsetup
+cap program drop   ad_setup
+    program define ad_setup
 
     syntax, folder(string) [ ///
       name(string) ///

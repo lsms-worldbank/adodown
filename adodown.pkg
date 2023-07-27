@@ -20,7 +20,7 @@ d
 d Distribution-Date: 20230724
 d
 *** adofiles
-f ado/adsetup.ado
+f ado/ad_setup.ado
 *** helpfiles
 
 *** ancillaryfiles
