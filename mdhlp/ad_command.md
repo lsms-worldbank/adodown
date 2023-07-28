@@ -68,7 +68,8 @@ local con "jdoe@worldbank.org"
 
 * Set up adodown-styled package folder
 ad_setup, adfolder("`myfolder'") autoconfirm    ///
-     name("`pkg'") author("`aut'") desc("`des'") /// url("`url'") contact("`con'")
+     name("`pkg'") author("`aut'") desc("`des'") ///
+     url("`url'") contact("`con'")
 
 * Add command mycmd to the package folder
 ad_command create mycmd, adf("`myfolder'") pkg("`pkg'")
@@ -80,5 +81,5 @@ Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues
 
 # Authors
 
-Author: John Doe
-Support: jdoe@worldbank.org
+* Author: John Doe
+* Support: jdoe@worldbank.org

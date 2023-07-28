@@ -66,7 +66,8 @@ local con "jdoe@worldbank.org"
 
 {break}    * Set up adodown-styled package folder
 ad_setup, adfolder("{c 96}myfolder{c 39}") autoconfirm    ///
-     name("`pkg'") author("`aut'") desc("`des'") /// url("`url'") contact("`con'")
+     name("`pkg'") author("`aut'") desc("`des'") ///
+     url("`url'") contact("`con'")
 {c 96}{c 96}{c 96} 
 
 {title:Feedback, bug reports and contributions}
@@ -76,8 +77,7 @@ Please use the  {browse "https://github.com/lsms-worldbank/adodown/issues":issue
 
 {title:Authors}
 
-{p 4 4 2}
-Author: John Doe
-Support: jdoe@worldbank.org
+{break}    * Author: John Doe
+{break}    * Support: jdoe@worldbank.org
 
 
