@@ -1,7 +1,7 @@
 cap program drop   ad_command
     program define ad_command
 
-    syntax anything , folder(string) pkgname(string) [debug]
+    syntax anything , ADFolder(string) PKGname(string) [debug]
 
     *******************************************************
     * Create locals
@@ -34,44 +34,33 @@ cap program drop   ad_command
       exit
     }
 
-    * create mode
-      * prepare ado and md
-      * create ado and md
-      * Add sthlp and ado to pkg file
-    * remove mode
-      * Prompt user
-      * remove ado md
-      * Remove sthlp and ado from pkg file
-
     *******************************************************
     * Confirming that the folder is a valid adodown folder
 
-    if !missing("`debug'") noi di as text "Testing adodown folder"
-
-    * Confirming that the folder used in folder() exists
-    local folderstd	= subinstr(`"`folder'"',"\","/",.)
+    * Confirming that the folder used in adfolder() exists
+    local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
 
     local folder_error "FALSE"
 
     * Test the folder passed in option
-    mata : st_numscalar("r(dirExist)", direxists("`folderstd'"))
+    mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'"))
     if `r(dirExist)' == 0  {
       local folder_error "TRUE"
-      local missing_flds `" "`folder'" "'
+      local missing_flds `" "`adfolder'" "'
     }
 
     * Test for adodown folders expected in the folder
     foreach ad_fld in ado mdhlp sthlp {
-      mata : st_numscalar("r(dirExist)", direxists("`folderstd'/`ad_fld'"))
+      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`ad_fld'"))
       if `r(dirExist)' == 0  {
         local folder_error "TRUE"
-        local missing_flds `"`missing_flds' "`folder'/`ad_fld'" "'
+        local missing_flds `"`missing_flds' "`adfolder'/`ad_fld'" "'
       }
     }
 
     * Output errors and list missing folders
     if ("`folder_error'" == "TRUE") {
-      noi di as error "{pstd}The folder in option {inp:folder()} is not valid adodown folder. The following folders were expected but not found:{p_end}"
+      noi di as error "{pstd}The folder in option {inp:adfolder()} is not valid adodown folder. The following folders were expected but not found:{p_end}"
       foreach miss_fold of local missing_flds {
         noi di as text `"{pstd}- `miss_fold'/{p_end}"'
       }
@@ -81,9 +70,9 @@ cap program drop   ad_command
 
     * Test that the package file exists
     local pkgname = subinstr("`pkgname'",".pkg","",.)
-    cap confirm file "`folderstd'/`pkgname'.pkg"
+    cap confirm file "`adfolderstd'/`pkgname'.pkg"
     if _rc {
-      noi di as error "{pstd}The package file {inp:`folder'/`pkgname'.pkg} was expected but not found.{p_end}"
+      noi di as error "{pstd}The package file {inp:`adfolder'/`pkgname'.pkg} was expected but not found.{p_end}"
       error 99
       exit
     }
@@ -95,9 +84,9 @@ cap program drop   ad_command
 
     local cname = subinstr("`cname'",".ado","",.)
 
-    local adof "`folderstd'/ado/`cname'.ado"
-    local mdhf "`folderstd'/mdhlp/`cname'.md"
-    local sthf "`folderstd'/sthlp/`cname'.sthlp"
+    local adof "`adfolderstd'/ado/`cname'.ado"
+    local mdhf "`adfolderstd'/mdhlp/`cname'.md"
+    local sthf "`adfolderstd'/sthlp/`cname'.sthlp"
 
     * Checking if file exists or not
     foreach f in adof mdhf sthf {
@@ -186,7 +175,7 @@ cap program drop   ad_command
       tempname pkg_read pkg_write
 
       * Open template to read from and new tempfile to write to
-      file open `pkg_read'  using "`folderstd'/`pkgname'.pkg", read
+      file open `pkg_read'  using "`adfolderstd'/`pkgname'.pkg", read
       file open `pkg_write' using `pkg_out', write
 
       * Read first line
@@ -219,7 +208,7 @@ cap program drop   ad_command
           copy "``adt'_out'" "``adt'f'"
       }
       *Write package file
-      copy "`pkg_out'" "`folderstd'/`pkgname'.pkg", replace
+      copy "`pkg_out'" "`adfolderstd'/`pkgname'.pkg", replace
 
       noi di as res "{pstd}Command {it:`cname'} was succesfully added to package {it:`pkgname'}.{p_end}"
 
@@ -237,7 +226,7 @@ cap program drop   ad_command
       tempname pkg_read pkg_write
 
       * Open template to read from and new tempfile to write to
-      file open `pkg_read'  using "`folderstd'/`pkgname'.pkg", read
+      file open `pkg_read'  using "`adfolderstd'/`pkgname'.pkg", read
       file open `pkg_write' using `pkg_out', write
 
       * Read first line
@@ -296,7 +285,7 @@ cap program drop   ad_command
       }
 
       *Copy updated tempfile to package file
-      copy "`pkg_out'" "`folderstd'/`pkgname'.pkg", replace
+      copy "`pkg_out'" "`adfolderstd'/`pkgname'.pkg", replace
 
       noi di as res "{pstd}Command {it:`cname'} was succesfully removed from package {it:`pkgname'}.{p_end}"
 

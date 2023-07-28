@@ -11,7 +11,7 @@ if c(username) == "<computer username>" {
 
 Test 1 shows how the command can run with no manual input. All package meta information is in the command options. In test 2 no package meta information is passed as options. Instead, the command will prompt the user to enter it manually. You can mix passing meta info in options and provide manually.
 
-See outputs of tests here: `adodown\tests\outputs\adosetup`
+See outputs of tests here: `adodown\tests\outputs\ad_setup`
 
 ## Current features
 
@@ -21,7 +21,7 @@ See outputs of tests here: `adodown\tests\outputs\adosetup`
   * Prepare and test the folder template creation:
     * Test that folders can be created
     * Get templates from repo
-  * Once testing is successful, prompt user to confirm (unless option `yesconfirm` is used)
+  * Once testing is successful, prompt user to confirm (unless option `autoconfirm` is used)
   * Then create the templates
     * Populate pkg file and toc file with package meta info
     * Only now create all the folder and files

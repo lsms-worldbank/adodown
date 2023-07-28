@@ -1,13 +1,13 @@
 cap program drop   ad_setup
     program define ad_setup
 
-    syntax, folder(string) [ ///
-      name(string) ///
-      description(string) ///
-      author(string) ///
-      contact(string) ///
-      url(string) ///
-      yesconfirm ///
+    syntax, ADFolder(string) [ ///
+      Name(string) ///
+      Description(string) ///
+      Author(string) ///
+      Contact(string) ///
+      Url(string) ///
+      AUTOCONfirm ///
       debug ///
       ]
 
@@ -16,15 +16,15 @@ cap program drop   ad_setup
     ****************************************************
     * Test input - except package meta information
 
-    local folderstd	= subinstr(`"`folder'"',"\","/",.)
-    mata : st_numscalar("r(dirExist)", direxists("`folderstd'"))
+    local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
+    mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'"))
     if `r(dirExist)' == 0  {
-      noi di as error `"{phang}The folder used in folder(`folder') does not exist.{p_end}"'
+      noi di as error `"{phang}The folder used in adfolder(`adfolder') does not exist.{p_end}"'
       error 99
       exit
     }
 
-    //TODO: test when yesconfirm can be used
+    //TODO: test when autoconfirm can be used
 
     ****************************************************
     * Set up locals used accross the command
@@ -91,10 +91,10 @@ cap program drop   ad_setup
     * Test that folders to be created does not already exist
     local folder_error 0
     foreach fld of local folders {
-      if !missing("`debug'") noi di as text "testfolder create: `folderstd'/`fld'"
-      mata : st_numscalar("r(dirExist)", direxists("`folderstd'/`fld'"))
+      if !missing("`debug'") noi di as text "testfolder create: `adfolderstd'/`fld'"
+      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`fld'"))
       if `r(dirExist)' == 1  {
-        noi di as error `"{phang}A folder with the name ("`folderstd'/`fld'") already exists.{p_end}"'
+        noi di as error `"{phang}A folder with the name ("`adfolderstd'/`fld'") already exists.{p_end}"'
         local folder_error 1
       }
     }
@@ -129,8 +129,7 @@ cap program drop   ad_setup
 
     *****************************************************
     * Confirm meta data
-    if missing("`yesconfirm'") {
-      local confirm_col 55
+    if missing("`autoconfirm'") {
       noi di as text "{pstd}Please confirm all package meta information:{p_end}"
       noi di as text ""
       noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
@@ -168,20 +167,17 @@ cap program drop   ad_setup
         local t_file     "`r(t_file)'"
 
         * If not already created, create folder
-        mata : st_numscalar("r(dirExist)", direxists("`folderstd'/`t_folder'"))
-        if `r(dirExist)' == 0 mkdir "`folderstd'/`t_folder'"
+        mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`t_folder'"))
+        if `r(dirExist)' == 0 mkdir "`adfolderstd'/`t_folder'"
         *Copy file to location
-        copy ``t_tempfile'' "`folderstd'/`t_folder'/`t_file'"
+        copy ``t_tempfile'' "`adfolderstd'/`t_folder'/`t_file'"
 
         if !missing("`debug'") noi di as text `"File created: `t_folder'/`t_file'"
     }
 
-    qui ad_command create `name', folder("`folder'") pkgname("`name'")
+    qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
 
-    noi di as res `"{pstd}Package template for package {inp:`name'} successfully created at: `folder' {p_end}"'
-
-
-
+    noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
 
 end
 
