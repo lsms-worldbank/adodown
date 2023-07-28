@@ -11,7 +11,7 @@ if c(username) == "<computer username>" {
 
 Test 1 shows how the command can run with no manual input. All package meta information is in the command options. In test 2 no package meta information is passed as options. Instead, the command will prompt the user to enter it manually. You can mix passing meta info in options and provide manually.
 
-See outputs of tests here: `adodown\tests\outputs\adosetup`
+See outputs of tests here: `adodown\tests\outputs\ad_setup`
 
 ## Current features
 

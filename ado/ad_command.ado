@@ -34,15 +34,6 @@ cap program drop   ad_command
       exit
     }
 
-    * create mode
-      * prepare ado and md
-      * create ado and md
-      * Add sthlp and ado to pkg file
-    * remove mode
-      * Prompt user
-      * remove ado md
-      * Remove sthlp and ado from pkg file
-
     *******************************************************
     * Confirming that the folder is a valid adodown folder
 

@@ -130,7 +130,6 @@ cap program drop   ad_setup
     *****************************************************
     * Confirm meta data
     if missing("`yesconfirm'") {
-      local confirm_col 55
       noi di as text "{pstd}Please confirm all package meta information:{p_end}"
       noi di as text ""
       noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
