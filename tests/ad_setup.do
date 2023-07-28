@@ -38,11 +38,13 @@
 
     *********
     * Test 2 - manually enter all package meta information
+    *Change to if 1 to run this section
+        if 0 {
+        * Set up the folders needed for ths
+        local test2_fldr "`ad_setup_out'/test2-manual"
+        rec_rmdir, folder("`test2_fldr'") okifnotexist //Delete existing test results
+        rec_mkdir, folder("`test2_fldr'")              //Make sure folder exists
+        * Run ad_setup with all required info specified in options
+        ad_setup, adfolder("`test2_fldr'")
+    }
 
-    * Set up the folders needed for ths
-    local test2_fldr "`ad_setup_out'/test2-manual"
-    ie_recurse_rmdir, folder("`test2_fldr'") okifnotexist //Delete existing test results
-    ie_recurse_mkdir, folder("`test2_fldr'")              //Make sure folder exists
-
-    * Run ad_setup with all required info specified in options
-    ad_setup, adfolder("`test2_fldr'")

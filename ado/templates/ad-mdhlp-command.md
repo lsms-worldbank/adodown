@@ -6,9 +6,9 @@ __ADCOMMANDNAME__ - This command is used for short description.
 
 __ADCOMMANDNAME__ , option1(_string_)
 
-| _options_            | Description                                                       |
-|-------------------|-------------------------------------------------------------------|
-| option1(_string_)   | Short description of option1                                      |
+| _options_ | Description |
+|-----------|-------------|
+| option1(_string_)   | Short description of option1  |
 
 # Description
 
