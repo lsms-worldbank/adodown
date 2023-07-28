@@ -8,7 +8,6 @@
         local clone "<clone file path>"
     }
 
-
     * Folder paths
     local ado   "`clone'/ado"
     local tests "`clone'/tests"
@@ -22,14 +21,27 @@
     run "`tests'/test_utils.do"
     
     * Set up the folders needed for ths
-    local mvp_fldr "`out_sthlp'/test-mvp"
-    qui rec_rmdir, folder("`mvp_fldr'") okifnotexist //Delete existing test results
-    qui rec_mkdir, folder("`mvp_fldr'")              //Make sure folder exists
+    local mvp_f "`out_sthlp'/test-mvp"
+    qui rec_rmdir, folder("`mvp_f'") okifnotexist //Delete existing test results
+    qui rec_mkdir, folder("`mvp_f'")              //Make sure folder exists
     
-    * Setup needed to test sthlp
-    ad_setup, folder("`mvp_fldr'") yesconfirm author("A") name("mypkg") description("d") url("u") contact("c")
-    ad_command create mycmd1, folder("`mvp_fldr'") pkgname("mypkg")
-    ad_command create mycmd2, folder("`mvp_fldr'") pkgname("mypkg")  
-    ad_command create mycmd3, folder("`mvp_fldr'") pkgname("mypkg")
+    * Package meta info
+    local pkg "my_mvp_pkg"
+    local aut "John Doe"
+    local des "This packages does amazing thing A, B and C."
+    local url "https://github.com/lsms-worldbank/adodown"
+    local con "jdoe@worldbank.org"
+      
+    *set up folder 
+    ad_setup, adf("`mvp_f'") autocon ///
+        a("`aut'") n("`pkg'") d("`des'") u("`url'") c("`con'")
+    ad_command create mycmd1, adf("`mvp_f'") pkg("`pkg'")
+    ad_command create mycmd2, adf("`mvp_f'") pkg("`pkg'")  
+    ad_command create mycmd3, adf("`mvp_f'") pkg("`pkg'")
     
-    ad_sthlp, folder("`mvp_fldr'")
+    * Test rendering files
+    ad_sthlp, adf("`mvp_f'")
+    
+    
+  
+    

@@ -21,7 +21,7 @@ See outputs of tests here: `adodown\tests\outputs\ad_setup`
   * Prepare and test the folder template creation:
     * Test that folders can be created
     * Get templates from repo
-  * Once testing is successful, prompt user to confirm (unless option `yesconfirm` is used)
+  * Once testing is successful, prompt user to confirm (unless option `autoconfirm` is used)
   * Then create the templates
     * Populate pkg file and toc file with package meta info
     * Only now create all the folder and files

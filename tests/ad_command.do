@@ -18,21 +18,18 @@
     run "`clone'/ado/ad_setup.ado"
     * Load utility functions that delete old test putput and set up folders
     run "`tests'/test_utils.do"
-    
+
     * Set up the folders needed for ths
     local mvp_fldr "`out_command'/test-mvp"
     qui rec_rmdir, folder("`mvp_fldr'") okifnotexist //Delete existing test results
     qui rec_mkdir, folder("`mvp_fldr'")              //Make sure folder exists
-    
-    ad_setup, folder("`mvp_fldr'") yesconfirm ///
+
+    ad_setup, adfolder("`mvp_fldr'") autoconfirm ///
         author("A") name("my_mvp_pkg") ///
         description("d") url("u")  ///
         contact("c")
-        
-    ad_command create mycmd1, folder("`mvp_fldr'") pkgname("my_mvp_pkg")
-        
-    ad_command create mycmd2, folder("`mvp_fldr'") pkgname("my_mvp_pkg")  
-        
-    ad_command remove mycmd1, folder("`mvp_fldr'") pkgname("my_mvp_pkg")
-        
-    ad_command create mycmd3, folder("`mvp_fldr'") pkgname("my_mvp_pkg")
+
+    ad_command create mycmd1, adfolder("`mvp_fldr'") pkgname("my_mvp_pkg")
+    ad_command create mycmd2, adfolder("`mvp_fldr'") pkgname("my_mvp_pkg")
+    ad_command remove mycmd1, adfolder("`mvp_fldr'") pkgname("my_mvp_pkg")
+    ad_command create mycmd3, adfolder("`mvp_fldr'") pkgname("my_mvp_pkg")

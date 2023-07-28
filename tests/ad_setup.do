@@ -28,7 +28,7 @@
     rec_mkdir, folder("`test1_fldr'")              //Make sure folder exists
 
     * Run ad_setup with all required info specified in options
-    ad_setup, folder("`test1_fldr'") yesconfirm ///
+    ad_setup, adfolder("`test1_fldr'") autoconfirm ///
         author("John Doe")  ///
         name("myprog1")  ///
         description("My awesome Stata tool")  ///
@@ -45,4 +45,4 @@
     ie_recurse_mkdir, folder("`test2_fldr'")              //Make sure folder exists
 
     * Run ad_setup with all required info specified in options
-    ad_setup, folder("`test2_fldr'")
+    ad_setup, adfolder("`test2_fldr'")

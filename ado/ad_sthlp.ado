@@ -2,7 +2,7 @@ cap program drop   ad_sthlp
     program define ad_sthlp
   qui {
 
-    syntax, folder(string) [debug]
+    syntax, ADFolder(string) [debug]
 
     *******************************************************
     * Create locals
@@ -13,14 +13,14 @@ cap program drop   ad_sthlp
     * Test folder input to make sure it is an adodown folder
 
     ** Standardize slashes in file paths
-    local folderstd	= subinstr(`"`folder'"',"\","/",.)
+    local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
     ** Test if parameter folders exist
     foreach fld of local hlpflds {
-      local `fld'hlp "`folderstd'/`fld'hlp"
+      local `fld'hlp "`adfolderstd'/`fld'hlp"
     }
 
     * Test for adodown folders expected in the folder
-    foreach ad_fld in folderstd mdhlp sthlp {
+    foreach ad_fld in adfolderstd mdhlp sthlp {
       mata : st_numscalar("r(dirExist)", direxists("``ad_fld''"))
       if `r(dirExist)' == 0  {
         local folder_error "TRUE"
@@ -29,7 +29,7 @@ cap program drop   ad_sthlp
     }
     * Output errors and list missing folders
     if ("`folder_error'" == "TRUE") {
-      noi di as error "{pstd}The folder in option {inp:folder()} is not valid adodown folder. The following folders were expected but not found:{p_end}"
+      noi di as error "{pstd}The folder in option {inp:adfolder()} is not valid adodown folder. The following folders were expected but not found:{p_end}"
       foreach miss_fold of local missing_flds {
         noi di as text `"{pstd}- `miss_fold'/{p_end}"'
       }
