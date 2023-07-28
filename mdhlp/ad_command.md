@@ -9,9 +9,10 @@ __ad_command__ _subcommand_ _commandname_ , **adf**older(_string_) **pkg**name(_
 where _subcommand_ is either `create` or `remove` and _commandname_ is the name of the new command to create or the existing command to remove.
 
 | _options_ | Description |
-|-----------|-------------|
+|------------------|-------------|
 | **adf**older(_string_) | Location where package folder already exists |
 | **pkg**name(_string_) | Name of package that exists in the location adfolder() points to. |
+
 
 # Description
 
@@ -75,7 +76,7 @@ ad_command create mycmd, adf("`myfolder'") pkg("`pkg'")
 
 # Feedback, bug reports and contributions
 
-Please use the issues feature on https://github.com/lsms-worldbank/adodown to communicate any feedback, report bugs, or to make feature requests.
+Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) on the GitHub repository for the adodown package to communicate any feedback, report bugs, or to make feature requests.
 
 # Authors
 

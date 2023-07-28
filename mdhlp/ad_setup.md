@@ -7,7 +7,7 @@ __ad_setup__ - Sets up the initial package folder in the adodown workflow.
 __ad_setup__ , **adf**older(_string_) [ **n**ame(_string_) **d**escription(_string_) **a**uthor(_string_) **c**ontact(_string_) **u**rl(_string_) **autocon**firm
 
 | _options_ | Description |
-|-----------|-------------|
+|--------------------|-------------|
 | **adf**older(_string_)    | Location where package folder will be created |
 | **n**ame(_string_)        | Name of package |
 | **d**escription(_string_) | Description of package |
@@ -15,6 +15,7 @@ __ad_setup__ , **adf**older(_string_) [ **n**ame(_string_) **d**escription(_stri
 | **c**ontact(_string_)     | Contact information |
 | **u**rl(_string_)         | URl (for example to repo hosting the package) |
 | **autocon**firm           | Suppress the prompt asking user to confirm package creation  |
+
 
 # Description
 
@@ -58,7 +59,7 @@ ad_setup, adfolder("`myfolder'") autoconfirm    ///
 
 # Feedback, bug reports and contributions
 
-Please use the issues feature on https://github.com/lsms-worldbank/adodown to communicate any feedback, report bugs, or to make feature requests.
+Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) on the GitHub repository for the adodown package to communicate any feedback, report bugs, or to make feature requests.
 
 # Authors
 

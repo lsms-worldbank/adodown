@@ -7,8 +7,9 @@ __ad_sthlp__ - Renders sthlp-files from mdhlp-files in the adodown workflow.
 __ad_sthlp__ , **adf**older(_string_)
 
 | _options_ | Description |
-|-----------|-------------|
+|------------------|-------------|
 | **adf**older(_string_) | Location where package folder already exists |
+
 
 # Description
 
@@ -63,7 +64,7 @@ ad_sthlp, adf("`myfolder'")
 
 # Feedback, bug reports and contributions
 
-Please use the issues feature on https://github.com/lsms-worldbank/adodown to communicate any feedback, report bugs, or to make feature requests.
+Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) on the GitHub repository for the adodown package to communicate any feedback, report bugs, or to make feature requests.
 
 # Authors
 
