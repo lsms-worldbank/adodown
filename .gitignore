@@ -47,8 +47,13 @@
 !/**/*.ado
 !/**/*.sthlp
 !/**/*.smcl
-!stata.toc
-!adodown.pkg
+!src/stata.toc
+!src/adodown.pkg
+
+# Template files
+!src/ado/templates/*.txt
+!src/ado/templates/*.toc
+!src/ado/templates/*.pkg
 
 # R
 !/**/*.R
@@ -75,4 +80,4 @@
 
 ####################################
 # Ignore test outputs
-tests/outputs/
+src/tests/outputs/
