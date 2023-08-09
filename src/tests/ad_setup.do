@@ -10,12 +10,13 @@
 
 
     * Folder paths
-    local ado   "`clone'/ado"
-    local tests "`clone'/tests"
+    local ado          "`clone'/src/ado"
+    local tests        "`clone'/src/tests"
     local ad_setup_out "`tests'/outputs/ad_setup"
 
     * Load the command directly from the ado file
-    run "`clone'/ado/ad_setup.ado"
+    run "`ado'/ad_setup.ado"
+    run "`ado'/ad_command.ado"
     * Load utility functions that delete old test putput and set up folders
     run "`tests'/test_utils.do"
 
@@ -28,7 +29,7 @@
     rec_mkdir, folder("`test1_fldr'")              //Make sure folder exists
 
     * Run ad_setup with all required info specified in options
-    ad_setup, adfolder("`test1_fldr'") autoconfirm ///
+    ad_setup, adfolder("`test1_fldr'") autoconfirm debug ///
         author("John Doe")  ///
         name("myprog1")  ///
         description("My awesome Stata tool")  ///

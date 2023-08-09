@@ -11,8 +11,6 @@ cap program drop   ad_setup
       debug ///
       ]
 
-
-
     ****************************************************
     * Test input - except package meta information
 
@@ -24,30 +22,48 @@ cap program drop   ad_setup
       exit
     }
 
+    * Local to the src/ folder
+    local srcfolderstd `"`adfolder'/src"'
+
     //TODO: test when autoconfirm can be used
 
     ****************************************************
     * Set up locals used accross the command
 
-    * Locals pointing to all folders to be setup
-    local folders "ado dev mdhlp sthlp tests vignettes"
-
-    * Locals pointing to all template files to be used
-    foreach fld of local folders {
-      local ad_templates "`ad_templates' ad-`fld'-README.md"
-    }
-    local ad_templates "`ad_templates' ad-dev-description.txt"
-    local ad_templates "`ad_templates' ad-package.pkg"
-    local ad_templates "`ad_templates' ad-stata.toc"
+    * Meta information types
+    local inputtypes name description author contact url
 
     * Template root url
     local branch "main"
     local gh_account_repo "lsms-worldbank/adodown"
     local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
-    local template_url "`repo_url'/`branch'/ado/templates"
+    local template_url "`repo_url'/`branch'/src/ado/templates"
 
-    * Meta information types
-    local inputtypes name description author contact url
+    * Locals pointing to all template files to be used in the src folder
+    local src_tfs ""
+    local src_tfs "`src_tfs' ad-src-package.pkg"
+    local src_tfs "`src_tfs' ad-src-stata.toc"
+    local src_tfs "`src_tfs' ad-src-ado-README.md"
+    local src_tfs "`src_tfs' ad-src-dev-README.md"
+    local src_tfs "`src_tfs' ad-src-mdhlp-README.md"
+    local src_tfs "`src_tfs' ad-src-sthlp-README.md"
+    local src_tfs "`src_tfs' ad-src-tests-README.md"
+    local src_tfs "`src_tfs' ad-src-vignettes-README.md"
+    local src_tfs "`src_tfs' ad-src-dev-description.txt"
+
+    * Extract from template names all folders needed
+    local src_folders ""
+    foreach template of local src_tfs {
+      template_parser, template("`template'")
+      local this_folder "`r(t_folder)'"
+      local src_folders : list src_folders | this_folder
+    }
+
+    * Locals pointing to all template files for the github option
+    local gh_tfs ""
+    local gh_tfs "`gh_tfs' ad-.gitignore"
+    local gh_tfs "`gh_tfs' ad-.github-workflows-build_adodown_site.yaml"
+
 
     *****************************************************
     * Handle package meta information
@@ -90,11 +106,11 @@ cap program drop   ad_setup
 
     * Test that folders to be created does not already exist
     local folder_error 0
-    foreach fld of local folders {
-      if !missing("`debug'") noi di as text "testfolder create: `adfolderstd'/`fld'"
-      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`fld'"))
+    foreach folder of local src_folders {
+      if !missing("`debug'") noi di as text "testfolder create: `adfolderstd'/`folder'"
+      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`folder'"))
       if `r(dirExist)' == 1  {
-        noi di as error `"{phang}A folder with the name ("`adfolderstd'/`fld'") already exists.{p_end}"'
+        noi di as error `"{phang}A folder with the name ("`adfolderstd'/`folder'") already exists.{p_end}"'
         local folder_error 1
       }
     }
@@ -105,23 +121,23 @@ cap program drop   ad_setup
 
     * Get all templates and store in temporary files
     noi di as text "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
-    foreach ad_t of local ad_templates {
+    foreach template of local src_tfs {
 
       * Get tempfile name from template name
-      template_parser, template("`ad_t'")
+      template_parser, template("`template'")
       local tempfile = "`r(t_tempfile)'"
       tempfile `tempfile'
 
       * Get file from GitHub repo and store in temporary file
-      if !missing("`debug'") noi di as text `"Get file: `template_url'/`ad_t''"
-      cap copy "`template_url'/`ad_t'" ``tempfile'', replace
+      if !missing("`debug'") noi di as text `"Get file: `template_url'/`template''"
+      cap copy "`template_url'/`template'" ``tempfile'', replace
       if _rc == 631 {
         noi di as error "{pstd}This command only works with an internet connection, and you do not seem to have an internet connection. {it:(Offline mode will be implemented.)}{p_end}""
         error 631
         exit
       }
       else if _rc {
-        copy "`template_url'/`ad_t'" ``tempfile'', replace
+        copy "`template_url'/`template'" ``tempfile'', replace
       }
       if !missing("`debug'") noi di as text `"  Saved in ``tempfile''"
     }
@@ -129,6 +145,7 @@ cap program drop   ad_setup
 
     *****************************************************
     * Confirm meta data
+
     if missing("`autoconfirm'") {
       noi di as text "{pstd}Please confirm all package meta information:{p_end}"
       noi di as text ""
@@ -151,30 +168,31 @@ cap program drop   ad_setup
     }
 
     *****************************************************
-    * Create template
+    * Populate templates
 
     * Populate the pkg tempfile
-    populate_pkg, pkg_template(`package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'")
+    populate_pkg, pkg_template(`src_package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'")
 
     * Populate the toc tempfile
-    populate_toc, toc_template(`stata_toc') name("`name'")
+    populate_toc, toc_template(`src_stata_toc') name("`name'")
 
-    foreach ad_t of local ad_templates {
+    *****************************************************
+    * Everything is ready - create template on disk
 
-        template_parser, template("`ad_t'") name("`name'")
-        local t_tempfile "`r(t_tempfile)'"
-        local t_folder   "`r(t_folder)'"
-        local t_file     "`r(t_file)'"
-
-        * If not already created, create folder
-        mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`t_folder'"))
-        if `r(dirExist)' == 0 mkdir "`adfolderstd'/`t_folder'"
-        *Copy file to location
-        copy ``t_tempfile'' "`adfolderstd'/`t_folder'/`t_file'"
-
-        if !missing("`debug'") noi di as text `"File created: `t_folder'/`t_file'"
+    * Create all folders needed
+    foreach folder of local src_folders {
+      rec_mkdir, folder(`"`adfolderstd'/`folder'"')
     }
 
+    * Copy all templates files to their folders
+    foreach template of local src_tfs {
+        * Get file/folder name from template name and write file
+        template_parser, template("`template'") name("`name'")
+        copy ``r(t_tempfile)'' `"`adfolderstd'/`r(t_folder)'/`r(t_file)'"'
+        if !missing("`debug'") noi di as text `"File created:`r(t_folder)'/`r(t_file)'"'
+    }
+
+    * Add a command with the same name as the package to the package template
     qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
 
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
@@ -474,4 +492,25 @@ cap program drop   populate_toc
 
     * Overwrite the template tempfiel with the populated file
     copy `toc_output' `toc_template', replace
+end
+
+* Recursively create folders, such that folder(abc/def) first create a folder
+* "abc" and then in it a folder "def"
+cap program drop rec_mkdir
+	program define rec_mkdir
+
+	syntax, folder(string)
+	*Test if this folder exists
+	mata : st_numscalar("r(dirExist)", direxists(`"`folder'"'))
+	*Folder does not exist, find parent folder and make recursive call
+	if (`r(dirExist)' == 0) {
+		*Get the parent folder of folder
+		local lastSlash = strpos(strreverse(`"`folder'"'),"/")
+		local parentFolder = substr(`"`folder'"',1,strlen("`folder'")-`lastSlash')
+		local thisFolder = substr(`"`folder'"', (-1 * `lastSlash')+1 ,.)
+		*Recursively create parent folders
+		noi rec_mkdir , folder(`"`parentFolder'"') `dryrun'
+		*Create this folder as the parent folder is certain to exist now
+		noi mkdir "`folder'"
+	}
 end

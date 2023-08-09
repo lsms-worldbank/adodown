@@ -9,13 +9,13 @@
     }
 
     * Folder paths
-    local ado   "`clone'/ado"
-    local tests "`clone'/tests"
+    local ado         "`clone'/src/ado"
+    local tests       "`clone'/src/tests"
     local out_command "`tests'/outputs/ad_command"
 
     * Load the command directly from the ado file
-    run "`clone'/ado/ad_command.ado"
-    run "`clone'/ado/ad_setup.ado"
+    run "`ado'/ad_command.ado"
+    run "`ado'/ad_setup.ado"
     * Load utility functions that delete old test putput and set up folders
     run "`tests'/test_utils.do"
 
