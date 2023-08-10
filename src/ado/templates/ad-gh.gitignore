@@ -2,7 +2,7 @@
 #
 # Based on DIME .gitignore template. Follow the instructions in the URL
 # below to set up this template in your own repository
-# https://github.com/worldbank/dime-github-trainings/tree/master/GitHub-resources/DIME-GitHub-Templates
+# https://github.com/worldbank/dime-github-trainings/tree/main/GitHub-resources/DIME-GitHub-Templates
 #
 # This is version 2.0
 #
@@ -20,6 +20,7 @@
 # These files include GitHub settings
 !.gitignore
 !.gitattributes
+!.github/
 
 # Git placeholder file (to commit empty folders)
 !/**/*.gitkeep
@@ -45,40 +46,10 @@
 # Stata
 !/**/*.do
 !/**/*.ado
-!/**/*.sthlp
-!/**/*.smcl
 !src/stata.toc
 !src/adodown.pkg
-
-# Template files
-!src/ado/templates/*.txt
-!src/ado/templates/*.toc
-!src/ado/templates/*.pkg
-!src/ado/templates/*.gitignore
-
-# R
-!/**/*.R
-!/**/*.Rmd
-!/**/*.Rproj
-!/**/*.qmd
-# Still ignore user file for R projects
-.Rproj.user
 
 # Markdown
 !/**/*.md
 
-#Files to create custom layout and functionality
-# in dashboards, markdown notebooks, bookdown etc.
-!/**/*.css
-!/**/*.js
-
-#Bash scripts
-!/**/*.sh
-
-# .yml and .yaml files
-!/**/*.yml
-!/**/*.yaml
-
-####################################
-# Ignore test outputs
-src/tests/outputs/
+# Github workflows files
