@@ -4,7 +4,7 @@ __ad_setup__ - Sets up the initial package folder in the adodown workflow.
 
 # Syntax
 
-__ad_setup__ , **adf**older(_string_) [ **n**ame(_string_) **d**escription(_string_) **a**uthor(_string_) **c**ontact(_string_) **u**rl(_string_) **autocon**firm
+__ad_setup__ , **adf**older(_string_) [ **n**ame(_string_) **d**escription(_string_) **a**uthor(_string_) **c**ontact(_string_) **u**rl(_string_) **autocon**firm  **git**hub
 
 | _options_ | Description |
 |--------------------|-------------|
@@ -15,7 +15,7 @@ __ad_setup__ , **adf**older(_string_) [ **n**ame(_string_) **d**escription(_stri
 | **c**ontact(_string_)     | Contact information |
 | **u**rl(_string_)         | URl (for example to repo hosting the package) |
 | **autocon**firm           | Suppress the prompt asking user to confirm package creation  |
-
+| **git**hub                | Add GitHub template files without prompting  |
 
 # Description
 
@@ -36,6 +36,8 @@ This workflow makes it easier to create Stata command and packages both ready fo
 **c**ontact(_string_) specifies the contact information where a users of this package can ask for support. This information will be included when using `ssc describe <name>` or `net describe <name>`. While this option is optional, this package meta data is required. So if this option is not used, the user will be prompted to enter the name interactively.
 
 **u**rl(_string_) specifies a website for where this code is hosted. This should not be where the web-documentation generated in the adodown is hosted, but where the source code is hosted. The web-documentation will include a link pointing to the URL. If using GitHub, then the intended URL should be on this format: https://github.com/lsms-worldbank/adodown. This information will be included when using `ssc describe <name>` or `net describe <name>`. While this option is optional, this package meta data is required. So if this option is not used, the user will be prompted to enter the name interactively.
+
+**git**hub makes the command add template files useful if the package is stored in a GitHub repository. The two files that are added are a .gitignore file and a GitHub Actions template. The .gitignore is tailored to adodown styled packages such that only required files are pushed to the repository. This template may be modified if preferred or needed. The Github Actions template includes instructions for an automated workflow to generate web based documentation. Read more about this workflow and how to enable it in your repository here. TODO: Add link to vignette when live.
 
 # Examples
 
