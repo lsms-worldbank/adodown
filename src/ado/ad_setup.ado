@@ -7,7 +7,7 @@ qui {
       Author(string)           ///
       Contact(string)          ///
       Url(string)              ///
-      AUTOCONfirm              ///
+      AUTOprompt                 ///
       GIThub                   ///
       debug                    ///
       ]
@@ -22,11 +22,8 @@ qui {
       error 99
       exit
     }
-
     * Local to the src/ folder
     local srcfolderstd `"`adfolder'/src"'
-
-    //TODO: test when autoconfirm can be used
 
     ****************************************************
     * Set up locals used accross the command
@@ -90,7 +87,7 @@ qui {
     foreach inputtype of local inputtypes {
       local useinp_params "`useinp_params' `inputtype'("``inputtype''")"
     }
-    noi userinputs, `debug' `useinp_params'
+    noi userinputs, inputtypes(`inputtypes') `debug' `autoprompt' `useinp_params'
     if "`r(inputbreak)'" == "TRUE" {
       noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
       error 1
@@ -103,18 +100,24 @@ qui {
     *****************************************************
     * Prompt user if GH files should be created
 
-    if missing("`github'") {
+    if missing("`github'") & missing("`autoprompt'") {
+      noi di ""
       noi di as text "{pstd}Are you setting up this package template folder in  GitHub repository and want to add GitHub template files for the adodown workflow? This includes adding a .gitignore template and a Github Actions workflow template for automatic web documentation.{p_end}"
       noi di as text ""
 
       global ghinp_confirmation ""
-      while (!inlist(upper("${ghinp_confirmation}"),"Y","N")) {
-        noi di as txt `"{pstd}Enter "Y" to to add the GitHub templates, or "N" to not add them."', _request(ghinp_confirmation)
+      while (!inlist(upper("${ghinp_confirmation}"),"Y","N","BREAK")) {
+        noi di as txt `"{pstd}Enter "Y" to to add the GitHub templates, or "N" to not add them. Enter "BREAK" to abort"', _request(ghinp_confirmation)
       }
 
       * Set local github as if the option was used
       if upper("${ghinp_confirmation}") =="Y" {
         local github "github"
+      }
+      else if upper("${ghinp_confirmation}") =="BREAK" {
+        noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
+        error 1
+        exit
       }
     }
 
@@ -178,7 +181,7 @@ qui {
     *****************************************************
     * Confirm meta data
 
-    if missing("`autoconfirm'") {
+    if missing("`autoprompt'") {
 
       * Prepare Github output
       if !missing("`github'") local gh_conf "GitHub templates file will be created."
@@ -197,7 +200,7 @@ qui {
       noi di as text ""
 
       global adinp_confirmation ""
-      while (upper("${adinp_confirmation}") != "Y" & upper("${adinp_confirmation}") != "BREAK") {
+      while (!inlist(upper("${adinp_confirmation}"),"Y", "BREAK")) {
         noi di as txt `"{pstd}Enter "Y" to confirm and create the package template or enter "BREAK" to abort."', _request(adinp_confirmation)
       }
       if upper("${adinp_confirmation}") == "BREAK" {
@@ -269,52 +272,61 @@ end
 cap program drop   userinputs
     program define userinputs, rclass
 qui {
-    syntax, [name(string) description(string) author(string) contact(string)   url(string) debug]
+    syntax, [inputtypes(string) name(string) description(string) author(string) contact(string) url(string) autoprompt debug]
 
-    if (missing("`name'") | missing("`description'") | missing("`author'") | missing("`contact'") | missing("`url'")) {
+    local prompt_intro `"Please enter the package meta information needed to set up this package template. Type "BREAK" to cancel."'
+    local name_prompt "Enter name of Stata package {it:(required)}:"
+    local description_prompt "Enter package description {it:(optional)}:"
+    local author_prompt "Enter name of author(s) {it:(optional)}:"
+    local contact_prompt "Enter contact information {it:(optional)}:"
+    local url_prompt  "Enter package URL. For example GitHub repo {it:(optional)}:"
 
-      noi di as txt `"{pstd}Please enter the package meta information needed to set up this package template. Type "BREAK" to cancel.{p_end}"'
+    * Test if autoprompt was not used
+    if missing("`autoprompt'") {
 
-      local inputbreak "FALSE"
+      * Autoprompt not used, prompt for any information not provided
+      if (missing("`name'") | missing("`description'") | missing("`author'") | missing("`contact'") | missing("`url'")) {
 
-      * Ask for package name
-      if missing("`name'") & "`inputbreak'" == "FALSE" {
-        noi inputprompter, inputtype("name") inputprompt("Enter name of Stata package:") `debug'
-        local inputbreak "`r(inputbreak)'"
-        return local name "`r(verifiedinput)'"
+        noi di ""
+        noi di as txt `"{pstd}`prompt_intro' Press ENTER with no input to leave an optional input blank.{p_end}"'
+        local inputbreak "FALSE"
+
+        foreach inputtype of local inputtypes {
+          * Ask for input if missin
+          if missing("``inputtype''") & "`inputbreak'" == "FALSE" {
+            noi di ""
+            noi inputprompter, `debug' ///
+              inputtype("`inputtype'") ///
+              inputprompt("``inputtype'_prompt'")
+            local inputbreak "`r(inputbreak)'"
+            return local `inputtype' "`r(verifiedinput)'"
+          }
+        }
+        return local inputbreak "`inputbreak'"
       }
-
-      * Ask for description
-      if missing("`description'") & "`inputbreak'" == "FALSE" {
-        noi inputprompter, inputtype("description") inputprompt("Enter package description:")
-        local inputbreak "`r(inputbreak)'"
-        return local description "`r(verifiedinput)'"
-      }
-
-      * Ask for author name
-      if missing("`author'") & "`inputbreak'" == "FALSE" {
-        noi inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
-        local inputbreak "`r(inputbreak)'"
-        return local author "`r(verifiedinput)'"
-      }
-
-      * Ask for contact
-      if missing("`contact'") & "`inputbreak'" == "FALSE" {
-        noi inputprompter, inputtype("contact") inputprompt("Enter contact information:")
-        local inputbreak "`r(inputbreak)'"
-        return local contact "`r(verifiedinput)'"
-      }
-
-      * Ask for package url
-      if missing("`url'") & "`inputbreak'" == "FALSE" {
-        noi inputprompter, inputtype("url") inputprompt("Enter package URL (for example GitHub repo):")
-        local inputbreak "`r(inputbreak)'"
-        return local url "`r(verifiedinput)'"
-      }
-
-      return local inputbreak "`inputbreak'"
-
     }
+    else {
+
+      * Autoprompt was used, prompt anyway if name is missing as it is required
+      if missing("`name'") {
+
+        noi di ""
+        noi di as txt `"{pstd}`prompt_intro'{p_end}"'
+        local inputbreak "FALSE"
+
+        * Ask for package name
+        if missing("`name'") & "`inputbreak'" == "FALSE" {
+          noi di ""
+          noi inputprompter, inputtype("name") inputprompt("`name_prompt'") `debug'
+          local inputbreak "`r(inputbreak)'"
+          return local name "`r(verifiedinput)'"
+        }
+        return local inputbreak "`inputbreak'"
+      }
+    }
+
+
+
 }
 end
 
@@ -322,7 +334,7 @@ end
 cap program drop   inputprompter
     program define inputprompter, rclass
 qui {
-    syntax, inputtype(string) inputprompt(string) [debug]
+    syntax, inputtype(string) inputprompt(string) [required debug]
 
     if!missing("`debug'") noi di "inputprompter inputtype: `inputtype'"
     if!missing("`debug'") noi di "inputprompter inputprompt: `inputprompt'"
@@ -348,9 +360,6 @@ cap program drop   inputconfirm
 qui {
     args case inputtype userinput
 
-    if!missing("`debug'") noi di "inputconfirm inputtype: `inputtype'"
-    if!missing("`debug'") noi di "inputconfirm userinput: `userinput'"
-
     local error 0
 
     * Test for BREAK in all inputs for users to exit command
@@ -364,7 +373,7 @@ qui {
       * Test package name
       if "`inputtype'" == "name" {
           * Test one word
-          if `: word count `userinput'' != 1 {
+          if `: word count `userinput'' > 1 {
             noi di as error "{pstd}The package name may only include one word.{p_end}"
             local error 1
           }
@@ -373,26 +382,15 @@ qui {
             noi di as error "{pstd}The package name must only be lower case.{p_end}"
             local error 1
           }
+          if "`userinput'" == "" {
+            noi di as error "{pstd}The package name may not be blank.{p_end}"
+            local error 1
+          }
       }
 
-      * Test description
-      else if "`inputtype'" == "description" {
-        //No tests for description - included as placeholder for future tests
-      }
-
-      * Test author name
-      else if "`inputtype'" == "author" {
-        //No tests for author - included as placeholder for future tests
-      }
-
-      * Test contact information
-      else if "`inputtype'" == "contact" {
-        //No tests for contact - included as placeholder for future tests
-      }
-
-      * Test URL
-      else if "`inputtype'" == "url" {
-        //No tests for url - included as placeholder for future tests
+      * Inputs with no tests
+      else if inlist("`inputtype'","description","author","contact","url") {
+        //No tests for these inputs
       }
 
       else {
@@ -455,7 +453,7 @@ end
 cap program drop   populate_pkg
     program define populate_pkg, rclass
 
-    syntax, pkg_template(string) name(string) description(string) author(string) contact(string) url(string)
+    syntax, pkg_template(string) name(string) [description(string) author(string) contact(string) url(string)]
 
     * Initiate the tempfile handlers and tempfiles needed
     tempname pkg_read pkg_write
