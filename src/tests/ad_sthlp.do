@@ -33,7 +33,7 @@
     local con "jdoe@worldbank.org"
       
     *set up folder 
-    ad_setup, adf("`mvp_f'") autocon ///
+    ad_setup, adf("`mvp_f'") autoprompt ///
         a("`aut'") n("`pkg'") d("`des'") u("`url'") c("`con'")
     ad_command create mycmd1, adf("`mvp_f'") pkg("`pkg'")
     ad_command create mycmd2, adf("`mvp_f'") pkg("`pkg'")  
