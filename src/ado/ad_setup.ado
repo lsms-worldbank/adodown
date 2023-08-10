@@ -1,14 +1,15 @@
 cap program drop   ad_setup
     program define ad_setup
-
+qui {
     syntax, ADFolder(string) [ ///
-      Name(string) ///
-      Description(string) ///
-      Author(string) ///
-      Contact(string) ///
-      Url(string) ///
-      AUTOCONfirm ///
-      debug ///
+      Name(string)             ///
+      Description(string)      ///
+      Author(string)           ///
+      Contact(string)          ///
+      Url(string)              ///
+      AUTOCONfirm              ///
+      GIThub                   ///
+      debug                    ///
       ]
 
     ****************************************************
@@ -61,9 +62,8 @@ cap program drop   ad_setup
 
     * Locals pointing to all template files for the github option
     local gh_tfs ""
-    local gh_tfs "`gh_tfs' ad-.gitignore"
-    local gh_tfs "`gh_tfs' ad-.github-workflows-build_adodown_site.yaml"
-
+    local gh_tfs "`gh_tfs' ad-gh.gitignore"
+    local gh_tfs "`gh_tfs' ad-gh-workflows.yaml"
 
     *****************************************************
     * Handle package meta information
@@ -100,13 +100,33 @@ cap program drop   ad_setup
       if missing("``inputtype''") local `inputtype' `r(`inputtype')'
     }
 
+    *****************************************************
+    * Prompt user if GH files should be created
+
+    if missing("`github'") {
+      noi di as text "{pstd}Are you setting up this package template folder in  GitHub repository and want to add GitHub template files for the adodown workflow? This includes adding a .gitignore template and a Github Actions workflow template for automatic web documentation.{p_end}"
+      noi di as text ""
+
+      global ghinp_confirmation ""
+      while (!inlist(upper("${ghinp_confirmation}"),"Y","N")) {
+        noi di as txt `"{pstd}Enter "Y" to to add the GitHub templates, or "N" to not add them."', _request(ghinp_confirmation)
+      }
+
+      * Set local github as if the option was used
+      if upper("${ghinp_confirmation}") =="Y" {
+        local github "github"
+      }
+    }
 
     *****************************************************
     * Test that package can be created
 
     * Test that folders to be created does not already exist
+    local test_folders "`src_folders'"
+    if !missing("`github'") local test_folders "`src_folders' .github/workflows"
+
     local folder_error 0
-    foreach folder of local src_folders {
+    foreach folder of local test_folders {
       if !missing("`debug'") noi di as text "testfolder create: `adfolderstd'/`folder'"
       mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`folder'"))
       if `r(dirExist)' == 1  {
@@ -118,6 +138,7 @@ cap program drop   ad_setup
       error 99
       exit
     }
+
 
     * Get all templates and store in temporary files
     noi di as text "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
@@ -143,17 +164,37 @@ cap program drop   ad_setup
     }
 
 
+    * Get github templates
+    if !missing("`github'") {
+      foreach template of local gh_tfs {
+        if !missing("`debug'") noi di as text `"Get file: `template_url'/`template''"
+        * Get file from GitHub repo and store in temporary file
+        local tempfile = subinstr("`template'","-","_",.)
+        local tempfile = subinstr("`tempfile'",".","_",.)
+        tempfile `tempfile'
+        copy "`template_url'/`template'" ``tempfile'', replace
+      }
+    }
+
     *****************************************************
     * Confirm meta data
 
     if missing("`autoconfirm'") {
-      noi di as text "{pstd}Please confirm all package meta information:{p_end}"
+
+      * Prepare Github output
+      if !missing("`github'") local gh_conf "GitHub templates file will be created."
+      else local gh_conf "No GitHub templates file will be created."
+
+      noi di as text ""
+      noi di as text "{pstd}Before any files are created on your disk, please confirm the following information:{p_end}"
       noi di as text ""
       noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
       noi di as text "{pmore}Package description: {inp:`description'}{p_end}"
       noi di as text "{pmore}Package author name(s): {inp:`author'}{p_end}"
       noi di as text "{pmore}Contact information: {inp:`contact'}{p_end}"
       noi di as text "{pmore}Package URL (for example repo): {inp:`url'}{p_end}"
+      noi di as text ""
+      noi di as text "{pmore}`gh_conf'{p_end}"
       noi di as text ""
 
       global adinp_confirmation ""
@@ -181,7 +222,7 @@ cap program drop   ad_setup
 
     * Create all folders needed
     foreach folder of local src_folders {
-      rec_mkdir, folder(`"`adfolderstd'/`folder'"')
+      recursive_mkdir, folder(`"`adfolderstd'/`folder'"')
     }
 
     * Copy all templates files to their folders
@@ -189,20 +230,46 @@ cap program drop   ad_setup
         * Get file/folder name from template name and write file
         template_parser, template("`template'") name("`name'")
         copy ``r(t_tempfile)'' `"`adfolderstd'/`r(t_folder)'/`r(t_file)'"'
-        if !missing("`debug'") noi di as text `"File created:`r(t_folder)'/`r(t_file)'"'
+        if !missing("`debug'") noi di as text `"File created:/`r(t_folder)'/`r(t_file)'"'
+    }
+
+    * Copy the github template to the folders
+    if !missing("`github'") {
+      foreach template of local gh_tfs {
+
+        * Generate tempfile name
+        local tempfile = subinstr("`template'","-","_",.)
+        local tempfile = subinstr("`tempfile'",".","_",.)
+
+        * Get special folder location
+        if "`template'" == "ad-gh.gitignore" {
+          local filename ".gitignore"
+          local folder   ""
+        }
+        else if "`template'" == "ad-gh-workflows.yaml" {
+          local filename "build_adodown_site.yaml"
+          local folder   "/.github/workflows"
+        }
+
+        * Create folders if needed
+        recursive_mkdir, folder(`"`adfolderstd'`folder'"')
+        * Copy file to location
+        copy ``tempfile'' `"`adfolderstd'`folder'/`filename'"'
+        if !missing("`debug'") noi di as text `"File created:`folder'/`filename'"'
+      }
     }
 
     * Add a command with the same name as the package to the package template
     qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
 
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
-
+}
 end
 
 * Handler for all inputs
 cap program drop   userinputs
     program define userinputs, rclass
-
+qui {
     syntax, [name(string) description(string) author(string) contact(string)   url(string) debug]
 
     if (missing("`name'") | missing("`description'") | missing("`author'") | missing("`contact'") | missing("`url'")) {
@@ -344,7 +411,7 @@ cap program drop   inputconfirm
         if ("`case'" == "prompt") noi di "{pstd}Invalid input. You entered: [`userinput']. Try again.{p_end}"
       }
    }
-
+}
 end
 
 * Prompting for each input
@@ -496,8 +563,8 @@ end
 
 * Recursively create folders, such that folder(abc/def) first create a folder
 * "abc" and then in it a folder "def"
-cap program drop rec_mkdir
-	program define rec_mkdir
+cap program drop recursive_mkdir
+	program define recursive_mkdir
 
 	syntax, folder(string)
 	*Test if this folder exists
