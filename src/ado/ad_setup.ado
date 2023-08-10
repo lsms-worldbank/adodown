@@ -1,17 +1,16 @@
 cap program drop   ad_setup
     program define ad_setup
-
+qui {
     syntax, ADFolder(string) [ ///
-      Name(string) ///
-      Description(string) ///
-      Author(string) ///
-      Contact(string) ///
-      Url(string) ///
-      AUTOCONfirm ///
-      debug ///
+      Name(string)             ///
+      Description(string)      ///
+      Author(string)           ///
+      Contact(string)          ///
+      Url(string)              ///
+      AUTOprompt                 ///
+      GIThub                   ///
+      debug                    ///
       ]
-
-
 
     ****************************************************
     * Test input - except package meta information
@@ -23,31 +22,45 @@ cap program drop   ad_setup
       error 99
       exit
     }
-
-    //TODO: test when autoconfirm can be used
+    * Local to the src/ folder
+    local srcfolderstd `"`adfolder'/src"'
 
     ****************************************************
     * Set up locals used accross the command
 
-    * Locals pointing to all folders to be setup
-    local folders "ado dev mdhlp sthlp tests vignettes"
-
-    * Locals pointing to all template files to be used
-    foreach fld of local folders {
-      local ad_templates "`ad_templates' ad-`fld'-README.md"
-    }
-    local ad_templates "`ad_templates' ad-dev-description.txt"
-    local ad_templates "`ad_templates' ad-package.pkg"
-    local ad_templates "`ad_templates' ad-stata.toc"
+    * Meta information types
+    local inputtypes name description author contact url
 
     * Template root url
     local branch "main"
     local gh_account_repo "lsms-worldbank/adodown"
     local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
-    local template_url "`repo_url'/`branch'/ado/templates"
+    local template_url "`repo_url'/`branch'/src/ado/templates"
 
-    * Meta information types
-    local inputtypes name description author contact url
+    * Locals pointing to all template files to be used in the src folder
+    local src_tfs ""
+    local src_tfs "`src_tfs' ad-src-package.pkg"
+    local src_tfs "`src_tfs' ad-src-stata.toc"
+    local src_tfs "`src_tfs' ad-src-ado-README.md"
+    local src_tfs "`src_tfs' ad-src-dev-README.md"
+    local src_tfs "`src_tfs' ad-src-mdhlp-README.md"
+    local src_tfs "`src_tfs' ad-src-sthlp-README.md"
+    local src_tfs "`src_tfs' ad-src-tests-README.md"
+    local src_tfs "`src_tfs' ad-src-vignettes-README.md"
+    local src_tfs "`src_tfs' ad-src-dev-description.txt"
+
+    * Extract from template names all folders needed
+    local src_folders ""
+    foreach template of local src_tfs {
+      template_parser, template("`template'")
+      local this_folder "`r(t_folder)'"
+      local src_folders : list src_folders | this_folder
+    }
+
+    * Locals pointing to all template files for the github option
+    local gh_tfs ""
+    local gh_tfs "`gh_tfs' ad-gh.gitignore"
+    local gh_tfs "`gh_tfs' ad-gh-workflows.yaml"
 
     *****************************************************
     * Handle package meta information
@@ -56,7 +69,7 @@ cap program drop   ad_setup
     local allsyntaxinputok "TRUE"
     foreach inputtype of local inputtypes {
       if !missing("``inputtype''") {
-        inputconfirm syntax `inputtype' "``inputtype''"
+        noi inputconfirm syntax `inputtype' "``inputtype''"
         if "`r(inputok)'" == "FALSE" {
             local allsyntaxinputok "FALSE"
             noi di as error "{pstd}Package meta data used in `inputtype'(``inputtype'') is not valid.{p_end}"
@@ -74,7 +87,7 @@ cap program drop   ad_setup
     foreach inputtype of local inputtypes {
       local useinp_params "`useinp_params' `inputtype'("``inputtype''")"
     }
-    userinputs, `debug' `useinp_params'
+    noi userinputs, inputtypes(`inputtypes') `debug' `autoprompt' `useinp_params'
     if "`r(inputbreak)'" == "TRUE" {
       noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
       error 1
@@ -84,17 +97,43 @@ cap program drop   ad_setup
       if missing("``inputtype''") local `inputtype' `r(`inputtype')'
     }
 
+    *****************************************************
+    * Prompt user if GH files should be created
+
+    if missing("`github'") & missing("`autoprompt'") {
+      noi di ""
+      noi di as text "{pstd}Are you setting up this package template folder in  GitHub repository and want to add GitHub template files for the adodown workflow? This includes adding a .gitignore template and a Github Actions workflow template for automatic web documentation.{p_end}"
+      noi di as text ""
+
+      global ghinp_confirmation ""
+      while (!inlist(upper("${ghinp_confirmation}"),"Y","N","BREAK")) {
+        noi di as txt `"{pstd}Enter "Y" to to add the GitHub templates, or "N" to not add them. Enter "BREAK" to abort"', _request(ghinp_confirmation)
+      }
+
+      * Set local github as if the option was used
+      if upper("${ghinp_confirmation}") =="Y" {
+        local github "github"
+      }
+      else if upper("${ghinp_confirmation}") =="BREAK" {
+        noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
+        error 1
+        exit
+      }
+    }
 
     *****************************************************
     * Test that package can be created
 
     * Test that folders to be created does not already exist
+    local test_folders "`src_folders'"
+    if !missing("`github'") local test_folders "`src_folders' .github/workflows"
+
     local folder_error 0
-    foreach fld of local folders {
-      if !missing("`debug'") noi di as text "testfolder create: `adfolderstd'/`fld'"
-      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`fld'"))
+    foreach folder of local test_folders {
+      if !missing("`debug'") noi di as text "testfolder create: `adfolderstd'/`folder'"
+      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`folder'"))
       if `r(dirExist)' == 1  {
-        noi di as error `"{phang}A folder with the name ("`adfolderstd'/`fld'") already exists.{p_end}"'
+        noi di as error `"{phang}A folder with the name ("`adfolderstd'/`folder'") already exists.{p_end}"'
         local folder_error 1
       }
     }
@@ -103,34 +142,53 @@ cap program drop   ad_setup
       exit
     }
 
+
     * Get all templates and store in temporary files
     noi di as text "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
-    foreach ad_t of local ad_templates {
+    foreach template of local src_tfs {
 
       * Get tempfile name from template name
-      template_parser, template("`ad_t'")
+      template_parser, template("`template'")
       local tempfile = "`r(t_tempfile)'"
       tempfile `tempfile'
 
       * Get file from GitHub repo and store in temporary file
-      if !missing("`debug'") noi di as text `"Get file: `template_url'/`ad_t''"
-      cap copy "`template_url'/`ad_t'" ``tempfile'', replace
+      if !missing("`debug'") noi di as text `"Get file: `template_url'/`template''"
+      cap copy "`template_url'/`template'" ``tempfile'', replace
       if _rc == 631 {
         noi di as error "{pstd}This command only works with an internet connection, and you do not seem to have an internet connection. {it:(Offline mode will be implemented.)}{p_end}""
         error 631
         exit
       }
       else if _rc {
-        copy "`template_url'/`ad_t'" ``tempfile'', replace
+        copy "`template_url'/`template'" ``tempfile'', replace
       }
-      if !missing("`debug'") noi di as text `"  Saved in ``tempfile''"
     }
 
 
+    * Get github templates
+    if !missing("`github'") {
+      foreach template of local gh_tfs {
+        if !missing("`debug'") noi di as text `"Get file: `template_url'/`template''"
+        * Get file from GitHub repo and store in temporary file
+        local tempfile = subinstr("`template'","-","_",.)
+        local tempfile = subinstr("`tempfile'",".","_",.)
+        tempfile `tempfile'
+        copy "`template_url'/`template'" ``tempfile'', replace
+      }
+    }
+
     *****************************************************
     * Confirm meta data
-    if missing("`autoconfirm'") {
-      noi di as text "{pstd}Please confirm all package meta information:{p_end}"
+
+    if missing("`autoprompt'") {
+
+      * Prepare Github output
+      if !missing("`github'") local gh_conf "GitHub templates file will be created."
+      else local gh_conf "No GitHub templates file will be created."
+
+      noi di as text ""
+      noi di as text "{pstd}Before any files are created on your disk, please confirm the following information:{p_end}"
       noi di as text ""
       noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
       noi di as text "{pmore}Package description: {inp:`description'}{p_end}"
@@ -138,9 +196,11 @@ cap program drop   ad_setup
       noi di as text "{pmore}Contact information: {inp:`contact'}{p_end}"
       noi di as text "{pmore}Package URL (for example repo): {inp:`url'}{p_end}"
       noi di as text ""
+      noi di as text "{pmore}`gh_conf'{p_end}"
+      noi di as text ""
 
       global adinp_confirmation ""
-      while (upper("${adinp_confirmation}") != "Y" & upper("${adinp_confirmation}") != "BREAK") {
+      while (!inlist(upper("${adinp_confirmation}"),"Y", "BREAK")) {
         noi di as txt `"{pstd}Enter "Y" to confirm and create the package template or enter "BREAK" to abort."', _request(adinp_confirmation)
       }
       if upper("${adinp_confirmation}") == "BREAK" {
@@ -151,94 +211,130 @@ cap program drop   ad_setup
     }
 
     *****************************************************
-    * Create template
+    * Populate templates
 
     * Populate the pkg tempfile
-    populate_pkg, pkg_template(`package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'")
+    populate_pkg, pkg_template(`src_package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'")
 
     * Populate the toc tempfile
-    populate_toc, toc_template(`stata_toc') name("`name'")
+    populate_toc, toc_template(`src_stata_toc') name("`name'")
 
-    foreach ad_t of local ad_templates {
+    *****************************************************
+    * Everything is ready - create template on disk
 
-        template_parser, template("`ad_t'") name("`name'")
-        local t_tempfile "`r(t_tempfile)'"
-        local t_folder   "`r(t_folder)'"
-        local t_file     "`r(t_file)'"
-
-        * If not already created, create folder
-        mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`t_folder'"))
-        if `r(dirExist)' == 0 mkdir "`adfolderstd'/`t_folder'"
-        *Copy file to location
-        copy ``t_tempfile'' "`adfolderstd'/`t_folder'/`t_file'"
-
-        if !missing("`debug'") noi di as text `"File created: `t_folder'/`t_file'"
+    * Create all folders needed
+    foreach folder of local src_folders {
+      recursive_mkdir, folder(`"`adfolderstd'/`folder'"')
     }
 
+    * Copy all templates files to their folders
+    foreach template of local src_tfs {
+        * Get file/folder name from template name and write file
+        template_parser, template("`template'") name("`name'")
+        copy ``r(t_tempfile)'' `"`adfolderstd'/`r(t_folder)'/`r(t_file)'"'
+        if !missing("`debug'") noi di as text `"File created:/`r(t_folder)'/`r(t_file)'"'
+    }
+
+    * Copy the github template to the folders
+    if !missing("`github'") {
+      foreach template of local gh_tfs {
+
+        * Generate tempfile name
+        local tempfile = subinstr("`template'","-","_",.)
+        local tempfile = subinstr("`tempfile'",".","_",.)
+
+        * Get special folder location
+        if "`template'" == "ad-gh.gitignore" {
+          local filename ".gitignore"
+          local folder   ""
+        }
+        else if "`template'" == "ad-gh-workflows.yaml" {
+          local filename "build_adodown_site.yaml"
+          local folder   "/.github/workflows"
+        }
+
+        * Create folders if needed
+        recursive_mkdir, folder(`"`adfolderstd'`folder'"')
+        * Copy file to location
+        copy ``tempfile'' `"`adfolderstd'`folder'/`filename'"'
+        if !missing("`debug'") noi di as text `"File created:`folder'/`filename'"'
+      }
+    }
+
+    * Add a command with the same name as the package to the package template
     qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
 
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
-
+}
 end
 
 * Handler for all inputs
 cap program drop   userinputs
     program define userinputs, rclass
+qui {
+    syntax, [inputtypes(string) name(string) description(string) author(string) contact(string) url(string) autoprompt debug]
 
-    syntax, [name(string) description(string) author(string) contact(string)   url(string) debug]
+    local prompt_intro `"Please enter the package meta information needed to set up this package template. Type "BREAK" to cancel."'
+    local name_prompt "Enter name of Stata package {it:(required)}:"
+    local description_prompt "Enter package description {it:(optional)}:"
+    local author_prompt "Enter name of author(s) {it:(optional)}:"
+    local contact_prompt "Enter contact information {it:(optional)}:"
+    local url_prompt  "Enter package URL. For example GitHub repo {it:(optional)}:"
 
-    if (missing("`name'") | missing("`description'") | missing("`author'") | missing("`contact'") | missing("`url'")) {
+    * Test if autoprompt was not used
+    if missing("`autoprompt'") {
 
-      noi di as txt `"{pstd}Please enter the package meta information needed to set up this package template. Type "BREAK" to cancel.{p_end}"'
+      * Autoprompt not used, prompt for any information not provided
+      if (missing("`name'") | missing("`description'") | missing("`author'") | missing("`contact'") | missing("`url'")) {
 
-      local inputbreak "FALSE"
+        noi di ""
+        noi di as txt `"{pstd}`prompt_intro' Press ENTER with no input to leave an optional input blank.{p_end}"'
+        local inputbreak "FALSE"
 
-      * Ask for package name
-      if missing("`name'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("name") inputprompt("Enter name of Stata package:") `debug'
-        local inputbreak "`r(inputbreak)'"
-        return local name "`r(verifiedinput)'"
+        foreach inputtype of local inputtypes {
+          * Ask for input if missin
+          if missing("``inputtype''") & "`inputbreak'" == "FALSE" {
+            noi di ""
+            noi inputprompter, `debug' ///
+              inputtype("`inputtype'") ///
+              inputprompt("``inputtype'_prompt'")
+            local inputbreak "`r(inputbreak)'"
+            return local `inputtype' "`r(verifiedinput)'"
+          }
+        }
+        return local inputbreak "`inputbreak'"
       }
+    }
+    else {
 
-      * Ask for description
-      if missing("`description'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("description") inputprompt("Enter package description:")
-        local inputbreak "`r(inputbreak)'"
-        return local description "`r(verifiedinput)'"
+      * Autoprompt was used, prompt anyway if name is missing as it is required
+      if missing("`name'") {
+
+        noi di ""
+        noi di as txt `"{pstd}`prompt_intro'{p_end}"'
+        local inputbreak "FALSE"
+
+        * Ask for package name
+        if missing("`name'") & "`inputbreak'" == "FALSE" {
+          noi di ""
+          noi inputprompter, inputtype("name") inputprompt("`name_prompt'") `debug'
+          local inputbreak "`r(inputbreak)'"
+          return local name "`r(verifiedinput)'"
+        }
+        return local inputbreak "`inputbreak'"
       }
-
-      * Ask for author name
-      if missing("`author'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
-        local inputbreak "`r(inputbreak)'"
-        return local author "`r(verifiedinput)'"
-      }
-
-      * Ask for contact
-      if missing("`contact'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("contact") inputprompt("Enter contact information:")
-        local inputbreak "`r(inputbreak)'"
-        return local contact "`r(verifiedinput)'"
-      }
-
-      * Ask for package url
-      if missing("`url'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("url") inputprompt("Enter package URL (for example GitHub repo):")
-        local inputbreak "`r(inputbreak)'"
-        return local url "`r(verifiedinput)'"
-      }
-
-      return local inputbreak "`inputbreak'"
-
     }
 
+
+
+}
 end
 
 * Prompting for each input
 cap program drop   inputprompter
     program define inputprompter, rclass
-
-    syntax, inputtype(string) inputprompt(string) [debug]
+qui {
+    syntax, inputtype(string) inputprompt(string) [required debug]
 
     if!missing("`debug'") noi di "inputprompter inputtype: `inputtype'"
     if!missing("`debug'") noi di "inputprompter inputprompt: `inputprompt'"
@@ -248,24 +344,21 @@ cap program drop   inputprompter
     global adinp_userinput ""
     while ("`inputok'" == "FALSE" & "`inputbreak'" == "FALSE") {
       noi di as txt "{pstd}`inputprompt'", _request(adinp_userinput)
-      inputconfirm prompt `inputtype' "${adinp_userinput}"
+      noi inputconfirm prompt `inputtype' "${adinp_userinput}"
       local inputbreak "`r(inputbreak)'"
       local inputok    "`r(inputok)'"
     }
 
     return local inputbreak    "`inputbreak'"
     return local verifiedinput "`r(verifiedinput)'"
-
+}
 end
 
 * Test input provided either through syntax or prompt
 cap program drop   inputconfirm
     program define inputconfirm, rclass
-
+qui {
     args case inputtype userinput
-
-    if!missing("`debug'") noi di "inputconfirm inputtype: `inputtype'"
-    if!missing("`debug'") noi di "inputconfirm userinput: `userinput'"
 
     local error 0
 
@@ -280,7 +373,7 @@ cap program drop   inputconfirm
       * Test package name
       if "`inputtype'" == "name" {
           * Test one word
-          if `: word count `userinput'' != 1 {
+          if `: word count `userinput'' > 1 {
             noi di as error "{pstd}The package name may only include one word.{p_end}"
             local error 1
           }
@@ -289,26 +382,15 @@ cap program drop   inputconfirm
             noi di as error "{pstd}The package name must only be lower case.{p_end}"
             local error 1
           }
+          if "`userinput'" == "" {
+            noi di as error "{pstd}The package name may not be blank.{p_end}"
+            local error 1
+          }
       }
 
-      * Test description
-      else if "`inputtype'" == "description" {
-        //No tests for description - included as placeholder for future tests
-      }
-
-      * Test author name
-      else if "`inputtype'" == "author" {
-        //No tests for author - included as placeholder for future tests
-      }
-
-      * Test contact information
-      else if "`inputtype'" == "contact" {
-        //No tests for contact - included as placeholder for future tests
-      }
-
-      * Test URL
-      else if "`inputtype'" == "url" {
-        //No tests for url - included as placeholder for future tests
+      * Inputs with no tests
+      else if inlist("`inputtype'","description","author","contact","url") {
+        //No tests for these inputs
       }
 
       else {
@@ -326,7 +408,7 @@ cap program drop   inputconfirm
         if ("`case'" == "prompt") noi di "{pstd}Invalid input. You entered: [`userinput']. Try again.{p_end}"
       }
    }
-
+}
 end
 
 * Prompting for each input
@@ -371,7 +453,7 @@ end
 cap program drop   populate_pkg
     program define populate_pkg, rclass
 
-    syntax, pkg_template(string) name(string) description(string) author(string) contact(string) url(string)
+    syntax, pkg_template(string) name(string) [description(string) author(string) contact(string) url(string)]
 
     * Initiate the tempfile handlers and tempfiles needed
     tempname pkg_read pkg_write
@@ -474,4 +556,25 @@ cap program drop   populate_toc
 
     * Overwrite the template tempfiel with the populated file
     copy `toc_output' `toc_template', replace
+end
+
+* Recursively create folders, such that folder(abc/def) first create a folder
+* "abc" and then in it a folder "def"
+cap program drop recursive_mkdir
+	program define recursive_mkdir
+
+	syntax, folder(string)
+	*Test if this folder exists
+	mata : st_numscalar("r(dirExist)", direxists(`"`folder'"'))
+	*Folder does not exist, find parent folder and make recursive call
+	if (`r(dirExist)' == 0) {
+		*Get the parent folder of folder
+		local lastSlash = strpos(strreverse(`"`folder'"'),"/")
+		local parentFolder = substr(`"`folder'"',1,strlen("`folder'")-`lastSlash')
+		local thisFolder = substr(`"`folder'"', (-1 * `lastSlash')+1 ,.)
+		*Recursively create parent folders
+		noi recursive_mkdir , folder(`"`parentFolder'"')
+		*Create this folder as the parent folder is certain to exist now
+		noi mkdir "`folder'"
+	}
 end

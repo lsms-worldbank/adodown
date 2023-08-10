@@ -13,14 +13,17 @@ cap program drop   ad_sthlp
     * Test folder input to make sure it is an adodown folder
 
     ** Standardize slashes in file paths
-    local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
+    local folderstd	= subinstr(`"`adfolder'"',"\","/",.)
+    local srcfolder	= `"`adfolder'/src"'
+
+
     ** Test if parameter folders exist
     foreach fld of local hlpflds {
-      local `fld'hlp "`adfolderstd'/`fld'hlp"
+      local `fld'hlp "`srcfolder'/`fld'hlp"
     }
 
     * Test for adodown folders expected in the folder
-    foreach ad_fld in adfolderstd mdhlp sthlp {
+    foreach ad_fld in folderstd srcfolder mdhlp sthlp {
       mata : st_numscalar("r(dirExist)", direxists("``ad_fld''"))
       if `r(dirExist)' == 0  {
         local folder_error "TRUE"

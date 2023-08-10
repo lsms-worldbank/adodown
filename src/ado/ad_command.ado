@@ -10,7 +10,7 @@ cap program drop   ad_command
     local branch "main"
     local gh_account_repo "lsms-worldbank/adodown"
     local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
-    local template_url "`repo_url'/`branch'/ado/templates"
+    local template_url "`repo_url'/`branch'/src/ado/templates"
 
     *******************************************************
     * Test inputs
@@ -38,12 +38,13 @@ cap program drop   ad_command
     * Confirming that the folder is a valid adodown folder
 
     * Confirming that the folder used in adfolder() exists
-    local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
+    local folderstd	= subinstr(`"`adfolder'"',"\","/",.)
+    local srcfolder	= `"`folderstd'/src"'
 
     local folder_error "FALSE"
 
     * Test the folder passed in option
-    mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'"))
+    mata : st_numscalar("r(dirExist)", direxists("`folderstd'"))
     if `r(dirExist)' == 0  {
       local folder_error "TRUE"
       local missing_flds `" "`adfolder'" "'
@@ -51,10 +52,10 @@ cap program drop   ad_command
 
     * Test for adodown folders expected in the folder
     foreach ad_fld in ado mdhlp sthlp {
-      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'/`ad_fld'"))
+      mata : st_numscalar("r(dirExist)", direxists("`srcfolder'/`ad_fld'"))
       if `r(dirExist)' == 0  {
         local folder_error "TRUE"
-        local missing_flds `"`missing_flds' "`adfolder'/`ad_fld'" "'
+        local missing_flds `"`missing_flds' "`srcfolder'/`ad_fld'" "'
       }
     }
 
@@ -70,9 +71,9 @@ cap program drop   ad_command
 
     * Test that the package file exists
     local pkgname = subinstr("`pkgname'",".pkg","",.)
-    cap confirm file "`adfolderstd'/`pkgname'.pkg"
+    cap confirm file "`srcfolder'/`pkgname'.pkg"
     if _rc {
-      noi di as error "{pstd}The package file {inp:`adfolder'/`pkgname'.pkg} was expected but not found.{p_end}"
+      noi di as error "{pstd}The package file {inp:`srcfolder'/`pkgname'.pkg} was expected but not found.{p_end}"
       error 99
       exit
     }
@@ -84,9 +85,9 @@ cap program drop   ad_command
 
     local cname = subinstr("`cname'",".ado","",.)
 
-    local adof "`adfolderstd'/ado/`cname'.ado"
-    local mdhf "`adfolderstd'/mdhlp/`cname'.md"
-    local sthf "`adfolderstd'/sthlp/`cname'.sthlp"
+    local adof "`srcfolder'/ado/`cname'.ado"
+    local mdhf "`srcfolder'/mdhlp/`cname'.md"
+    local sthf "`srcfolder'/sthlp/`cname'.sthlp"
 
     * Checking if file exists or not
     foreach f in adof mdhf sthf {
@@ -126,8 +127,8 @@ cap program drop   ad_command
       foreach adt of local ad_templates {
 
         tempfile `adt'_template
-        if "`adt'" == "ado" local template "ad-ado-command.ado"
-        if "`adt'" == "mdh" local template "ad-mdhlp-command.md"
+        if "`adt'" == "ado" local template "ad-cmd-command.ado"
+        if "`adt'" == "mdh" local template "ad-cmd-command.md"
 
         * Get file from GitHub repo and store in temporary file
         if !missing("`debug'") noi di as text `"Get file: `template_url'/`template'"
@@ -175,7 +176,7 @@ cap program drop   ad_command
       tempname pkg_read pkg_write
 
       * Open template to read from and new tempfile to write to
-      file open `pkg_read'  using "`adfolderstd'/`pkgname'.pkg", read
+      file open `pkg_read'  using "`srcfolder'/`pkgname'.pkg", read
       file open `pkg_write' using `pkg_out', write
 
       * Read first line
@@ -208,7 +209,7 @@ cap program drop   ad_command
           copy "``adt'_out'" "``adt'f'"
       }
       *Write package file
-      copy "`pkg_out'" "`adfolderstd'/`pkgname'.pkg", replace
+      copy "`pkg_out'" "`srcfolder'/`pkgname'.pkg", replace
 
       noi di as res "{pstd}Command {it:`cname'} was succesfully added to package {it:`pkgname'}.{p_end}"
 
@@ -226,7 +227,7 @@ cap program drop   ad_command
       tempname pkg_read pkg_write
 
       * Open template to read from and new tempfile to write to
-      file open `pkg_read'  using "`adfolderstd'/`pkgname'.pkg", read
+      file open `pkg_read'  using "`srcfolder'/`pkgname'.pkg", read
       file open `pkg_write' using `pkg_out', write
 
       * Read first line
@@ -285,7 +286,7 @@ cap program drop   ad_command
       }
 
       *Copy updated tempfile to package file
-      copy "`pkg_out'" "`adfolderstd'/`pkgname'.pkg", replace
+      copy "`pkg_out'" "`srcfolder'/`pkgname'.pkg", replace
 
       noi di as res "{pstd}Command {it:`cname'} was succesfully removed from package {it:`pkgname'}.{p_end}"
 
