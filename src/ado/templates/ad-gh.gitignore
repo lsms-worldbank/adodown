@@ -47,7 +47,7 @@
 !/**/*.do
 !/**/*.ado
 !src/stata.toc
-!src/adodown.pkg
+!src/*.pkg
 
 # Markdown
 !/**/*.md
