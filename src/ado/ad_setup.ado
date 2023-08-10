@@ -72,7 +72,7 @@ qui {
     local allsyntaxinputok "TRUE"
     foreach inputtype of local inputtypes {
       if !missing("``inputtype''") {
-        inputconfirm syntax `inputtype' "``inputtype''"
+        noi inputconfirm syntax `inputtype' "``inputtype''"
         if "`r(inputok)'" == "FALSE" {
             local allsyntaxinputok "FALSE"
             noi di as error "{pstd}Package meta data used in `inputtype'(``inputtype'') is not valid.{p_end}"
@@ -90,7 +90,7 @@ qui {
     foreach inputtype of local inputtypes {
       local useinp_params "`useinp_params' `inputtype'("``inputtype''")"
     }
-    userinputs, `debug' `useinp_params'
+    noi userinputs, `debug' `useinp_params'
     if "`r(inputbreak)'" == "TRUE" {
       noi di as txt "{pstd}Package template creation aborted - nothing was created.{p_end}"
       error 1
@@ -160,7 +160,6 @@ qui {
       else if _rc {
         copy "`template_url'/`template'" ``tempfile'', replace
       }
-      if !missing("`debug'") noi di as text `"  Saved in ``tempfile''"
     }
 
 
@@ -280,35 +279,35 @@ qui {
 
       * Ask for package name
       if missing("`name'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("name") inputprompt("Enter name of Stata package:") `debug'
+        noi inputprompter, inputtype("name") inputprompt("Enter name of Stata package:") `debug'
         local inputbreak "`r(inputbreak)'"
         return local name "`r(verifiedinput)'"
       }
 
       * Ask for description
       if missing("`description'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("description") inputprompt("Enter package description:")
+        noi inputprompter, inputtype("description") inputprompt("Enter package description:")
         local inputbreak "`r(inputbreak)'"
         return local description "`r(verifiedinput)'"
       }
 
       * Ask for author name
       if missing("`author'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
+        noi inputprompter, inputtype("author") inputprompt("Enter name of author(s):")
         local inputbreak "`r(inputbreak)'"
         return local author "`r(verifiedinput)'"
       }
 
       * Ask for contact
       if missing("`contact'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("contact") inputprompt("Enter contact information:")
+        noi inputprompter, inputtype("contact") inputprompt("Enter contact information:")
         local inputbreak "`r(inputbreak)'"
         return local contact "`r(verifiedinput)'"
       }
 
       * Ask for package url
       if missing("`url'") & "`inputbreak'" == "FALSE" {
-        inputprompter, inputtype("url") inputprompt("Enter package URL (for example GitHub repo):")
+        noi inputprompter, inputtype("url") inputprompt("Enter package URL (for example GitHub repo):")
         local inputbreak "`r(inputbreak)'"
         return local url "`r(verifiedinput)'"
       }
@@ -316,13 +315,13 @@ qui {
       return local inputbreak "`inputbreak'"
 
     }
-
+}
 end
 
 * Prompting for each input
 cap program drop   inputprompter
     program define inputprompter, rclass
-
+qui {
     syntax, inputtype(string) inputprompt(string) [debug]
 
     if!missing("`debug'") noi di "inputprompter inputtype: `inputtype'"
@@ -333,20 +332,20 @@ cap program drop   inputprompter
     global adinp_userinput ""
     while ("`inputok'" == "FALSE" & "`inputbreak'" == "FALSE") {
       noi di as txt "{pstd}`inputprompt'", _request(adinp_userinput)
-      inputconfirm prompt `inputtype' "${adinp_userinput}"
+      noi inputconfirm prompt `inputtype' "${adinp_userinput}"
       local inputbreak "`r(inputbreak)'"
       local inputok    "`r(inputok)'"
     }
 
     return local inputbreak    "`inputbreak'"
     return local verifiedinput "`r(verifiedinput)'"
-
+}
 end
 
 * Test input provided either through syntax or prompt
 cap program drop   inputconfirm
     program define inputconfirm, rclass
-
+qui {
     args case inputtype userinput
 
     if!missing("`debug'") noi di "inputconfirm inputtype: `inputtype'"
@@ -576,7 +575,7 @@ cap program drop recursive_mkdir
 		local parentFolder = substr(`"`folder'"',1,strlen("`folder'")-`lastSlash')
 		local thisFolder = substr(`"`folder'"', (-1 * `lastSlash')+1 ,.)
 		*Recursively create parent folders
-		noi rec_mkdir , folder(`"`parentFolder'"') `dryrun'
+		noi recursive_mkdir , folder(`"`parentFolder'"')
 		*Create this folder as the parent folder is certain to exist now
 		noi mkdir "`folder'"
 	}
