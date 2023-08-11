@@ -58,7 +58,7 @@ cap program drop   ad_sthlp
         //Do nothing, alwas skip this file
       }
       else {
-        local prepped_mdfiles "`prepped_mdfiles' `file_name'"
+        local file_names "`file_names' `file_name'"
       }
     }
 
@@ -70,28 +70,91 @@ cap program drop   ad_sthlp
     }
 
     *******************************************************
-    * Convert files
+    * Render mdhlp files into tempfiles
 
-    foreach file_name of local prepped_mdfiles {
+    * Loop over all mdhlp files
+    foreach file_name of local file_names {
 
-      * Generate the sthlp file from the markdown source
-      qui markdoc "`mdhlp'/`file_name'.md", mini export(sthlp) replace suppress
+      * Initiate the tempfile handlers and tempfiles needed
+      tempname md_fh st_fh
+      tempfile `file_name'
 
-      * markdoc does not allow to specify a location for the output,
-      * it will always save in the same file as the source file.
-      * Copy stlhp file to output folder for this experiment,
-      * and then delete the file where markdoc wrote it
-      copy "`mdhlp'/`file_name'.sthlp" "`sthlp'/`file_name'.sthlp", replace
-      rm   "`mdhlp'/`file_name'.sthlp"
+      * Open template to read from and new tempfile to write to
+      file open `md_fh' using "`mdhlp'/`file_name'.md"  , read
+      file open `st_fh' using ``file_name'' , write
 
-      * Names to be outputted
-      local sthlp_files "`sthlp_files' `file_name'"
+      * Read first line then iterate until end of file (eof)
+      file read `md_fh' line
+      local codeblock 0
+      local paragraph 0
+      while r(eof)==0 {
+
+        noi di `"LINE: `macval(line)'"'
+
+        * Replace Stta tricky markdown syntax with tokens
+        local line : subinstr local line "```" "%%%CODEBLOCK%%%"
+
+        * Title 1 heading #
+        if (substr(trim(`"`macval(line)'"'),1,2) == "# ") {
+          local line = trim(subinstr("`macval(line)'","# ","",1))
+          file write `st_fh' "{title:`line'}" _n
+        }
+
+        * Title 1 heading #
+        else if (substr(trim(`"`macval(line)'"'),1,3) == "## ") {
+          local line = trim(subinstr("`macval(line)'","## ","",1))
+          file write `st_fh' "{dlgtab:`line'}" _n
+        }
+
+        * Code block ```
+        else if strpos(`"`macval(line)'"',"%%%CODEBLOCK%%%") {
+          if (`codeblock' == 0) file write `st_fh' "{input}"
+          else file write `st_fh' "{text}" _n
+          local codeblock !`codeblock'
+        }
+
+        * Empty line
+        else if (trim(`"`macval(line)'"') == "") {
+          if (`paragraph' == 1) {
+            file write `st_fh' "{p_end}" _n _n
+            local paragraph !`paragraph'
+          }
+          else file write `st_fh' "" _n
+        }
+
+        * Write line
+        else {
+
+          if (`paragraph' == 0 & `codeblock' == 0 ) {
+            file write `st_fh' "{pstd}"
+            local paragraph !`paragraph'
+          }
+
+          local indent ""
+          if (`codeblock' == 1) local indent "{space 8}"
+          file write `st_fh' `"`indent'`macval(line)'"' _n
+        }
+
+        * Read next line
+        file read `md_fh' line
+      }
+      file close `md_fh'
+      file close `st_fh'
+
+    }
+
+    *******************************************************
+    * Copy tempfiles to disk
+
+    * Copy all the tempfiles to disk
+    foreach file_name of local file_names {
+      copy ``file_name'' `"`sthlp'/`file_name'.smcl"', replace
     }
 
     * Output confirmation of files converted
     noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The follwoing sthlp file(s) were created:{p_end}"'
-    foreach sthlp_file of local sthlp_files {
-      noi di as text `"{pstd}- {view "`sthlp'/`sthlp_file'.sthlp":`sthlp_file'.sthlp}.{p_end}"'
+    foreach file_name of local file_names {
+      noi di as text `"{pstd}- {view "`sthlp'/`file_name'.smcl":`file_name'.smcl}.{p_end}"'
     }
   }
 

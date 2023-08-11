@@ -23,7 +23,7 @@ In the adodown workflow the mdhlp-files are expected to be stored in a folder `m
 
 # Examples
 
-__Example 1__
+## Example 1
 
 This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to, and that some commands have already been created. Any mdhlp-files in the `mdhlp` folder in the folder `myfolder` is pointing to will be rendered to Stata helpfile format and saved in the `sthlp` folder.
 
@@ -35,7 +35,7 @@ local myfolder "path/to/folder"
 ad_sthlp, adf("`myfolder'")
 ```
 
-__Example 2__
+## Example 2
 
 This example includes the steps for how to create the adodown-styled package folder in the location the local `myfolder` is pointing to, creating some commands and then render the template mdhlp-files to Stata helpfiles.
 
