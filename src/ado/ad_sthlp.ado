@@ -91,86 +91,27 @@ cap program drop   ad_sthlp
       file read `md_fh' line
       local codeblock 0
       local paragraph 0
+      local table     0
       while r(eof)==0 {
-
-        noi di `"LINE: `macval(line)'"'
 
         * Replace Stata tricky markdown syntax with tokens
         local line : subinstr local line "```" "%%%CODEBLOCK%%%"
 
         * Replace ` with input tags - but ignore text in a code block
         if (`codeblock' == 0) {
+          apply_inline_formatting, line("`macval(line)'")
+          local line "`r(line)'"
+        }
 
-          * Initiate span locals
-          local code_span 0
-          local bold_span 0
-          local ulin_span 0
-          local ital_span 0
-
-          local n = strlen("`line'")
-          local i 1
-          while (`i' <= `n') {
-
-              * Switch between start and end tags for
-              if (`code_span' == 0) local ctag "{inp:"
-              else local ctag "}"
-              if (`bold_span' == 0) local btag "{bf:"
-              else local btag "}"
-              if (`ulin_span' == 0) local utag "{ul:"
-              else local utag "}"
-              if (`ital_span' == 0) local itag "{it:"
-              else local itag "}"
-
-              local pre   = substr("`line'",1,`i'-1)
-              local post1 = substr("`line'",`i'+1,.)
-              local post2 = substr("`line'",`i'+2,.)
-
-              * CODE SPAN
-              if (substr("`line'",`i',1) == "`") {
-                  local line "`pre'`ctag'`post1'"
-                  local code_span !`code_span'
-                  local i = `i' + strlen("`ctag'")
-              }
-
-              * BOLD SPAN
-              else if (substr("`line'",`i',2) == "__") {
-                  * Ignore __ for bold face in code spans
-                  if (`code_span') local i = `i' + 1
-                  else {
-                      local line "`pre'`btag'`post2'"
-                      local bold_span !`bold_span'
-                      local i = `i' + strlen("`btag'")
-                  }
-              }
-              * UNDERLINE SPAN
-              else if (substr("`line'",`i',2) == "**") {
-                  * Ignore ** for underline in code spans or outside of bold spans
-                  if (`code_span') | (!`bold_span') local i = `i' + 1
-                  else {
-                      local line "`pre'`utag'`post2'"
-                      local ulin_span !`ulin_span'
-                      local i = `i' + strlen("`utag'")
-                  }
-              }
-              * ITALIC SPAN
-              else if (substr("`line'",`i',1) == "_") {
-                  * Ignore _ for italic in code spans or in block spans
-                  if (`code_span') | (`bold_span') local i = `i' + 1
-                  else {
-                      local line "`pre'`itag'`post1'"
-                      local ital_span !`ital_span'
-                      local i = `i' + strlen("`itag'")
-                  }
-              }
-              * No special character skip to next character in line
-              else local i = `i' + 1
-              * Keep updating n as line is longer as smcl characters are added
-              local n = strlen("`line'")
-          }
+        * Code block ```
+        if strpos(`"`macval(line)'"',"%%%CODEBLOCK%%%") {
+          if (`codeblock' == 0) file write `st_fh' "{input}"
+          else file write `st_fh' "{text}" _n
+          local codeblock = !`codeblock'
         }
 
         * Title 1 heading #
-        if (substr(trim(`"`macval(line)'"'),1,2) == "# ") {
+        else if (substr(trim(`"`macval(line)'"'),1,2) == "# ") {
           local title = trim(subinstr("`macval(line)'","# ","",1))
           file write `st_fh' "{title:`title'}" _n
         }
@@ -181,13 +122,6 @@ cap program drop   ad_sthlp
           file write `st_fh' "{dlgtab:`title'}" _n
         }
 
-        * Code block ```
-        else if strpos(`"`macval(line)'"',"%%%CODEBLOCK%%%") {
-          if (`codeblock' == 0) file write `st_fh' "{input}"
-          else file write `st_fh' "{text}" _n
-          local codeblock = !`codeblock'
-        }
-
         * Empty lines
         else if (trim(`"`macval(line)'"') == "") {
           if (`paragraph' == 1) {
@@ -195,6 +129,11 @@ cap program drop   ad_sthlp
             local paragraph = !`paragraph'
           }
           else file write `st_fh' "" _n
+        }
+
+        * Table
+        else if (substr(trim(`"`macval(line)'"'),1,1) == "|") {
+          file write `st_fh' `"`macval(line)'"' _n
         }
 
         * Write line
@@ -228,11 +167,108 @@ cap program drop   ad_sthlp
     * Output confirmation of files converted
     noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The follwoing sthlp file(s) were created:{p_end}"'
     foreach file_name of local file_names {
-      noi di as text `"{pstd}- {view "`sthlp'/`file_name'.sthlp":`file_name'.sthlp}.{p_end}"'
+      noi di as text `"{pstd}- {view "`sthlp'/`file_name'.sthlp":`file_name'.sthlp}{p_end}"'
     }
   }
 
 end
+
+* Splits a file name into its name and its extension
+cap program drop   	apply_inline_formatting
+  	program define	apply_inline_formatting, rclass
+
+    syntax, [line(string)]
+
+    * Initiate span locals
+    local code_span 0
+    local bold_span 0
+    local ulin_span 0
+    local ital_span 0
+
+    local n = strlen("`line'")
+    local i 1
+    while (`i' <= `n') {
+
+        * Switch between start and end tags for
+        if (`code_span' == 0) local ctag "{inp:"
+        else local ctag "}"
+        if (`bold_span' == 0) local btag "{bf:"
+        else local btag "}"
+        if (`ulin_span' == 0) local utag "{ul:"
+        else local utag "}"
+        if (`ital_span' == 0) local itag "{it:"
+        else local itag "}"
+
+        local dtag  "{c S|}"
+        local lctag "{c -(}"
+        local rctag "{c )-}"
+
+        local pre   = substr("`line'",1,`i'-1)
+        local post1 = substr("`line'",`i'+1,.)
+        local post2 = substr("`line'",`i'+2,.)
+
+        * CODE SPAN
+        if (substr("`line'",`i',1) == "`") {
+            local line "`pre'`ctag'`post1'"
+            local code_span !`code_span'
+            local i = `i' + strlen("`ctag'")
+        }
+
+        * BOLD SPAN
+        else if (substr("`line'",`i',2) == "__") {
+            * Ignore __ for bold face in code spans
+            if (`code_span') local i = `i' + 1
+            else {
+                local line "`pre'`btag'`post2'"
+                local bold_span !`bold_span'
+                local i = `i' + strlen("`btag'")
+            }
+        }
+        * UNDERLINE SPAN
+        else if (substr("`line'",`i',2) == "**") {
+            * Ignore ** for underline in code spans or outside of bold spans
+            if (`code_span') | (!`bold_span') local i = `i' + 1
+            else {
+                local line "`pre'`utag'`post2'"
+                local ulin_span !`ulin_span'
+                local i = `i' + strlen("`utag'")
+            }
+        }
+        * ITALIC SPAN
+        else if (substr("`line'",`i',1) == "_") {
+            * Ignore _ for italic in code spans or in block spans
+            if (`code_span') | (`bold_span') local i = `i' + 1
+            else {
+                local line "`pre'`itag'`post1'"
+                local ital_span !`ital_span'
+                local i = `i' + strlen("`itag'")
+            }
+        }
+
+        * Stata/smcl tricky characters $, {, and }
+        else if (substr("`line'",`i',1) == "$") {
+          local line "`pre'`dtag'`post1'"
+          local i = `i' + strlen("`dtag'")
+        }
+        else if (substr("`line'",`i',1) == "{") {
+          local line "`pre'`lctag'`post1'"
+          local i = `i' + strlen("`lctag'")
+        }
+        else if (substr("`line'",`i',1) == "}") {
+          local line "`pre'`rctag'`post1'"
+          local i = `i' + strlen("`rctag'")
+        }
+
+        * No special character skip to next character in line
+        else local i = `i' + 1
+        * Keep updating n as line grows longer as smcl characters are added
+        local n = strlen("`line'")
+    }
+
+    return local line "`line'"
+
+end
+
 
 * Splits a file name into its name and its extension
 cap program drop 	split_file_extentsion
