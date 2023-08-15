@@ -83,6 +83,10 @@ cap program drop   ad_sthlp
       file open `md_fh' using "`mdhlp'/`file_name'.md"  , read
       file open `st_fh' using ``file_name'' , write
 
+      * Write the smcl tag at top of file to
+      file write `st_fh' "{smcl}" _n "{* 01 Jan 1960}{...}" _n ///
+        "{hline}" _n "help file for {hi:`file_name'}" _n "{hline}" _n _n
+
       * Read first line then iterate until end of file (eof)
       file read `md_fh' line
       local codeblock 0
@@ -91,33 +95,104 @@ cap program drop   ad_sthlp
 
         noi di `"LINE: `macval(line)'"'
 
-        * Replace Stta tricky markdown syntax with tokens
+        * Replace Stata tricky markdown syntax with tokens
         local line : subinstr local line "```" "%%%CODEBLOCK%%%"
 
-        * Title 1 heading #
-        if (substr(trim(`"`macval(line)'"'),1,2) == "# ") {
-          local line = trim(subinstr("`macval(line)'","# ","",1))
-          file write `st_fh' "{title:`line'}" _n
+        * Replace ` with input tags - but ignore text in a code block
+        if (`codeblock' == 0) {
+
+          * Initiate span locals
+          local code_span 0
+          local bold_span 0
+          local ulin_span 0
+          local ital_span 0
+
+          local n = strlen("`line'")
+          local i 1
+          while (`i' <= `n') {
+
+              * Switch between start and end tags for
+              if (`code_span' == 0) local ctag "{inp:"
+              else local ctag "}"
+              if (`bold_span' == 0) local btag "{bf:"
+              else local btag "}"
+              if (`ulin_span' == 0) local utag "{ul:"
+              else local utag "}"
+              if (`ital_span' == 0) local itag "{it:"
+              else local itag "}"
+
+              local pre   = substr("`line'",1,`i'-1)
+              local post1 = substr("`line'",`i'+1,.)
+              local post2 = substr("`line'",`i'+2,.)
+
+              * CODE SPAN
+              if (substr("`line'",`i',1) == "`") {
+                  local line "`pre'`ctag'`post1'"
+                  local code_span !`code_span'
+                  local i = `i' + strlen("`ctag'")
+              }
+
+              * BOLD SPAN
+              else if (substr("`line'",`i',2) == "__") {
+                  * Ignore __ for bold face in code spans
+                  if (`code_span') local i = `i' + 1
+                  else {
+                      local line "`pre'`btag'`post2'"
+                      local bold_span !`bold_span'
+                      local i = `i' + strlen("`btag'")
+                  }
+              }
+              * UNDERLINE SPAN
+              else if (substr("`line'",`i',2) == "**") {
+                  * Ignore ** for underline in code spans or outside of bold spans
+                  if (`code_span') | (!`bold_span') local i = `i' + 1
+                  else {
+                      local line "`pre'`utag'`post2'"
+                      local ulin_span !`ulin_span'
+                      local i = `i' + strlen("`utag'")
+                  }
+              }
+              * ITALIC SPAN
+              else if (substr("`line'",`i',1) == "_") {
+                  * Ignore _ for italic in code spans or in block spans
+                  if (`code_span') | (`bold_span') local i = `i' + 1
+                  else {
+                      local line "`pre'`itag'`post1'"
+                      local ital_span !`ital_span'
+                      local i = `i' + strlen("`itag'")
+                  }
+              }
+              * No special character skip to next character in line
+              else local i = `i' + 1
+              * Keep updating n as line is longer as smcl characters are added
+              local n = strlen("`line'")
+          }
         }
 
         * Title 1 heading #
+        if (substr(trim(`"`macval(line)'"'),1,2) == "# ") {
+          local title = trim(subinstr("`macval(line)'","# ","",1))
+          file write `st_fh' "{title:`title'}" _n
+        }
+
+        * Title 2 heading ##
         else if (substr(trim(`"`macval(line)'"'),1,3) == "## ") {
-          local line = trim(subinstr("`macval(line)'","## ","",1))
-          file write `st_fh' "{dlgtab:`line'}" _n
+          local title = trim(subinstr("`macval(line)'","## ","",1))
+          file write `st_fh' "{dlgtab:`title'}" _n
         }
 
         * Code block ```
         else if strpos(`"`macval(line)'"',"%%%CODEBLOCK%%%") {
           if (`codeblock' == 0) file write `st_fh' "{input}"
           else file write `st_fh' "{text}" _n
-          local codeblock !`codeblock'
+          local codeblock = !`codeblock'
         }
 
-        * Empty line
+        * Empty lines
         else if (trim(`"`macval(line)'"') == "") {
           if (`paragraph' == 1) {
             file write `st_fh' "{p_end}" _n _n
-            local paragraph !`paragraph'
+            local paragraph = !`paragraph'
           }
           else file write `st_fh' "" _n
         }
@@ -127,7 +202,7 @@ cap program drop   ad_sthlp
 
           if (`paragraph' == 0 & `codeblock' == 0 ) {
             file write `st_fh' "{pstd}"
-            local paragraph !`paragraph'
+            local paragraph = !`paragraph'
           }
 
           local indent ""
@@ -140,7 +215,6 @@ cap program drop   ad_sthlp
       }
       file close `md_fh'
       file close `st_fh'
-
     }
 
     *******************************************************
@@ -148,13 +222,13 @@ cap program drop   ad_sthlp
 
     * Copy all the tempfiles to disk
     foreach file_name of local file_names {
-      copy ``file_name'' `"`sthlp'/`file_name'.smcl"', replace
+      copy ``file_name'' `"`sthlp'/`file_name'.sthlp"', replace
     }
 
     * Output confirmation of files converted
     noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The follwoing sthlp file(s) were created:{p_end}"'
     foreach file_name of local file_names {
-      noi di as text `"{pstd}- {view "`sthlp'/`file_name'.smcl":`file_name'.smcl}.{p_end}"'
+      noi di as text `"{pstd}- {view "`sthlp'/`file_name'.sthlp":`file_name'.sthlp}.{p_end}"'
     }
   }
 

@@ -1,25 +1,29 @@
 # Title
 
-__ad_sthlp__ - Renders sthlp-files from mdhlp-files in the adodown workflow.
+__ad_sthlp__ - Renders sthlp-files from mdhlp-files in the `adodown` workflow.
 
 # Syntax
 
-__ad_sthlp__ , **adf**older(_string_)
+__ad_sthlp__ , __**adf**older__(_string_)
 
 | _options_ | Description |
 |------------------|-------------|
-| **adf**older(_string_) | Location where package folder already exists |
+| __**adf**older__(_string_) | Location where package folder already exists |
 
 
 # Description
 
-This command renders Stata helpfiles in the `.sthlp` format written in the mdhlp-files written in markdown. The sthlp-files are then intended to be included instead of the mdhlp-files when distributing the command using either either `ssc install` or `net install`.
+This command renders Stata helpfiles in the `.sthlp` format
+written in the mdhlp-files written in markdown.
+The sthlp-files are then intended to be included instead
+of the mdhlp-files when distributing the command using
+either `ssc install` or `net install`.
 
-In the adodown workflow the mdhlp-files are expected to be stored in a folder `mdhlp` in the folder that **adf**older(_string_) points to, and the sthlp-files are expted to be written to a folder `sthlp` in the same location. If the package folder was set up using `ad_setup` and the commands were added to the package folder using `ad_command`, then this is already the case.
+In the `adodown` workflow the mdhlp-files are expected to be stored in a folder `mdhlp` in the folder that __**adf**older__(_string_) points to, and the sthlp-files are expected to be written to a folder `sthlp` in the same location. If the package folder was set up using `ad_setup` and the commands were added to the package folder using `ad_command`, then this is already the case.
 
 # Options
 
-**adf**older(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
+__**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
 # Examples
 
@@ -65,9 +69,9 @@ ad_sthlp, adf("`myfolder'")
 
 # Feedback, bug reports and contributions
 
-Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) on the GitHub repository for the adodown package to communicate any feedback, report bugs, or to make feature requests.
+Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) on the GitHub repository for the `adodown` package to communicate any feedback, report bugs, or to make feature requests.
 
 # Authors
 
-* Author: John Doe
-* Support: jdoe@worldbank.org
+Author: John Doe
+Support: jdoe@worldbank.org

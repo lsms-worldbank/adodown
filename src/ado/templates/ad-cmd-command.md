@@ -4,11 +4,11 @@ __ADCOMMANDNAME__ - This command is used for short description.
 
 # Syntax
 
-__ADCOMMANDNAME__ , option1(_string_)
+__ADCOMMANDNAME__ , __**opt**ion1__(_string_)
 
 | _options_ | Description |
 |-----------|-------------|
-| option1(_string_)   | Short description of option1  |
+| __**opt**ion1__(_string_)   | Short description of option1  |
 
 # Description
 
@@ -18,7 +18,7 @@ __ADCOMMANDNAME__ , option1(_string_)
 
 <!--- Longer description (paragraph length) of all options, their intended use case and best practices related to them. -->
 
-option1(_string_) is used for xyz. Longer description (paragraph length) of all options, their intended use case and best practices related to them.
+__**opt**ion1__(_string_) is used for xyz. Longer description (paragraph length) of all options, their intended use case and best practices related to them.
 
 # Examples
 
