@@ -25,13 +25,17 @@ the SMCL format that is used in Stata helpfiles.
 
 | Markdown syntax | Description | SMCL syntax | Comment |
 | ---  | --- | --- | --------- |
-| `#`  | Header level 1 | Using `{title}` tag  | |
-| `##` | Header level 2 | Using `{dlgtab}` tag  | No formatting applied if using  more `#`. As in `###`, `####` etc. |
+|   | Paragraph | Using `{pstd}`/`{p_end}` tags  | In markdown a paragraph is not defined by a character. Instead, a paragraph is defined as text between empty lines with no other formatting (part from inline formatting) |
+| `#`  | Header level 1 | Using `{title:}` tag  | |
+| `##` | Header level 2 | Using `{dlgtab:}` tag  | No formatting applied if using  more `#`. As in `###`, `####` etc. |
 | `__ __` | Inline bold font | Using `{bf:}` tag | Ignored within code formatting |
 | `** **` | Inline underlined font | Using `{ul:}` tag  | Ignored unless used for text already in bold font |
 | `_ _` | Inline italic font | Using `{it:}` tag | Ignored in bold font |
 | `` ` ` `` | Inline code font | Using `{inp:}` tag | All other inline formatting is ignored within the `` ` `` tags |
-| ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tag | Ignores all formatting within the ```` ``` ```` tags  |
+| ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tags | Ignores all formatting within the ```` ``` ```` tags  |
+| `\|   \|   \|` / `\|--\|--\|` / `\|   \|   \|`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section. |
+
+
 
 #### Paragraphs
 
@@ -119,7 +123,7 @@ format syntax of command names and command option names.
 
 | Example      | Description  |  
 | ---          | ---          |  
-| `__ad_sthlp__` | Command named `ad_sthlp`. Do not use underline in command names as abbreviations are not allowed in names of community written commands. | 
+| `__ad_sthlp__` | Command named `ad_sthlp`. Do not use underline in command names as abbreviations are not allowed in names of community written commands. |
 | `__option__` | Option named `option`. No parameter is allowed. No abbreviation is allowed. |
 | `__**opt**ion__` | Option named `option`. No parameter is allowed. The option named is allowed to abbreviate to `opt`. |
 | `__option__(_string_)` | Option named `option`. A string parameter is expected. No abbreviation is allowed. |
@@ -153,3 +157,19 @@ The initial ```` ``` ```` will be replaced with the `{input}` tag,
 and the ending ```` ``` ```` will be replaced with `{text}`.
 The text in-between is indented 8 blank spaces
 (twice the indent for `{pstd}`).
+
+#### Syntax option tables
+
+The only supported table is the syntax option table in the _Syntax_ section.
+This is a table that list all the options in the first column and
+provide a short description in the second column.
+The table may only be exactly two columns wide.
+When rendered into a Stata helpfile the column titles will be
+"_options_" and "Description" which is the Stata defaults.
+Only "_options_" will be italicized.
+
+Tables in any other section than the _Syntax_ section
+will be ignored in the current version of `ad_sthlp`.
+Until support for tables in other sections are implemented,
+the recommendation is to use vignette articles to document anything
+best described in a table.

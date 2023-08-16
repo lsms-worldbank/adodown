@@ -85,13 +85,14 @@ cap program drop   ad_sthlp
 
       * Write the smcl tag at top of file to
       file write `st_fh' "{smcl}" _n "{* 01 Jan 1960}{...}" _n ///
-        "{hline}" _n "help file for {hi:`file_name'}" _n "{hline}" _n _n
+        "{hline}" _n "{pstd}help file for {hi:`file_name'}{p_end}" _n "{hline}" _n _n
 
       * Read first line then iterate until end of file (eof)
       file read `md_fh' line
       local codeblock 0
       local paragraph 0
       local table     0
+      local tbl_str ""
       while r(eof)==0 {
 
         * Replace Stata tricky markdown syntax with tokens
@@ -104,36 +105,45 @@ cap program drop   ad_sthlp
         }
 
         * Code block ```
-        if strpos(`"`macval(line)'"',"%%%CODEBLOCK%%%") {
+        if strpos(`"`line'"',"%%%CODEBLOCK%%%") {
           if (`codeblock' == 0) file write `st_fh' "{input}"
           else file write `st_fh' "{text}" _n
           local codeblock = !`codeblock'
         }
 
         * Title 1 heading #
-        else if (substr(trim(`"`macval(line)'"'),1,2) == "# ") {
-          local title = trim(subinstr("`macval(line)'","# ","",1))
+        else if (substr(trim(`"`line'"'),1,2) == "# ") {
+          local title = trim(subinstr("`line'","# ","",1))
           file write `st_fh' "{title:`title'}" _n
         }
 
         * Title 2 heading ##
-        else if (substr(trim(`"`macval(line)'"'),1,3) == "## ") {
-          local title = trim(subinstr("`macval(line)'","## ","",1))
+        else if (substr(trim(`"`line'"'),1,3) == "## ") {
+          local title = trim(subinstr("`line'","## ","",1))
           file write `st_fh' "{dlgtab:`title'}" _n
         }
 
+        * Table | --- | --- |
+        else if (substr(trim(`"`line'"'),1,1) == "|") {
+          local tbl_str `"`tbl_str' "`line'""'
+          local table 1
+        }
+
         * Empty lines
-        else if (trim(`"`macval(line)'"') == "") {
+        else if (trim(`"`line'"') == "") {
+          * Write end of pragraph tag
           if (`paragraph' == 1) {
             file write `st_fh' "{p_end}" _n _n
             local paragraph = !`paragraph'
           }
+          * End of table - write the table and reset table locals
+          else if (`table' == 1) {
+            write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title'")
+            local table = 0
+            local tbl_str = ""
+          }
+          * Just write the empty line
           else file write `st_fh' "" _n
-        }
-
-        * Table
-        else if (substr(trim(`"`macval(line)'"'),1,1) == "|") {
-          file write `st_fh' `"`macval(line)'"' _n
         }
 
         * Write line
@@ -146,7 +156,7 @@ cap program drop   ad_sthlp
 
           local indent ""
           if (`codeblock' == 1) local indent "{space 8}"
-          file write `st_fh' `"`indent'`macval(line)'"' _n
+          file write `st_fh' `"`indent'`line'"' _n
         }
 
         * Read next line
@@ -269,6 +279,90 @@ cap program drop   	apply_inline_formatting
 
 end
 
+* write smcl tables from md strings
+cap program drop   	write_table
+  	program define	write_table, rclass
+
+    syntax, handle(string) tbl_str(string) section(string)
+
+    if ("`section'" == "Syntax") {
+
+      * Syntax table always has exectly two columns
+      local c_exp_count 2
+      local c1_max_l    0
+      local c2_max_l    0
+
+      * Initiate locals and loop over all table rows
+      local md_row_i 0
+      local sy_row_i 0
+      foreach row of local tbl_str {
+
+          * Skip header and |---|---| row
+          if (`++md_row_i') > 2 {
+
+             parse_table_row, row("`row'")
+             local row_`++sy_row_i' "{synopt: `r(c1)'}`r(c2)'{p_end}"
+             * Test the the number of columns are as expected
+             if (`r(c_count)' != `c_exp_count') {
+                 noi di as error "Not the correct amounts of cols in row `row_i'"
+                 exit
+             }
+             * Keep track of longest value in each column
+             forvalues col = 1/`r(c_count)' {
+                  local c`col'_max_l = max(`c`col'_max_l',`r(c`col'_l)')
+             }
+          }
+      }
+      local r_exp_count = `sy_row_i'
+
+      * Write syntax option table to file
+      file write `handle' "{synoptset `c1_max_l'}{...}" _n
+      file write `handle' "{synopthdr:options}" _n
+      file write `handle' "{synoptline}" _n
+      forvalues row = 1/`r_exp_count' {
+         file write `handle' "`row_`row''" _n
+      }
+      file write `handle' "{synoptline}" _n
+
+    }
+    else {
+      //TODO: implement support for other tables
+
+      // * Get header row from md table str
+      // local header : word 1 of `tbl_str'
+      //
+      // * Parse header to get expecte number of columns
+      // parse_table_row, row("`header'")
+      // local c_exp_count = `r(c_count)'
+      //
+      // forvalues col = 1/`r(c_count)' {
+      //     local c`col'_title  "`r(c`col')'"
+      //     local c`col'_max_l "`r(c`col'_l)'"
+      // }
+    }
+
+end
+
+cap program drop   	parse_table_row
+  	program define	parse_table_row, rclass
+
+    syntax, row(string)
+
+    tokenize "`row'", parse("|")
+
+    local more_cols 1
+    local tok_i 0
+    local col_i 0
+    while (`more_cols') {
+        if missing("``++tok_i''") local more_cols 0
+        else if ("``tok_i''" != "|") {
+            return local c`++col_i' = trim("``tok_i''")
+            return local c`col_i'_l = strlen(trim("``tok_i''"))
+        }
+    }
+    return local c_count `col_i'
+
+end
 
 * Splits a file name into its name and its extension
 cap program drop 	split_file_extentsion
