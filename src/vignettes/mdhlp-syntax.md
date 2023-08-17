@@ -34,21 +34,21 @@ the SMCL format that is used in Stata helpfiles.
 | `` ` ` `` | Inline code font | Using `{inp:}` tag | All other inline formatting is ignored within the `` ` `` tags |
 | ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tags | Ignores all formatting within the ```` ``` ```` tags  |
 | ` [ ]( ) ` | Hyperlinks | Using `{browse link:text}` tags | May not be combined with other types of formatting |
-| `\|   \|   \|` / `\|--\|--\|` / `\|   \|   \|`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section. |
+| `\|   \|   \|` / `\|--\|--\|` / `\|   \|   \|`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section |
 
 #### Paragraphs
 
-Text that are not tables, headers or code blocks that follows
+Text that are not formatted as tables, headers or code blocks that follows
 an empty line will be interpreted as a paragraph and the `{pstd}` will be used.
 
 The `{pstd}` tag will be added in the beginning of the first line of text,
 and `{p_end}` will added on it's own line
 before the first subsequent empty line.
-This means that lines of regular text separated by a line break will
-still be considered the same paragraph unless there also is a empty line.
+This means that lines of text only separated by a line breaks will
+still be considered the same paragraph as long as there are no empty lines.
 
-In the _Title_ and _Syntax_ sections the `{phang}` tag
-is used instead of `{pstd}`.
+In the _Title_ and _Syntax_ sections,
+the `{phang}` tag is used instead of `{pstd}`.
 This is to highlight the command name in the special paragraphs
 typically found in those sections.
 
@@ -70,14 +70,14 @@ Any line that starts with `#` will be treated as a level 1 heading and
 rendered as a title using the `{title}` tag.
 Everything that follows `#` will be used as the title text.
 Adding other types of formatting to the title text might work,
-but is not supported, and therefore not recommended.
+but it is not supported, and therefore not recommended.
 
 ###### Level 2 - Dialogue Tab
 Any line that starts with `##` will be treated as a level 2 heading and
 rendered as a dialogue tab using the `{dlgtab}` tag.
 Everything that follows `##` will be used as the dialogue tab text.
 Adding other types of formatting to the dialogue box text might work,
-but is not supported, and therefore not recommended.
+but it is not supported, and therefore not recommended.
 
 #### Inline text formatting
 
@@ -116,9 +116,11 @@ It indicates the shortest allowed abbreviations of command and option names.
 Since abbreviations are only allowed for options in community written commands
 we will only focus on underlined formatting for abbreviations in option names.
 
-This is why underlined formatting is only applied to
-text already formatted with bold font,
-as option names are always formatted with bold font.
+Option names are in bold font,
+and underline font should therefore only be used on text in bold font.
+This reduces the risk of relying too much on underlined formatting
+when writing Stata helpfiles
+and then realizing underlining is not supported in web documentation.
 
 ###### Suggested formatting of command and option names
 
@@ -140,9 +142,13 @@ using the `{input}` tag.
 You may not split the two `` ` `` across multiple lines.
 If unmatched `` ` `` are found, then a warning will be issued.
 
-It is not possible to show a `` ` `` in an inline comment which
-is needed if showing how a local in Stata is referenced.
-In those cases, use a code block.
+It is not possible to show a backtick `` ` `` in an inline comment.
+For example when trying to show a local referenced as in
+`` open `folder'/myfile.dta ``.
+The `` ` `` in the inline formatting will always be
+interpreted as the end of the inline code formatting
+when converted to Stata help files.
+It is still possible to show the backtick `` ` `` in code blocks (see below).
 
 All other formatting will be ignored in text that is formatted as a code.
 This means that `cd` in `ab_cd_ef` will not be italicized.
@@ -154,7 +160,7 @@ Any text between lines that starts with ```` ``` ````
 (commonly referred to as a code block)
 will be formatted using the `{input}` tag.
 Any text following on the same line as ```` ``` ```` will
-be ignored when rendering the Stata help files.
+be ignored when converting to Stata help files.
 Code blocks are suitable for longer examples of code.
 
 The initial ```` ``` ```` will be replaced with the `{input}` tag,
