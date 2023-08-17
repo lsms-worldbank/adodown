@@ -33,9 +33,8 @@ the SMCL format that is used in Stata helpfiles.
 | `_ _` | Inline italic font | Using `{it:}` tag | Ignored in bold font |
 | `` ` ` `` | Inline code font | Using `{inp:}` tag | All other inline formatting is ignored within the `` ` `` tags |
 | ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tags | Ignores all formatting within the ```` ``` ```` tags  |
+| ` [ ]( ) ` | Hyperlinks | Using `{browse link:text}` tags | May not be combined with other types of formatting |
 | `\|   \|   \|` / `\|--\|--\|` / `\|   \|   \|`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section. |
-
-
 
 #### Paragraphs
 
@@ -157,6 +156,16 @@ The initial ```` ``` ```` will be replaced with the `{input}` tag,
 and the ending ```` ``` ```` will be replaced with `{text}`.
 The text in-between is indented 8 blank spaces
 (twice the indent for `{pstd}`).
+
+#### Hyperlinks
+
+Markdown links on the format
+`[adodown](https://github.com/lsms-worldbank/adodown)`
+will be converted to SMCL links on the format
+`{browse "https://github.com/lsms-worldbank/adodown":adodown}`.
+Only links to internet URLs are supported.
+Creating hyperlinks to resources installed in the local Stata installation,
+for example `{help : generate}`, are currently not supported.
 
 #### Syntax option tables
 

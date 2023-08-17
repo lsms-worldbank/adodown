@@ -99,8 +99,8 @@ cap program drop   ad_sthlp
         local line : subinstr local line "```" "%%%CODEBLOCK%%%"
 
         * Replace ` with input tags - but ignore text in a code block
-        if (`codeblock' == 0) {
-          apply_inline_formatting, line("`macval(line)'")
+        if (`codeblock' == 0 & !missing(`"`macval(line)'"')) {
+          apply_inline_formatting, line(`"`macval(line)'"')
           local line "`r(line)'"
         }
 
@@ -187,7 +187,7 @@ end
 cap program drop   	apply_inline_formatting
   	program define	apply_inline_formatting, rclass
 
-    syntax, [line(string)]
+    syntax, line(string)
 
     * Initiate span locals
     local code_span 0
@@ -275,8 +275,11 @@ cap program drop   	apply_inline_formatting
         local n = strlen("`line'")
     }
 
-    return local line "`line'"
+    * Parse and convert hyperlinks
+    parse_hyperlinks, line(`"`line'"')
 
+    * Return line with inline smcl formatting
+    return local line `"`r(line)'"'
 end
 
 * write smcl tables from md strings
@@ -361,6 +364,93 @@ cap program drop   	parse_table_row
         }
     }
     return local c_count `col_i'
+
+end
+
+cap program drop   	parse_hyperlinks
+     program define	parse_hyperlinks, rclass
+
+ syntax , line(string)
+
+ * Parse hyperlink
+ local n = strlen(`"`line'"')
+ local i 1
+ local link_part 0
+ local curly_open 0
+ while (`i' <= `n') {
+
+   * Get the next s1 and the next two s2 characters
+   local s1 = substr(`"`line'"',`i',1)
+   local s2 = substr(`"`line'"',`i',2)
+
+   * Add smcl tags count - always reset link part when encountering smcl tag
+   if (`"`s1'"'=="{") {
+     local curly_open `++curly_open'
+     local link_part 0
+   }
+
+   * Reduce smcl tag count
+   else if (`"`s1'"'=="}") {
+     local curly_open `--curly_open'
+   }
+
+   * If not withing any smcl formatting, test for link
+   else if (`curly_open' == 0) {
+
+       * Beg of link token, if expected increment link part otherwise reset
+       if (`"`s1'"'=="[") {
+           if (`link_part' == 0) {
+               local link_part = 1
+               local lp1_i = `i'
+           }
+           else local link_part = 0
+       }
+       * Mid of link token, if expected increment link part otherwise reset
+       else if (`"`s2'"'=="](") {
+           if (`link_part' == 1) {
+               local link_part = 2
+               local lp2_i = `i'
+               local `++i'
+           }
+           else local link_part = 0
+       }
+       * End of link token, if expected increment link part otherwise reset
+       else if (`"`s1'"'==")") {
+           if (`link_part' == 2) {
+               local link_part = 3
+               local lp3_i = `i'
+           }
+           else local link_part = 0
+       }
+       * This is not a corrctly formatted link
+       else if (`"`s1'"'=="]") | ("`s1'"=="(") local link_part = 0
+   }
+
+   * Link found - therefore end the while loop
+   if (`link_part' == 3) local i = `n'
+
+   * go to next character in string
+   local `++i'
+ }
+
+ * While loop ended, if link found, build smcl link and recurse on remainder
+ if (`link_part' == 3) {
+   * Get the line before [
+   local pre  = substr(`"`line'"',1,`lp1_i'-1)
+   * Get the text bewtween [ and ](
+   local text = substr(`"`line'"',`lp1_i'+1,`lp2_i'-`lp1_i'-1)
+   * Get link between ]( and )
+   local link = substr(`"`line'"',`lp2_i'+2,`lp3_i'-`lp2_i'-2)
+
+   * Make a recurisive call on the rest of the line
+   local post = substr(`"`line'"',`lp3_i'+1,.)
+   parse_hyperlinks, line(`"`post'"')
+
+   * Return the line with smcl link
+   return local line `"`pre'{browse "`link'":`text'}`r(line)'"'
+ }
+ * No link found, return line as is
+ else return local line `"`line'"'
 
 end
 
