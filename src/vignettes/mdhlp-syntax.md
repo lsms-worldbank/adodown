@@ -25,7 +25,7 @@ the SMCL format that is used in Stata helpfiles.
 
 | Markdown syntax | Description | SMCL syntax | Comment |
 | ---  | --- | --- | --------- |
-|   | Paragraph | Using `{pstd}`/`{p_end}` tags  | In markdown a paragraph is not defined by a character. Instead, a paragraph is defined as text between empty lines with no other formatting (part from inline formatting) |
+|   | Paragraph | Using `{pstd}`/`{p_end}` tags  | In markdown a paragraph is not defined by a character. Instead, a paragraph is defined as text between empty lines with no other formatting (part from inline formatting). In the _Title_ and _Syntax_ sections the `{phang}` tag is used instead of `{pstd}`. |
 | `#`  | Header level 1 | Using `{title:}` tag  | |
 | `##` | Header level 2 | Using `{dlgtab:}` tag  | No formatting applied if using  more `#`. As in `###`, `####` etc. |
 | `__ __` | Inline bold font | Using `{bf:}` tag | Ignored within code formatting |
@@ -46,6 +46,11 @@ and `{p_end}` will added on it's own line
 before the first subsequent empty line.
 This means that lines of regular text separated by a line break will
 still be considered the same paragraph unless there also is a empty line.
+
+In the _Title_ and _Syntax_ sections the `{phang}` tag
+is used instead of `{pstd}`.
+This is to highlight the command name in the special paragraphs
+typically found in those sections.
 
 #### Headers
 
