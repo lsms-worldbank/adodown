@@ -113,14 +113,14 @@ cap program drop   ad_sthlp
 
         * Title 1 heading #
         else if (substr(trim(`"`line'"'),1,2) == "# ") {
-          local title = trim(subinstr("`line'","# ","",1))
-          file write `st_fh' "{title:`title'}" _n
+          local title1 = trim(subinstr("`line'","# ","",1))
+          file write `st_fh' "{title:`title1'}" _n
         }
 
         * Title 2 heading ##
         else if (substr(trim(`"`line'"'),1,3) == "## ") {
-          local title = trim(subinstr("`line'","## ","",1))
-          file write `st_fh' "{dlgtab:`title'}" _n
+          local title2 = trim(subinstr("`line'","## ","",1))
+          file write `st_fh' "{dlgtab:`title2'}" _n
         }
 
         * Table | --- | --- |
@@ -138,7 +138,7 @@ cap program drop   ad_sthlp
           }
           * End of table - write the table and reset table locals
           else if (`table' == 1) {
-            write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title'")
+            write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
             local table = 0
             local tbl_str = ""
           }
@@ -150,7 +150,9 @@ cap program drop   ad_sthlp
         else {
 
           if (`paragraph' == 0 & `codeblock' == 0 ) {
-            file write `st_fh' "{pstd}"
+            if inlist("`title1'", "Title", "Syntax") local ptype "{phang}"
+            else local ptype "{pstd}"
+            file write `st_fh' "`ptype'"
             local paragraph = !`paragraph'
           }
 
