@@ -360,7 +360,8 @@ cap program drop   	parse_table_row
         if missing("``++tok_i''") local more_cols 0
         else if ("``tok_i''" != "|") {
             return local c`++col_i' = trim("``tok_i''")
-            return local c`col_i'_l = strlen(trim("``tok_i''"))
+            display_len, str(`=trim("``tok_i''")')
+            return local c`col_i'_l = `r(dlen)'
         }
     }
     return local c_count `col_i'
@@ -453,6 +454,24 @@ cap program drop   	parse_hyperlinks
  else return local line `"`line'"'
 
 end
+
+cap program drop 	display_len
+	program define	display_len, rclass
+
+	syntax, [str(string)]
+
+    if missing("`str'") return local dlen 0
+    else {
+      local str_len = strlen("`str'")
+      local tag_len = 0
+      foreach tag in inp bf ul it {
+        local str : subinstr local str "{`tag':" "", all count(local count)
+        local tag_len = `tag_len' + (`count' * strlen("{`tag':}"))
+      }
+      return local dlen = (`str_len' - `tag_len')
+    }
+end
+
 
 * Splits a file name into its name and its extension
 cap program drop 	split_file_extentsion
