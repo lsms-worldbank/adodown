@@ -24,7 +24,7 @@
     qui rec_rmdir, folder("`mvp_fldr'") okifnotexist //Delete existing test results
     qui rec_mkdir, folder("`mvp_fldr'")              //Make sure folder exists
 
-    ad_setup, adfolder("`mvp_fldr'") autoconfirm ///
+    ad_setup, adfolder("`mvp_fldr'") autoprompt ///
         author("A") name("my_mvp_pkg") ///
         description("d") url("u")  ///
         contact("c")

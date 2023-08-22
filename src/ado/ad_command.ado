@@ -85,6 +85,7 @@ cap program drop   ad_command
 
     local cname = subinstr("`cname'",".ado","",.)
 
+    * Locals for refrences to the files assocaited with this command
     local adof "`srcfolder'/ado/`cname'.ado"
     local mdhf "`srcfolder'/mdhlp/`cname'.md"
     local sthf "`srcfolder'/sthlp/`cname'.sthlp"
@@ -92,25 +93,31 @@ cap program drop   ad_command
     * Checking if file exists or not
     foreach f in adof mdhf sthf {
       cap confirm file "``f''"
-      if _rc local `f'_exists "FALSE"
-      else   local `f'_exists "TRUE"
-    }
-
-    * Thorw errors for create
-    if ("`scmd'" == "create") {
-      if ("`adof_exists'" == "TRUE") | ("`mdhf_exists'" == "TRUE") {
-        noi di as error "{pstd}One or several files already exists where a file needs to be created: {p_end}"
-        if ("`adof_exists'" == "TRUE") noi di as text `"{pstd}- `adof'{p_end}"'
-        if ("`mdhf_exists'" == "TRUE") noi di as text `"{pstd}- `mdhf'{p_end}"'
+      if _rc {
+        local `f'_exists "FALSE"
+        local f_exists_f = trim("`f_exists_f' `f'")
+      }
+      else {
+        local `f'_exists "TRUE"
+        local f_exists_t = trim("`f_exists_t' `f'")
       }
     }
 
-    * Thorw errors for remove
-    if ("`scmd'" == "remove") {
-      if ("`adof_exists'" == "FALSE") | ("`mdhf_exists'" == "FALSE") {
-        noi di as error "{pstd}One or several files to be removed did not exist: {p_end}"
-        if ("`adof_exists'" == "FALSE") noi di as text `"{pstd}- `adof'{p_end}"'
-        if ("`mdhf_exists'" == "FALSE") noi di as text `"{pstd}- `mdhf'{p_end}"'
+    * Throw errors if files to be created already exists
+    if ("`scmd'" == "create") & !missing("`f_exists_t'") {
+      noi di as error _n "{pstd}One or several files already exists where a file needs to be created: {p_end}"
+      foreach f of local f_exists_t {
+        noi di as text `"{pstd}- ``f''{p_end}"'
+      }
+      error 99
+      exit
+    }
+
+    * List files that does not exist - this is not an error
+    if ("`scmd'" == "remove") & !missing("`f_exists_f'") {
+      noi di as text _n "{pstd}One or several files to be removed did not exist: {p_end}"
+      foreach f of local f_exists_f {
+        noi di as text `"{pstd}- ``f''{p_end}"'
       }
     }
 
@@ -255,34 +262,46 @@ cap program drop   ad_command
       **************************
       * Prompt users that files will be deleted
 
-      noi di as text "{pstd}{red:Warning:} The follwing files for command {inp:`cname'} are about to be deleted:{p_end}"
-      noi di as text "{pstd}- `adof'{p_end}"
-      noi di as text "{pstd}- `mdhf'{p_end}"
-      if ("`sthf_exists'" == "TRUE") {
-        noi di as text "{pstd}- "``sth'f'"}{p_end}"
-      }
-      noi di ""
-      noi di as text "{pstd}And files associated with the command {inp:`cname'} will be removed from the {inp:`pkgname'.pkg} file. {p_end}"
-      noi di as text ""
+      * Prompt if any files associated with the command to remove exists
+      if !missing("`f_exists_t'") {
+        noi di as text _n "{pstd}{red:Warning:} The following files for command {inp:`cname'} are about to be deleted:{p_end}"
+        foreach f of local f_exists_t {
+          noi di as text `"{pstd}- ``f''{p_end}"'
+        }
+        noi di as text _n "{pstd}And any reference to files associated with the command {inp:`cname'} will be removed from the {inp:`pkgname'.pkg} file. {p_end}" _n
 
-      global adremove_confirmation ""
-      while (upper("${adremove_confirmation}") != "Y" & upper("${adremove_confirmation}") != "BREAK") {
-        noi di as txt `"{pstd}Enter "Y" to confirm or enter "BREAK" to abort."', _request(adremove_confirmation)
+        global adremove_confirmation ""
+        while (upper("${adremove_confirmation}") != "Y" & upper("${adremove_confirmation}") != "BREAK") {
+          noi di as txt `"{pstd}Enter "Y" to confirm or enter "BREAK" to abort."', _request(adremove_confirmation)
+        }
+        if upper("${adremove_confirmation}") == "BREAK" {
+          noi di as txt "{pstd}Removal aborted - nothing was changed.{p_end}"
+          error 1
+          exit
+        }
       }
-      if upper("${adremove_confirmation}") == "BREAK" {
-        noi di as txt "{pstd}Removal aborted - nothing was changed.{p_end}"
-        error 1
-        exit
+      * Prompt if no files associated with the command to remove exists
+      else {
+        noi di as text _n "{pstd}{red:Warning:} No files associated with a command named exists {inp:`cname'}. No files will be removed. Continuing only makes sure that no file references to a command with that name exists in the {inp:`pkgname'.pkg} file.{p_end}" _n
+
+        global adremove_confirmation ""
+        while (upper("${adremove_confirmation}") != "Y" & upper("${adremove_confirmation}") != "BREAK") {
+          noi di as txt `"{pstd}Enter "Y" to continue or enter "BREAK" to abort."', _request(adremove_confirmation)
+        }
+        if upper("${adremove_confirmation}") == "BREAK" {
+          noi di as txt "{pstd}Removal aborted - nothing was changed.{p_end}"
+          error 1
+          exit
+        }
       }
+
 
       **************************
       * Remove the command
 
       * Delete files associated with this command
-      rm "`adof'"
-      rm "`mdhf'"
-      if ("`sthf_exists'" == "TRUE") {
-        rm "`sthf'"
+      foreach f of local f_exists_t {
+        rm "``f''"
       }
 
       *Copy updated tempfile to package file
