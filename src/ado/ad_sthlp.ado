@@ -89,22 +89,38 @@ cap program drop   ad_sthlp
 
       * Read first line then iterate until end of file (eof)
       file read `md_fh' line
-      local codeblock 0
-      local paragraph 0
-      local table     0
+      local codeblock       0
+      local mdcomment       0
+      local paragraph       0
+      local table           0
       local tbl_str ""
       while r(eof)==0 {
 
         * Replace Stata tricky markdown syntax with tokens
         local line : subinstr local line "```" "%%%CODEBLOCK%%%"
 
-        * Replace ` with input tags - but ignore text in a code block
+        * Apply all inline formatting ` _ __ ** and escape $ { }
+        * and get position of beg and end comment tags
         if (`codeblock' == 0 & !missing(`"`macval(line)'"')) {
           apply_inline_formatting, line(`"`macval(line)'"')
-          local line "`r(line)'"
+          local line       `"`r(line)'"'
+          local com_pos_beg `r(com_pos_beg)'
+          local com_pos_end `r(com_pos_end)'
+        }
+        else {
+          local com_pos_beg 0
+          local com_pos_end 0
         }
 
-        * Code block ```
+        if (`mdcomment' == 0 & `codeblock' == 0) {
+          if (`com_pos_beg' == 1) local mdcomment = 1
+          else if (`com_pos_beg' != 0) {
+            noi di "{pstd}{red:Warning:} Comment found but will be ignored as it is not at beginning of the line.{p_end}"
+          }
+        }
+
+        if (`mdcomment' == 0) {
+          * Code block ```
         if strpos(`"`line'"',"%%%CODEBLOCK%%%") {
           if (`codeblock' == 0) file write `st_fh' "{input}"
           else file write `st_fh' "{text}" _n
@@ -159,7 +175,10 @@ cap program drop   ad_sthlp
           local indent ""
           if (`codeblock' == 1) local indent "{space 8}"
           file write `st_fh' `"`indent'`line'"' _n
+          }
         }
+        * Line is comment - test if end of comment
+        else if (`com_pos_end' > 0) local mdcomment = 0
 
         * Read next line
         file read `md_fh' line
@@ -196,6 +215,10 @@ cap program drop   	apply_inline_formatting
     local bold_span 0
     local ulin_span 0
     local ital_span 0
+
+    * Initiate comment locals
+    local com_pos_beg 0
+    local com_pos_end 0
 
     local n = strlen("`line'")
     local i 1
@@ -271,6 +294,21 @@ cap program drop   	apply_inline_formatting
           local i = `i' + strlen("`rctag'")
         }
 
+        * Look for comment tags
+        else if !(`code_span') & (substr("`line'",`i',4) == "<!--") {
+          if (`com_pos_beg' == 0) {
+            local com_pos_beg `i'
+            local i = `i' + 1
+          }
+        }
+
+        else if !(`code_span') & (substr("`line'",`i',4) == "-->") {
+          if (`com_pos_end' == 0) {
+            local com_pos_end `i'
+            local i = `i' + 1
+          }
+        }
+
         * No special character skip to next character in line
         else local i = `i' + 1
         * Keep updating n as line grows longer as smcl characters are added
@@ -282,6 +320,8 @@ cap program drop   	apply_inline_formatting
 
     * Return line with inline smcl formatting
     return local line `"`r(line)'"'
+    return local com_pos_beg `com_pos_beg'
+    return local com_pos_end `com_pos_end'
 end
 
 * write smcl tables from md strings
