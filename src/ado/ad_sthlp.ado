@@ -367,7 +367,7 @@ cap program drop   	write_table
       forvalues row = 1/`r_exp_count' {
          file write `handle' "`row_`row''" _n
       }
-      file write `handle' "{synoptline}" _n
+      file write `handle' "{synoptline}" _n _n
 
     }
     else {
