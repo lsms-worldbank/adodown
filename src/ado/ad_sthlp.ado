@@ -93,8 +93,13 @@ cap program drop   ad_sthlp
       local mdcomment       0
       local paragraph       0
       local table           0
+      local last_line_empty 0
       local tbl_str ""
       while r(eof)==0 {
+
+        * Reset line write locals
+        local line2write ""
+        local newlines   1
 
         * Replace Stata tricky markdown syntax with tokens
         local line : subinstr local line "```" "%%%CODEBLOCK%%%"
@@ -121,68 +126,98 @@ cap program drop   ad_sthlp
 
         if (`mdcomment' == 0) {
           * Code block ```
-        if strpos(`"`line'"',"%%%CODEBLOCK%%%") {
-          if (`codeblock' == 0) file write `st_fh' "{input}"
-          else file write `st_fh' "{text}" _n
-          local codeblock = !`codeblock'
-        }
-
-        * Title 1 heading #
-        else if (substr(trim(`"`line'"'),1,2) == "# ") {
-          local title1 = trim(subinstr("`line'","# ","",1))
-          file write `st_fh' "{title:`title1'}" _n
-        }
-
-        * Title 2 heading ##
-        else if (substr(trim(`"`line'"'),1,3) == "## ") {
-          local title2 = trim(subinstr("`line'","## ","",1))
-          file write `st_fh' "{dlgtab:`title2'}" _n
-        }
-
-        * Table | --- | --- |
-        else if (substr(trim(`"`line'"'),1,1) == "|") {
-          local tbl_str `"`tbl_str' "`line'""'
-          local table 1
-        }
-
-        * Empty lines
-        else if (trim(`"`line'"') == "") {
-          * Write end of pragraph tag
-          if (`paragraph' == 1) {
-            file write `st_fh' "{p_end}" _n _n
-            local paragraph = !`paragraph'
-          }
-          * End of table - write the table and reset table locals
-          else if (`table' == 1) {
-            write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
-            local table = 0
-            local tbl_str = ""
-          }
-          * Just write the empty line
-          else file write `st_fh' "" _n
-        }
-
-        * Write line
-        else {
-
-          if (`paragraph' == 0 & `codeblock' == 0 ) {
-            if inlist("`title1'", "Title", "Syntax") local ptype "{phang}"
-            else local ptype "{pstd}"
-            file write `st_fh' "`ptype'"
-            local paragraph = !`paragraph'
+          if strpos(`"`line'"',"%%%CODEBLOCK%%%") {
+            if (`codeblock' == 0) {
+              local line2write "{input}"
+              local newlines   0
+            }
+            else local line2write "{text}"
+            local codeblock = !`codeblock'
           }
 
-          local indent ""
-          if (`codeblock' == 1) local indent "{space 8}"
-          file write `st_fh' `"`indent'`line'"' _n
+          * Title 1 heading #
+          else if (substr(trim(`"`line'"'),1,2) == "# ") {
+            local title1 = trim(subinstr(`"`line'"',"# ","",1))
+            local line2write `"{title:`title1'}"'
+          }
+
+          * Title 2 heading ##
+          else if (substr(trim(`"`line'"'),1,3) == "## ") {
+            local title2 = trim(subinstr("`line'","## ","",1))
+            local line2write `"{dlgtab:`title2'}"'
+          }
+
+          * Table | --- | --- |
+          else if (substr(trim(`"`line'"'),1,1) == "|") {
+            local tbl_str `"`tbl_str' "`line'""'
+            local table 1
+          }
+
+          * Empty lines
+          else if (trim(`"`line'"') == "") {
+            * Write end of pragraph tag
+            if (`paragraph' == 1) {
+              local line2write "{p_end}"
+              local newlines 2
+              local paragraph = !`paragraph'
+            }
+            * End of table - write the table and reset table locals
+            else if (`table' == 1) {
+              write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
+              local table = 0
+              local tbl_str = ""
+              local last_line_empty 1
+            }
+            * Just write the empty line
+            else if (`last_line_empty' == 0) {
+              file write `st_fh' "" _n
+              local last_line_empty 1
+            }
+          }
+
+          * Write line
+          else {
+
+            * If beginning of paragraph, add paragraph tag
+            local ptag ""
+            if (`paragraph' == 0 & `codeblock' == 0 ) {
+              if inlist("`title1'", "Title", "Syntax") local ptag "{phang}"
+              else local ptag "{pstd}"
+              local paragraph = !`paragraph'
+            }
+
+            * Add special indnent if applicable
+            local indent ""
+            if (`codeblock' == 1) local indent "{space 8}"
+
+            * Prepare line to write
+            local line2write `"`indent'`ptag'`line'"'
           }
         }
         * Line is comment - test if end of comment
         else if (`com_pos_end' > 0) local mdcomment = 0
 
+        * Write the line if applicable
+        if !missing(`"`line2write'"') {
+          file write `st_fh' `"`line2write'"' _newline(`newlines')
+
+          * Special cases that will appear as an empty line
+          if (inlist(`"`line2write'"', "{p_end}", "{text}")) {
+            local last_line_empty 1
+          }
+          * Last line is not an empty line
+          else local last_line_empty 0
+        }
+
         * Read next line
         file read `md_fh' line
       }
+
+      * Make sure to close open paragraphs before saving the file
+      if (`paragraph' == 1) {
+        file write `st_fh' "{p_end}" _n
+      }
+
       file close `md_fh'
       file close `st_fh'
     }
