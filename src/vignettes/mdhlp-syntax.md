@@ -35,6 +35,7 @@ the SMCL format that is used in Stata helpfiles.
 | ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tags | Ignores all formatting within the ```` ``` ```` tags  |
 | ` [ ]( ) ` | Hyperlinks | Using `{browse link:text}` tags | May not be combined with other types of formatting |
 | `\|   \|   \|` / `\|--\|--\|` / `\|   \|   \|`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section |
+| `<!--` / `-->` | Comments | Commented lines are ignored | Supports both multi and single line comments  |
 
 #### Paragraphs
 
@@ -193,3 +194,22 @@ will be ignored in the current version of `ad_sthlp`.
 Until support for tables in other sections are implemented,
 the recommendation is to use vignette articles to document anything
 best described in a table.
+
+#### Comments
+
+Any line that starts with `<!--` will be treated as a comment and be ignored
+when converting to `.sthlp` format.
+A comment ends with `-->`.
+If `<!--` and `-->` are on multiple lines, then both those lines,
+as well as any lines in-between those lines, will be treated as comments.
+
+Anything on the same line as `-->` will be treated as a comment
+even if it comes after `-->`.
+A line with any text before `<!--` will not be treated as a comment
+and a warning will be thrown.
+Due to these two behaviors it is not possible to do an inline comment
+where only part of a line is a comment.
+Hence, the line `Not a comment <!-- comment --> not a comment` will
+be converted verbatim and everything,
+including the `<!--` and `-->` tags,
+will be displayed when viewing the helpfile.
