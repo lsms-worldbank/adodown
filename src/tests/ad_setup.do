@@ -14,14 +14,14 @@ local ado          "`clone'/src/ado"
 local tests        "`clone'/src/tests"
 local ad_setup_out "`tests'/outputs/ad_setup"
 
-rec_rmdir, folder("`ad_setup_out'") okifnotexist //Delete existing test results
-rec_mkdir, folder("`ad_setup_out'")              //Make sure folder exists
-
 * Load the command directly from the ado file
 run "`ado'/ad_setup.ado"
 run "`ado'/ad_command.ado"
 * Load utility functions that delete old test putput and set up folders
 run "`tests'/test_utils.do"
+
+rec_rmdir, folder("`ad_setup_out'") okifnotexist //Delete existing test results
+rec_mkdir, folder("`ad_setup_out'")              //Make sure folder exists
 
 *********
 * Test 1 - passing all package meta information in options

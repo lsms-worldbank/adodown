@@ -191,6 +191,7 @@ qui {
       noi di as text "{pstd}Before any files are created on your disk, please confirm the following information:{p_end}"
       noi di as text ""
       noi di as text "{pmore}Stata package name: {inp:`name'}{p_end}"
+      noi di as text "{pmore}Package location: {inp:`adfolder'}{p_end}"
       noi di as text "{pmore}Package description: {inp:`description'}{p_end}"
       noi di as text "{pmore}Package author name(s): {inp:`author'}{p_end}"
       noi di as text "{pmore}Contact information: {inp:`contact'}{p_end}"
