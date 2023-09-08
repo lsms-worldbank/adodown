@@ -2,7 +2,7 @@
 *** version
 v 0.0
 *** name
-d mypackage
+d adodown
 *** description
 d mydescription
 d
@@ -14,15 +14,19 @@ d Author:
 *** contact
 d Contact: test@mail.com
 *** url
-d URL: https://github.com/kbjarkefur/adodown-stata
+d URL: https://github.com/lsms-worldbank/adodown
 d
 *** date
 d Distribution-Date: 20230724
 d
 *** adofiles
 f ado/ad_setup.ado
+f ado/ad_command.ado
+f ado/ad_sthlp.ado
 *** helpfiles
-
+f sthlp/ad_command.sthlp
+f sthlp/ad_setup.sthlp
+f sthlp/ad_sthlp.sthlp
 *** ancillaryfiles
 
 *** end
