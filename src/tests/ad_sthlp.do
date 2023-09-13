@@ -9,14 +9,14 @@
     }
 
     * Folder paths
-    local ado       "`clone'/src/ado"
     local tests     "`clone'/src/tests"
     local out_sthlp "`tests'/outputs/ad_sthlp"
 
-    * Load the command directly from the ado file
-    run "`ado'/ad_command.ado"
-    run "`ado'/ad_setup.ado"
-    run "`ado'/ad_sthlp.ado"
+    * Install the package
+    qui ieboilstart, version(14) adopath("`clone'\src\tests\installation", strict)
+    net uninstall adodown 
+    net install   adodown , from("`clone'\src")
+    
     * Load utility functions that delete old test putput and set up folders
     run "`tests'/test_utils.do"
     

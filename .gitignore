@@ -82,3 +82,5 @@
 ####################################
 # Ignore test outputs
 src/tests/outputs/
+
+src/tests/installation/

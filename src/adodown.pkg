@@ -20,14 +20,26 @@ d
 d Distribution-Date: 20230724
 d
 *** adofiles
-f ado/ad_setup.ado
-f ado/ad_command.ado
-f ado/ad_sthlp.ado
+F ado/ad_setup.ado
+F ado/ad_command.ado
+F ado/ad_sthlp.ado
 *** helpfiles
-f sthlp/ad_command.sthlp
-f sthlp/ad_setup.sthlp
-f sthlp/ad_sthlp.sthlp
+F sthlp/ad_command.sthlp
+F sthlp/ad_setup.sthlp
+F sthlp/ad_sthlp.sthlp
 *** ancillaryfiles
-
+F ado/templates/ad-cmd-command.ado
+F ado/templates/ad-cmd-command.md
+F ado/templates/ad-gh-workflows.yaml
+F ado/templates/ad-gh.gitignore
+F ado/templates/ad-src-ado-README.md
+F ado/templates/ad-src-dev-description.txt
+F ado/templates/ad-src-dev-README.md
+F ado/templates/ad-src-mdhlp-README.md
+F ado/templates/ad-src-package.pkg
+F ado/templates/ad-src-stata.toc
+F ado/templates/ad-src-sthlp-README.md
+F ado/templates/ad-src-tests-README.md
+F ado/templates/ad-src-vignettes-README.md
 *** end
 e

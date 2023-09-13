@@ -31,12 +31,6 @@ qui {
     * Meta information types
     local inputtypes name description author contact url
 
-    * Template root url
-    local branch "main"
-    local gh_account_repo "lsms-worldbank/adodown"
-    local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
-    local template_url "`repo_url'/`branch'/src/ado/templates"
-
     * Locals pointing to all template files to be used in the src folder
     local src_tfs ""
     local src_tfs "`src_tfs' ad-src-package.pkg"
@@ -61,6 +55,9 @@ qui {
     local gh_tfs ""
     local gh_tfs "`gh_tfs' ad-gh.gitignore"
     local gh_tfs "`gh_tfs' ad-gh-workflows.yaml"
+
+    * All tempfiles
+    local all_tfs "`src_tfs'"
 
     *****************************************************
     * Handle package meta information
@@ -121,6 +118,9 @@ qui {
       }
     }
 
+    * Add github templates to all tempfiles
+    if !missing("`github'") local all_tfs "`all_tfs' `gh_tfs'"
+
     *****************************************************
     * Test that package can be created
 
@@ -142,39 +142,29 @@ qui {
       exit
     }
 
-
     * Get all templates and store in temporary files
-    noi di as text "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
-    foreach template of local src_tfs {
+    foreach template of local all_tfs {
 
       * Get tempfile name from template name
       template_parser, template("`template'")
       local tempfile = "`r(t_tempfile)'"
       tempfile `tempfile'
 
-      * Get file from GitHub repo and store in temporary file
-      if !missing("`debug'") noi di as text `"Get file: `template_url'/`template''"
-      cap copy "`template_url'/`template'" ``tempfile'', replace
-      if _rc == 631 {
-        noi di as error "{pstd}This command only works with an internet connection, and you do not seem to have an internet connection. {it:(Offline mode will be implemented.)}{p_end}""
-        error 631
-        exit
+      * Get template file and store in temporary file
+      cap findfile `template'
+      if (_rc == 0) {
+        if !missing("`debug'") noi di as text `"Get template file: `template' and store in `tempfile' (``tempfile'') "'
+        * Copy file found in findfile to tempfile
+        copy "`r(fn)'" ``tempfile'', replace
       }
-      else if _rc {
-        copy "`template_url'/`template'" ``tempfile'', replace
+      *handle findfile errors
+      else if (_rc == 601) {
+        noi di as error "{pstd}The template file {inp:`template'} cannot be found. Make sure that {inp:adodown} is installed correctly.{p_end}"
+        findfile `template'
       }
-    }
-
-
-    * Get github templates
-    if !missing("`github'") {
-      foreach template of local gh_tfs {
-        if !missing("`debug'") noi di as text `"Get file: `template_url'/`template''"
-        * Get file from GitHub repo and store in temporary file
-        local tempfile = subinstr("`template'","-","_",.)
-        local tempfile = subinstr("`tempfile'",".","_",.)
-        tempfile `tempfile'
-        copy "`template_url'/`template'" ``tempfile'', replace
+      else {
+        noi di as error "{pstd}Unhandled adodown error in findfile.{p_end}"
+        findfile `template'
       }
     }
 
@@ -240,9 +230,9 @@ qui {
     if !missing("`github'") {
       foreach template of local gh_tfs {
 
-        * Generate tempfile name
-        local tempfile = subinstr("`template'","-","_",.)
-        local tempfile = subinstr("`tempfile'",".","_",.)
+        * Get tempfile name from template name
+        template_parser, template("`template'")
+        local tempfile = "`r(t_tempfile)'"
 
         * Get special folder location
         if "`template'" == "ad-gh.gitignore" {
@@ -254,17 +244,17 @@ qui {
           local folder   "/.github/workflows"
         }
 
+        if !missing("`debug'") noi di as text `"File will be created: `folder'/`filename'"'
+
         * Create folders if needed
         recursive_mkdir, folder(`"`adfolderstd'`folder'"')
         * Copy file to location
         copy ``tempfile'' `"`adfolderstd'`folder'/`filename'"'
-        if !missing("`debug'") noi di as text `"File created:`folder'/`filename'"'
       }
     }
 
     * Add a command with the same name as the package to the package template
     qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
-
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
 }
 end

@@ -1,16 +1,8 @@
 cap program drop   ad_command
     program define ad_command
 
+qui {
     syntax anything , ADFolder(string) PKGname(string) [debug]
-
-    *******************************************************
-    * Create locals
-
-    * Template root url
-    local branch "main"
-    local gh_account_repo "lsms-worldbank/adodown"
-    local repo_url "https://raw.githubusercontent.com/`gh_account_repo'"
-    local template_url "`repo_url'/`branch'/src/ado/templates"
 
     *******************************************************
     * Test inputs
@@ -129,7 +121,6 @@ cap program drop   ad_command
 
       *******************
       * Get all templates and store in temporary files
-      noi di as text "{pstd}Accessing template files from `repo_url'. This might take a minute.{p_end}"
       local ad_templates ado mdh
       foreach adt of local ad_templates {
 
@@ -137,17 +128,23 @@ cap program drop   ad_command
         if "`adt'" == "ado" local template "ad-cmd-command.ado"
         if "`adt'" == "mdh" local template "ad-cmd-command.md"
 
-        * Get file from GitHub repo and store in temporary file
-        if !missing("`debug'") noi di as text `"Get file: `template_url'/`template'"
-        cap copy "`template_url'/`template'" ``adt'_template', replace
-        if _rc == 631 {
-          noi di as error "{pstd}This command only works with an internet connection, and you do not seem to have an internet connection. {it:(Offline mode will be implemented.)}{p_end}""
-          error 631
-          exit
+        * Get template file and store in temporary file
+        if !missing("`debug'") noi di as text `"Get template file: `template' and store in `adt'_template "'
+        cap findfile `template'
+        if (_rc == 0) {
+          * Copy file found in findfile to tempfile
+          copy "`r(fn)'" ``adt'_template', replace
         }
-        else if _rc {
-          copy "`template_url'/`template'" ``adt'_template', replace
+        *handle findfile errors
+        else if (_rc == 601) {
+          noi di as error "{pstd}The template file {inp:`template'} cannot be found. Make sure that {inp:adodown} is installed correctly.{p_end}"
+          findfile `template'
         }
+        else {
+          noi di as error "{pstd}Unhandled adodown error in findfile.{p_end}"
+          findfile `template'
+        }
+
         if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"
       }
 
@@ -310,4 +307,5 @@ cap program drop   ad_command
       noi di as res "{pstd}Command {it:`cname'} was succesfully removed from package {it:`pkgname'}.{p_end}"
 
     }
+}
 end
