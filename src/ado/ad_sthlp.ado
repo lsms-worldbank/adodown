@@ -101,8 +101,17 @@ cap program drop   ad_sthlp
         local line2write ""
         local newlines   1
 
-        * Replace Stata tricky markdown syntax with tokens
+        * Replace placeholder for code block
         local line : subinstr local line "```" "%%%CODEBLOCK%%%"
+        *Temporary placeholder for inline code block unitl all ' are escaped
+        local line : subinstr local line "`"   "%%%CODEINLINE%%%", all
+
+        * Replace Stata tricky markdown syntax with smcl escapes
+        escape_tricky_characters, line(`"`macval(line)'"')
+        local line `"`r(escaped_line)'"'
+
+        *Switch back to ` - This is now safe as all ' are escaped and none of them will pair up with a ' to be interpreted as a local
+        local line : subinstr local line "%%%CODEINLINE%%%" "`", all
 
         * Apply all inline formatting ` _ __ ** and escape $ { }
         * and get position of beg and end comment tags
@@ -239,6 +248,42 @@ cap program drop   ad_sthlp
 
 end
 
+* Escapes ', $, { and } that never means anything in md formatting.
+* ` is not handled here as it means something in md formatting
+cap program drop   	escape_tricky_characters
+  	program define	escape_tricky_characters, rclass
+
+    syntax, [line(string)]
+
+    local esc_line ""
+
+    * Loop over all characters in the string
+    local n = strlen(`"`macval(line)'"')
+    local i 1
+    while (`i' <= `n') {
+        * Get next character
+        local c = substr(`"`macval(line)'"',`i',1)
+
+        * escape ', $ and "
+        local c : subinstr local c "'"   "{c 39}"
+        local c : subinstr local c "$"   "{c S|}"
+        local c : subinstr local c `"""' "{c 34}"
+
+        * Since { and } are used in the escapes above,
+        * we need to test if c is longer than 1,
+        * which is only willbe if it was escaped above
+        if strlen("`c'") == 1 local c : subinstr local c "{" "{c -(}"
+        if strlen("`c'") == 1 local c : subinstr local c "}" "{c )-}"
+
+        * Add charchter with escape if needed
+        local esc_line "`esc_line'`c'"
+        local `++i'
+    }
+
+    * Return escape
+    return local escaped_line `"`macval(esc_line)'"'
+end
+
 * Splits a file name into its name and its extension
 cap program drop   	apply_inline_formatting
   	program define	apply_inline_formatting, rclass
@@ -269,9 +314,7 @@ cap program drop   	apply_inline_formatting
         if (`ital_span' == 0) local itag "{it:"
         else local itag "}"
 
-        local dtag  "{c S|}"
-        local lctag "{c -(}"
-        local rctag "{c )-}"
+
 
         local pre   = substr("`line'",1,`i'-1)
         local post1 = substr("`line'",`i'+1,.)
@@ -313,20 +356,6 @@ cap program drop   	apply_inline_formatting
                 local ital_span !`ital_span'
                 local i = `i' + strlen("`itag'")
             }
-        }
-
-        * Stata/smcl tricky characters $, {, and }
-        else if (substr("`line'",`i',1) == "$") {
-          local line "`pre'`dtag'`post1'"
-          local i = `i' + strlen("`dtag'")
-        }
-        else if (substr("`line'",`i',1) == "{") {
-          local line "`pre'`lctag'`post1'"
-          local i = `i' + strlen("`lctag'")
-        }
-        else if (substr("`line'",`i',1) == "}") {
-          local line "`pre'`rctag'`post1'"
-          local i = `i' + strlen("`rctag'")
         }
 
         * Look for comment tags
