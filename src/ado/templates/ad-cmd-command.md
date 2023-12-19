@@ -8,7 +8,7 @@ __ADCOMMANDNAME__ , __**opt**ion1__(_string_)
 
 | _options_ | Description |
 |-----------|-------------|
-| __**opt**ion1__(_string_)   | Short description of option1  |
+| __**opt**ion1__(_string_) | Short description of option1 |
 
 # Description
 <!-- Longer description of the intended use of the command and best practices related to the usage. -->
