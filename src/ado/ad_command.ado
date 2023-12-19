@@ -1,3 +1,5 @@
+*! version XX XXXXXXXXX AUTHOR CONTACT
+
 cap program drop   ad_command
     program define ad_command
 
