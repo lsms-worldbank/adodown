@@ -20,7 +20,8 @@
 # These files include GitHub settings
 !.gitignore
 !.gitattributes
-!.github/
+!*.yaml
+
 
 # Git placeholder file (to commit empty folders)
 !/**/*.gitkeep
@@ -46,6 +47,7 @@
 # Stata
 !/**/*.do
 !/**/*.ado
+!/**/sthlp/*.sthlp
 !src/stata.toc
 !src/*.pkg
 
