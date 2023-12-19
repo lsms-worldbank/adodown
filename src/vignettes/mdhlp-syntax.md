@@ -151,6 +151,8 @@ interpreted as the end of the inline code formatting
 when converted to Stata help files.
 It is still possible to show the backtick `` ` `` in code blocks (see below).
 
+It is also not possible to end a line with the backtick `` ` ``. 
+
 All other formatting will be ignored in text that is formatted as a code.
 This means that `cd` in `ab_cd_ef` will not be italicized.
 The `_` signs will be kept and formatted as code.

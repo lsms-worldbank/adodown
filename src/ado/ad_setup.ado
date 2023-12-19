@@ -1,3 +1,5 @@
+*! version XX XXXXXXXXX ADAUTHORNAME ASCONTACTINFO
+
 cap program drop   ad_setup
     program define ad_setup
 qui {

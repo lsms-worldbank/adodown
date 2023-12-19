@@ -1,3 +1,5 @@
+*! version XX XXXXXXXXX ADAUTHORNAME ASCONTACTINFO
+
 cap program drop   ad_sthlp
     program define ad_sthlp
   qui {
@@ -94,7 +96,7 @@ cap program drop   ad_sthlp
       local paragraph       0
       local table           0
       local last_line_empty 0
-      local tbl_str ""
+      local tbl_str         ""
       while r(eof)==0 {
 
         * Reset line write locals
@@ -102,120 +104,125 @@ cap program drop   ad_sthlp
         local newlines   1
 
         * Replace placeholder for code block
-        local line : subinstr local line "```" "%%%CODEBLOCK%%%"
-        *Temporary placeholder for inline code block unitl all ' are escaped
+        local line : subinstr local line "```" "%%%CODEBLOCK%%%", count(local has_CODEBLOCK)
         local line : subinstr local line "`"   "%%%CODEINLINE%%%", all
 
-        * Replace Stata tricky markdown syntax with smcl escapes
-        escape_tricky_characters, line(`"`macval(line)'"')
-        local line `"`r(escaped_line)'"'
-
-        *Switch back to ` - This is now safe as all ' are escaped and none of them will pair up with a ' to be interpreted as a local
-        local line : subinstr local line "%%%CODEINLINE%%%" "`", all
-
-        * Apply all inline formatting ` _ __ ** and escape $ { }
-        * and get position of beg and end comment tags
-        if (`codeblock' == 0 & !missing(`"`macval(line)'"')) {
-          apply_inline_formatting, line(`"`macval(line)'"')
-          local line       `"`r(line)'"'
-          local com_pos_beg `r(com_pos_beg)'
-          local com_pos_end `r(com_pos_end)'
+        * Write codeblock by itself as it should allow
+        * special characters tricky in the rest of the code flow
+        if (`codeblock' == 1 & `has_CODEBLOCK' == 0) {
+          local line : subinstr local line "%%%CODEINLINE%%%" "`", all
+          local line = `"{space 8}`macval(line)'"'
+          file write `st_fh' `"`macval(line)'"' _newline(1)
         }
         else {
-          local com_pos_beg 0
-          local com_pos_end 0
-        }
 
-        if (`mdcomment' == 0 & `codeblock' == 0) {
-          if (`com_pos_beg' == 1) local mdcomment = 1
-          else if (`com_pos_beg' != 0) {
-            noi di "{pstd}{red:Warning:} Comment found but will be ignored as it is not at beginning of the line.{p_end}"
+          * Replace Stata tricky markdown syntax with smcl escapes
+          escape_tricky_characters, line(`"`macval(line)'"')
+          local line `"`r(escaped_line)'"'
+
+          *Switch back to ` - This is now safe as all ' are escaped and none of them will pair up with a ' to be interpreted as a local
+          local line : subinstr local line "%%%CODEINLINE%%%" "`", all
+
+          * Apply all inline formatting ` _ __ ** and escape $ { }
+          * and get position of beg and end comment tags
+          if (`codeblock' == 0 & !missing(`"`macval(line)'"')) {
+            apply_inline_formatting, line(`"`macval(line)'"')
+            local line       `"`r(line)'"'
+            local com_pos_beg `r(com_pos_beg)'
+            local com_pos_end `r(com_pos_end)'
           }
-        }
-
-        if (`mdcomment' == 0) {
-          * Code block ```
-          if strpos(`"`line'"',"%%%CODEBLOCK%%%") {
-            if (`codeblock' == 0) {
-              local line2write "{input}"
-              local newlines   0
-            }
-            else local line2write "{text}"
-            local codeblock = !`codeblock'
-          }
-
-          * Title 1 heading #
-          else if (substr(trim(`"`line'"'),1,2) == "# ") {
-            local title1 = trim(subinstr(`"`line'"',"# ","",1))
-            local line2write `"{title:`title1'}"'
-          }
-
-          * Title 2 heading ##
-          else if (substr(trim(`"`line'"'),1,3) == "## ") {
-            local title2 = trim(subinstr("`line'","## ","",1))
-            local line2write `"{dlgtab:`title2'}"'
-          }
-
-          * Table | --- | --- |
-          else if (substr(trim(`"`line'"'),1,1) == "|") {
-            local tbl_str `"`tbl_str' "`line'""'
-            local table 1
-          }
-
-          * Empty lines
-          else if (trim(`"`line'"') == "") {
-            * Write end of pragraph tag
-            if (`paragraph' == 1) {
-              local line2write "{p_end}"
-              local newlines 2
-              local paragraph = !`paragraph'
-            }
-            * End of table - write the table and reset table locals
-            else if (`table' == 1) {
-              write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
-              local table = 0
-              local tbl_str = ""
-              local last_line_empty 1
-            }
-            * Just write the empty line
-            else if (`last_line_empty' == 0) {
-              file write `st_fh' "" _n
-              local last_line_empty 1
-            }
-          }
-
-          * Write line
           else {
+            local com_pos_beg 0
+            local com_pos_end 0
+          }
 
-            * If beginning of paragraph, add paragraph tag
-            local ptag ""
-            if (`paragraph' == 0 & `codeblock' == 0 ) {
-              if inlist("`title1'", "Title", "Syntax") local ptag "{phang}"
-              else local ptag "{pstd}"
-              local paragraph = !`paragraph'
+          if (`mdcomment' == 0 & `codeblock' == 0) {
+            if (`com_pos_beg' == 1) local mdcomment = 1
+            else if (`com_pos_beg' != 0) {
+              noi di "{pstd}{red:Warning:} Comment found but will be ignored as it is not at beginning of the line.{p_end}"
+            }
+          }
+
+          if (`mdcomment' == 0) {
+            * Code block ```
+            if strpos(`"`line'"',"%%%CODEBLOCK%%%") {
+              if (`codeblock' == 0) {
+                local line2write "{input}"
+                local newlines   0
+              }
+              else local line2write "{text}"
+              local codeblock = !`codeblock'
             }
 
-            * Add special indnent if applicable
-            local indent ""
-            if (`codeblock' == 1) local indent "{space 8}"
+            * Title 1 heading #
+            else if (substr(trim(`"`line'"'),1,2) == "# ") {
+              local title1 = trim(subinstr(`"`line'"',"# ","",1))
+              local line2write `"{title:`title1'}"'
+            }
 
-            * Prepare line to write
-            local line2write `"`indent'`ptag'`line'"'
+            * Title 2 heading ##
+            else if (substr(trim(`"`line'"'),1,3) == "## ") {
+              local title2 = trim(subinstr("`line'","## ","",1))
+              local line2write `"{dlgtab:`title2'}"'
+            }
+
+            * Table | --- | --- |
+            else if (substr(trim(`"`line'"'),1,1) == "|") {
+              local tbl_str `"`tbl_str' "`line'""'
+              local table 1
+            }
+
+            * Empty lines
+            else if (trim(`"`line'"') == "") {
+              * Write end of pragraph tag
+              if (`paragraph' == 1) {
+                local line2write "{p_end}"
+                local newlines 2
+                local paragraph = !`paragraph'
+              }
+              * End of table - write the table and reset table locals
+              else if (`table' == 1) {
+                write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
+                local table = 0
+                local tbl_str = ""
+                local last_line_empty 1
+              }
+              * Just write the empty line
+              else if (`last_line_empty' == 0) {
+                file write `st_fh' "" _n
+                local last_line_empty 1
+              }
+            }
+
+            * Write line
+            else {
+
+              * If beginning of paragraph, add paragraph tag
+              local ptag ""
+              if (`paragraph' == 0 & `codeblock' == 0 ) {
+                if inlist("`title1'", "Title", "Syntax") local ptag "{phang}"
+                else local ptag "{pstd}"
+                local paragraph = !`paragraph'
+              }
+
+              * Prepare line to write
+              local line2write `"`ptag'`line'"'
+            }
           }
-        }
-        * Line is comment - test if end of comment
-        else if (`com_pos_end' > 0) local mdcomment = 0
+          * Line is comment - test if end of comment
+          else if (`com_pos_end' > 0) local mdcomment = 0
 
-        * Write the line if applicable
-        if !missing(`"`line2write'"') {
-          file write `st_fh' `"`line2write'"' _newline(`newlines')
+          * Write the line if applicable
+          if !missing(`"`line2write'"') {
+            file write `st_fh' `"`line2write'"' _newline(`newlines')
 
-          * Special cases that will appear as an empty line
-          if (inlist(`"`line2write'"', "{p_end}", "{text}")) {
-            local last_line_empty 1
+            * Special cases that will appear as an empty line
+            if (inlist(`"`line2write'"', "{p_end}", "{text}")) {
+              local last_line_empty 1
+            }
+            * Last line is not an empty line
+            else local last_line_empty 0
           }
-          * Last line is not an empty line
-          else local last_line_empty 0
         }
 
         * Read next line
