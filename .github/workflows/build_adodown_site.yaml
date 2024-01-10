@@ -49,7 +49,7 @@ jobs:
         run: install.packages("devtools")
         shell: Rscript {0}
 
-      - name: Install adodown
+      - name: Install adodownr
         run: devtools::install_github("lsms-worldbank/adodownr")
         shell: Rscript {0}
 
