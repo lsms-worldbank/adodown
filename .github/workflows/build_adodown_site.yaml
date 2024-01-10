@@ -50,7 +50,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Install adodown
-        run: devtools::install_github("arthur-shaw/adodown")
+        run: devtools::install_github("lsms-worldbank/adodownr")
         shell: Rscript {0}
 
       - name: Install here
@@ -58,7 +58,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Build site
-        run: adodown::build_site(pkg_dir = here::here(), site_dir = here::here())
+        run: adodownr::build_site(pkg_dir = here::here(), site_dir = here::here())
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages
