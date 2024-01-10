@@ -5,7 +5,7 @@ on:
 name: Build Site
 
 jobs:
-  adodown:
+  adodownr:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
