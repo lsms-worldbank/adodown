@@ -83,4 +83,5 @@
 # Ignore test outputs
 src/tests/outputs/
 
-src/tests/installation/
+* Ignore the local env
+/**/plus-ado/
