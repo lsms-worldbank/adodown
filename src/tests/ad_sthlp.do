@@ -12,10 +12,11 @@
     local tests     "`clone'/src/tests"
     local out_sthlp "`tests'/outputs/ad_sthlp"
 
-    * Install the package
-    qui ieboilstart, version(14) adopath("`clone'\src\tests\installation", strict)
-    net uninstall adodown 
-    net install   adodown , from("`clone'\src")
+    * Install the version of this package in 
+    * the plus-ado folder in the test folder
+    repado , adopath("`tests'/plus-ado/") mode(strict)
+    cap net uninstall adodown
+    net install adodown, from("`clone'/src") replace
     
     * Load utility functions that delete old test putput and set up folders
     run "`tests'/test_utils.do"
