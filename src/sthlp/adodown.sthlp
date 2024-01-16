@@ -1,33 +1,32 @@
 {smcl}
 {* 01 Jan 1960}{...}
 {hline}
-{pstd}help file for {hi:ad_publish}{p_end}
+{pstd}help file for {hi:adodown}{p_end}
 {hline}
 
 {title:Title}
 
-{phang}{bf:ad_publish} - This command is used for short description.
+{phang}{bf:adodown} - Package command with utilities for the rest of the package
 {p_end}
 
 {title:Syntax}
 
-{phang}{bf:ad_publish} , {bf:{ul:opt}ion1}({it:string})
+{phang}{bf:adodown}
 {p_end}
-
-{synoptset 15}{...}
-{synopthdr:options}
-{synoptline}
-{synopt: {bf:{ul:opt}ion1}({it:string})}Short description of option1{p_end}
-{synoptline}
 
 {title:Description}
 
-{title:Options}
-
-{pstd}{bf:{ul:opt}ion1}({it:string}) is used for xyz. Longer description (paragraph length) of all options, their intended use case and best practices related to them.
+{pstd}This command only returns the version number and version data to the user.
+This command has little application for a typical user.
+For packages installed on SSC it is important that a there is a command
+in the package that has the same name as the package.
+That is the main purpose of this command.
 {p_end}
 
-{title:Examples}
+{title:Options}
+
+{pstd}This command has no options.
+{p_end}
 
 {title:Feedback, bug reports and contributions}
 

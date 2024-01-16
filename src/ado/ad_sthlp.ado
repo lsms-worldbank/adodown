@@ -253,6 +253,9 @@ cap program drop   ad_sthlp
     }
   }
 
+  // Remove when command is no longer in beta
+  noi adodown "beta ad_sthlp"
+
 end
 
 * Escapes ', $, { and } that never means anything in md formatting.

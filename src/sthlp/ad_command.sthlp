@@ -59,12 +59,12 @@ and the ado-file and the sthlp file is addended to the pkg-file in that package 
 
 {input}{space 8}* point a local to the folder where the package will be created
 {space 8}local myfolder "path/to/folder"
-
+{space 8}
 {space 8}* Package meta info
 {space 8}local pkg "my_package"
-
+{space 8}
 {space 8}* Add command mycmd to the package folder
-{space 8}ad_command create mycmd, adf("") pkg("")
+{space 8}ad_command create mycmd, adf("`myfolder'") pkg("`pkg'")
 {text}
 {dlgtab:Example 2}
 
@@ -73,29 +73,34 @@ and the ado-file and the sthlp file is addended to the pkg-file in that package 
 
 {input}{space 8}* point a local to the folder where the package will be created
 {space 8}local myfolder "path/to/folder"
-
+{space 8}
 {space 8}* Package meta info
 {space 8}local pkg "my_package"
 {space 8}local aut "John Doe"
 {space 8}local des "This packages does amazing thing A, B and C."
 {space 8}local url "https://github.com/lsms-worldbank/adodown"
 {space 8}local con "jdoe@worldbank.org"
-
+{space 8}
 {space 8}* Set up adodown-styled package folder
-{space 8}ad_setup, adfolder("") autoconfirm    ///
-{space 8}     name("") author("") desc("") ///
-{space 8}     url("") contact("")
-
+{space 8}ad_setup, adfolder("`myfolder'") autoconfirm    ///
+{space 8}     name("`pkg'") author("`aut'") desc("`des'") ///
+{space 8}     url("`url'") contact("`con'")
+{space 8}
 {space 8}* Add command mycmd to the package folder
-{space 8}ad_command create mycmd, adf("") pkg("")
+{space 8}ad_command create mycmd, adf("`myfolder'") pkg("`pkg'")
 {text}
 {title:Feedback, bug reports and contributions}
 
-{pstd}Please use the {browse "https://github.com/lsms-worldbank/adodown/issues":issues feature} on the GitHub repository for the {inp:adodown} package to communicate any feedback, report bugs, or to make feature requests.
+{pstd}Read more about the commands in this package on the {browse "https://github.com/lsms-worldbank/adodown":GitHub repository} for the {inp:adodown} package.
+{p_end}
+
+{pstd}Please use the {browse "https://github.com/lsms-worldbank/adodown/issues":issues feature} e to communicate any feedback, report bugs, or to make feature requests.
+{p_end}
+
+{pstd}PRs with suggestions for improvements are also greatly appreciated.
 {p_end}
 
 {title:Authors}
 
-{pstd}* Author: John Doe
-* Support: jdoe@worldbank.org
+{pstd}LSMS Team, The World Bank lsms@worldbank.org
 {p_end}

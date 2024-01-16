@@ -310,4 +310,8 @@ qui {
 
     }
 }
+
+// Remove when command is no longer in beta
+noi adodown "beta ad_command"
+
 end

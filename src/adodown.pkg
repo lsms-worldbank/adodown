@@ -20,11 +20,13 @@ d
 d Distribution-Date: 20230724
 d
 *** adofiles
+f ado/adodown.ado
 f ado/ad_publish.ado
 F ado/ad_setup.ado
 F ado/ad_command.ado
 F ado/ad_sthlp.ado
 *** helpfiles
+f sthlp/adodown.sthlp
 f sthlp/ad_publish.sthlp
 F sthlp/ad_command.sthlp
 F sthlp/ad_setup.sthlp

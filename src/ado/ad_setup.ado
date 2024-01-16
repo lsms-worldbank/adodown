@@ -258,6 +258,9 @@ qui {
     * Add a command with the same name as the package to the package template
     qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
+
+    // Remove when command is no longer in beta
+    noi adodown "beta ad_setup"
 }
 end
 

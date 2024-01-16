@@ -107,4 +107,7 @@ cap program drop   ad_publish
 
     //TODO : implement command here
 
+
+    // Remove when command is no longer in beta
+    noi adodown "beta ad_publish"
 end

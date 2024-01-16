@@ -22,8 +22,13 @@ __**opt**ion1__(_string_) is used for xyz. Longer description (paragraph length)
 <!-- A couple of examples to help the user get started and a short explanation of each of them. -->
 
 # Feedback, bug reports and contributions
-<!-- A couple of examples to help the user get started and a short explanation of each of them. -->
+
+Read more about the commands in this package on the [GitHub repository](https://github.com/lsms-worldbank/adodown) for the `adodown` package.
+
+Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) e to communicate any feedback, report bugs, or to make feature requests.
+
+PRs with suggestions for improvements are also greatly appreciated.
 
 # Authors
 
-TODO: Populate this field from .pkg file
+LSMS Team, The World Bank lsms@worldbank.org

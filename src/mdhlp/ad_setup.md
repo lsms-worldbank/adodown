@@ -64,9 +64,12 @@ ad_setup, adfolder("`myfolder'") autoprompt    ///
 
 # Feedback, bug reports and contributions
 
-Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) on the GitHub repository for the `adodown` package to communicate any feedback, report bugs, or to make feature requests.
+Read more about the commands in this package on the [GitHub repository](https://github.com/lsms-worldbank/adodown) for the `adodown` package.
+
+Please use the [issues feature](https://github.com/lsms-worldbank/adodown/issues) e to communicate any feedback, report bugs, or to make feature requests.
+
+PRs with suggestions for improvements are also greatly appreciated.
 
 # Authors
 
-* Author: John Doe
-* Support: jdoe@worldbank.org
+LSMS Team, The World Bank lsms@worldbank.org
