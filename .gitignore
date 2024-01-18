@@ -68,4 +68,4 @@
 src/tests/outputs/
 
 * Ignore the local dev env used by repado
-/**/plus-ado/
+src/tests/dev-env/
