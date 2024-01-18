@@ -4,7 +4,7 @@ cap program drop   ad_sthlp
     program define ad_sthlp
   qui {
 
-    syntax, ADFolder(string) [debug]
+    syntax, ADFolder(string) [commands(string) debug]
 
     *******************************************************
     * Create locals
@@ -69,6 +69,17 @@ cap program drop   ad_sthlp
       foreach notmd_files of local notmd_files {
         noi di as text `"{pstd}- `notmd_files'{p_end}"'
       }
+    }
+
+    * If running st_hlp on only specific commands
+    if !missing("`commands'") {
+      * Make sure all commands in comamnds() were found
+      local commands_not_found : list commands - file_names
+      if !missing("`commands_not_found'") {
+        noi di as error `"{pstd}.mdhlp help files was not found for all commands listed in option {opt commands(`commands')}. For the command(s) [`commands_not_found'] no .mdhlp was found in the "src/mdhlp" folder.{p_end}"'
+      }
+      * Only use the commands
+      local file_names "`commands'"
     }
 
     *******************************************************
