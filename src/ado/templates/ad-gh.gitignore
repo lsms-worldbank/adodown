@@ -20,7 +20,7 @@
 # These files include GitHub settings
 !.gitignore
 !.gitattributes
-!*.yaml
+!.github/**/*.yaml
 
 
 # Git placeholder file (to commit empty folders)
@@ -51,8 +51,10 @@
 !src/stata.toc
 !src/*.pkg
 
-# Markdown
+# Markdown and web docs files
 !/**/*.md
+!src/dev/assets/*.png
+!src/dev/assets/*.css
 
-* Ignore the local env
+* Ignore the local dev env used by repado
 /**/plus-ado/

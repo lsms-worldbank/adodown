@@ -20,6 +20,7 @@
 # These files include GitHub settings
 !.gitignore
 !.gitattributes
+!.github/**/*.yaml
 
 # Git placeholder file (to commit empty folders)
 !/**/*.gitkeep
@@ -49,8 +50,6 @@
 !/**/*.smcl
 !src/stata.toc
 !src/adodown.pkg
-!src/dev/assets/*.png
-!src/dev/assets/*.css
 
 # Template files
 !src/ado/templates/*.txt
@@ -59,32 +58,14 @@
 !src/ado/templates/*.gitignore
 !src/ado/templates/*.png
 
-# R
-!/**/*.R
-!/**/*.Rmd
-!/**/*.Rproj
-!/**/*.qmd
-# Still ignore user file for R projects
-.Rproj.user
-
-# Markdown
+# Markdown and web docs files
 !/**/*.md
-
-#Files to create custom layout and functionality
-# in dashboards, markdown notebooks, bookdown etc.
-!/**/*.css
-!/**/*.js
-
-#Bash scripts
-!/**/*.sh
-
-# .yml and .yaml files
-!/**/*.yml
-!/**/*.yaml
+!src/dev/assets/*.png
+!src/dev/assets/*.css
 
 ####################################
 # Ignore test outputs
 src/tests/outputs/
 
-* Ignore the local env
+* Ignore the local dev env used by repado
 /**/plus-ado/
