@@ -67,5 +67,5 @@
 # Ignore test outputs
 src/tests/outputs/
 
-* Ignore the local dev env used by repado
+* Ignore the local dev env set up by repado
 src/tests/dev-env/

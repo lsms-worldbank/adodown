@@ -56,5 +56,5 @@
 !src/dev/assets/*.png
 !src/dev/assets/*.css
 
-* Ignore the local dev env used by repado
-/**/plus-ado/
+* Ignore the local dev env set up by repado
+src/tests/dev-env/
