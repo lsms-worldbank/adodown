@@ -19,7 +19,7 @@ qui {
     *Parse out the sub-command and the command name
     gettoken scmd cname : anything
     local scmd  = trim("`scmd'")
-    local cname = trim("`cname'")
+    local cname = trim(subinstr("`cname'",".ado","",.))
 
     * Test that subcommand is either create or remove
     if !(inlist("`scmd'","create", "remove")) {
@@ -45,7 +45,7 @@ qui {
     }
 
     * Test for adodown folders expected in the folder
-    foreach ad_fld in ado mdhlp sthlp {
+    foreach ad_fld in ado mdhlp sthlp tests {
       mata : st_numscalar("r(dirExist)", direxists("`srcfolder'/`ad_fld'"))
       if `r(dirExist)' == 0  {
         local folder_error "TRUE"
@@ -77,15 +77,14 @@ qui {
 
     if !missing("`debug'") noi di as text "Checking files already exist"
 
-    local cname = subinstr("`cname'",".ado","",.)
-
     * Locals for refrences to the files assocaited with this command
     local adof "`srcfolder'/ado/`cname'.ado"
     local mdhf "`srcfolder'/mdhlp/`cname'.md"
     local sthf "`srcfolder'/sthlp/`cname'.sthlp"
+    local tstf "`srcfolder'/tests/`cname'.do"
 
     * Checking if file exists or not
-    foreach f in adof mdhf sthf {
+    foreach f in adof mdhf sthf tstf {
       cap confirm file "``f''"
       if _rc {
         local `f'_exists "FALSE"
@@ -123,12 +122,13 @@ qui {
 
       *******************
       * Get all templates and store in temporary files
-      local ad_templates ado mdh
+      local ad_templates ado mdh tst
       foreach adt of local ad_templates {
 
         tempfile `adt'_template
         if "`adt'" == "ado" local template "ad-cmd-command.ado"
         if "`adt'" == "mdh" local template "ad-cmd-command.md"
+        if "`adt'" == "tst" local template "ad-cmd-command.do"
 
         * Get template file and store in temporary file
         if !missing("`debug'") noi di as text `"Get template file: `template' and store in `adt'_template "'
@@ -166,8 +166,10 @@ qui {
         file read ``adt'_read' line
         while r(eof)==0 {
           * Replace placeholder with command name
-          local line = subinstr("`macval(line)'","ADCOMMANDNAME","`cname'",.)
-          file write ``adt'_write' "`macval(line)'" _n
+          local line = subinstr(`"`macval(line)'"',"ADCOMMANDNAME","`cname'",.)
+          local line = subinstr(`"`macval(line)'"',"ADCLONEPATH",`"`adfolder'"',.)
+          local line = subinstr(`"`macval(line)'"',"ADPKGNAME","`pkgname'",.)
+          file write ``adt'_write' `"`macval(line)'"' _n
           * Read next line
           file read ``adt'_read' line
         }
@@ -216,6 +218,9 @@ qui {
       }
       *Write package file
       copy "`pkg_out'" "`srcfolder'/`pkgname'.pkg", replace
+
+      * Convert the first version of the sthlp file
+      qui ad_sthlp, adfolder("`adfolder'") commands("`cname'")
 
       noi di as res "{pstd}Command {it:`cname'} was succesfully added to package {it:`pkgname'}.{p_end}"
 

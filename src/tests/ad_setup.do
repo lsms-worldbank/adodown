@@ -12,9 +12,8 @@
     local tests        "`clone'/src/tests"
     local ad_setup_out "`tests'/outputs/ad_setup"
 
-    * Install the version of this package in 
-    * the plus-ado folder in the test folder
-    repado , adopath("`tests'/plus-ado/") mode(strict)
+    * Set up a dev environement for testing locally
+    repado , adopath("`tests'/dev-env/") mode(strict)
     cap net uninstall adodown
     net install adodown, from("`clone'/src") replace
 
@@ -46,9 +45,9 @@
     rec_mkdir, folder("`test2_fldr'")              //Make sure folder exists
 
     * Run ad_setup with all required info specified in options
-    ad_setup, adfolder("`test2_fldr'") autoprompt name("testautoprompt") 
-        
-        
+    ad_setup, adfolder("`test2_fldr'") autoprompt name("testautoprompt")
+
+
     *********
     * Test 3 - manually enter all package meta information
     *Change to if 1 to run this section
@@ -56,7 +55,7 @@
         * Set up the folders needed for ths
         local test3_fldr "`ad_setup_out'/test3-manual"
         rec_mkdir, folder("`test3_fldr'")              //Make sure folder exists
-        
+
         * Run ad_setup with all required info specified in options
         ad_setup, adfolder("`test3_fldr'") author("KB") contact("kbjarlefur@asdfd.sda")
     }

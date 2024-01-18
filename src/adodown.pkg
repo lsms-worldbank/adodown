@@ -33,6 +33,7 @@ F sthlp/ad_setup.sthlp
 F sthlp/ad_sthlp.sthlp
 *** ancillaryfiles
 F ado/templates/ad-cmd-command.ado
+F ado/templates/ad-cmd-command.do
 F ado/templates/ad-cmd-command.md
 F ado/templates/ad-gh-workflows.yaml
 F ado/templates/ad-gh.gitignore
