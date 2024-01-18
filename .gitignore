@@ -49,12 +49,15 @@
 !/**/*.smcl
 !src/stata.toc
 !src/adodown.pkg
+!src/dev/assets/*.png
+!src/dev/assets/*.css
 
 # Template files
 !src/ado/templates/*.txt
 !src/ado/templates/*.toc
 !src/ado/templates/*.pkg
 !src/ado/templates/*.gitignore
+!src/ado/templates/*.png
 
 # R
 !/**/*.R
