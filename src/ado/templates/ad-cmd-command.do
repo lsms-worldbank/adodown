@@ -23,10 +23,10 @@
     global tests "${src}/tests"
 
     * Set up a dev environement for testing locally
-    cap mkdir "${tests}/dev-env"
-    repado    "${tests}/dev-env"
+    cap mkdir    "${tests}/dev-env"
+    repado using "${tests}/dev-env"
 
-    * If not already installed, add repkit to the dev environment
+    * If not already installed in dev-env, add repkit to the dev environment
     cap which repkit
     if _rc == 111 ssc install repkit
 
