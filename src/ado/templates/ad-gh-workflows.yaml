@@ -58,7 +58,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Build site
-        run: adodownr::build_site(pkg_dir = here::here(), site_dir = here::here())
+        run: adodownr::build_site(pkg_dir = here::here(), site_dir = here::here(), rm_old_site_dir = FALSE)
         shell: Rscript {0}
 
       - name: Deploy to GitHub pages
