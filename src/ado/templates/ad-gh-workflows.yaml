@@ -64,7 +64,7 @@ jobs:
       - name: Deploy to GitHub pages
         uses: JamesIves/github-pages-deploy-action@v4.5.0
         with:
-          clean: false
+          clean: true
           folder: docs
           branch: gh-pages
           target-folder: docs
