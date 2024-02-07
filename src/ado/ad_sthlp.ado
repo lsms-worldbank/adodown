@@ -118,6 +118,11 @@ cap program drop   ad_sthlp
         local line : subinstr local line "```" "%%%CODEBLOCK%%%", count(local has_CODEBLOCK)
         local line : subinstr local line "`"   "%%%CODEINLINE%%%", all
 
+        * Add trailing space to line with ` as it
+        * prevents lines to evaluate with trailing `" which breaks the code
+        local hasinline = strpos(`"`macval(line)'"',"%%%CODEINLINE%%%")
+        if (`hasinline') local line = `"`macval(line)' "'
+
         * Write codeblock by itself as it should allow
         * special characters tricky in the rest of the code flow
         if (`codeblock' == 1 & `has_CODEBLOCK' == 0) {
