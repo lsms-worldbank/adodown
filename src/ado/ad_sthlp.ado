@@ -65,7 +65,7 @@ cap program drop   ad_sthlp
     }
 
     if (!missing("`notmd_files'")) {
-      noi di as text `"{pstd}{red:Warning:}Only files on format {inp:.md} is expected to be in the "`fld'hlp" folder. In the adodown workflow only markdown files should be saved in this folder. The follwoing file(s) will be skipped:{p_end}"'
+      noi di as text `"{pstd}{red:Warning:}Only files on format {inp:.md} is expected to be in the "`fld'hlp" folder. In the adodown workflow only markdown files should be saved in this folder. The following file(s) will be skipped:{p_end}"'
       foreach notmd_files of local notmd_files {
         noi di as text `"{pstd}- `notmd_files'{p_end}"'
       }
@@ -263,7 +263,7 @@ cap program drop   ad_sthlp
     }
 
     * Output confirmation of files converted
-    noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The follwoing sthlp file(s) were created:{p_end}"'
+    noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The following sthlp file(s) were created:{p_end}"'
     foreach file_name of local file_names {
       noi di as text `"{pstd}- {view "`sthlp'/`file_name'.sthlp":`file_name'.sthlp}{p_end}"'
     }
