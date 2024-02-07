@@ -1,14 +1,15 @@
 # Title
 
-__ad_sthlp__ - Renders sthlp-files from mdhlp-files in the `adodown` workflow.
+__ad_sthlp__ - Converts mdhlp-files to sthlp-files in the `adodown` workflow.
 
 # Syntax
 
-__ad_sthlp__ , __**adf**older__(_string_)
+__ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_)]
 
 | _options_ | Description |
 |------------------|-------------|
 | __**adf**older__(_string_) | Location where package folder already exists |
+| __commands__(_string_) | List specific command to convert. Default is all in package. |
 
 
 # Description
@@ -24,6 +25,8 @@ In the `adodown` workflow the mdhlp-files are expected to be stored in a folder 
 # Options
 
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
+
+__commands__(_string_) is used list individual commands to convert from `mdhlp` to `sthlp`. One or several commands can be listed. The default when this option is not used is to convert all `mdhlp` files in the package.
 
 # Examples
 

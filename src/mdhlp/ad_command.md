@@ -4,7 +4,7 @@ __ad_command__ - Creates or removes commands in the `adodown` workflow.
 
 # Syntax
 
-__ad_command__ _subcommand_ _commandname_ , __**adf**older__(_string_) __**pkg**name__(_string_)
+__ad_command__ _subcommand_ _commandname_ , __**adf**older__(_string_) __**pkg**name__(_string_) [__**undoc**umented__]
 
 where _subcommand_ is either `create` or `remove` and _commandname_ is the name of the new command to create or the existing command to remove.
 
@@ -12,6 +12,7 @@ where _subcommand_ is either `create` or `remove` and _commandname_ is the name 
 |------------------|-------------|
 | __**adf**older__(_string_) | Location where package folder already exists |
 | __**pkg**name__(_string_) | Name of package that exists in the location `adfolder()` points to. |
+| __**undoc**umented__ | used to create an undocumented command.
 
 
 # Description
@@ -32,6 +33,11 @@ _commandname_ as specified in `ad_command <subcommand> <commandname>` is the nam
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
 __**pkg**name__(_string_) is the name of the package expected to be found in the `adfolder()`.
+
+__**undoc**umented__  is used to create an undocumented command.
+An undocumented command is a command that not intended to be used by the user,
+and only be used by other commands in the same package.
+In practice, this means that no helpfile is created for this command.
 
 # Examples
 

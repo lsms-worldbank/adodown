@@ -6,18 +6,19 @@
 
 {title:Title}
 
-{phang}{bf:ad_sthlp} - Renders sthlp-files from mdhlp-files in the {inp:adodown} workflow.
+{phang}{bf:ad_sthlp} - Converts mdhlp-files to sthlp-files in the {inp:adodown} workflow.
 {p_end}
 
 {title:Syntax}
 
-{phang}{bf:ad_sthlp} , {bf:{ul:adf}older}({it:string})
+{phang}{bf:ad_sthlp} , {bf:{ul:adf}older}({it:string}) [{bf:commands}({it:string})]
 {p_end}
 
 {synoptset 16}{...}
 {synopthdr:options}
 {synoptline}
 {synopt: {bf:{ul:adf}older}({it:string})}Location where package folder already exists{p_end}
+{synopt: {bf:commands}({it:string})}List specific command to convert. Default is all in package.{p_end}
 {synoptline}
 
 {title:Description}
@@ -35,6 +36,9 @@ either {inp:ssc install} or {inp:net install}.
 {title:Options}
 
 {pstd}{bf:{ul:adf}older}({it:string}) is used to indicate the location of where the adodown-styled package folder already exist.
+{p_end}
+
+{pstd}{bf:commands}({it:string}) is used list individual commands to convert from {inp:mdhlp} to {inp:sthlp}. One or several commands can be listed. The default when this option is not used is to convert all {inp:mdhlp} files in the package.
 {p_end}
 
 {title:Examples}

@@ -9,7 +9,7 @@ qui {
       Author(string)           ///
       Contact(string)          ///
       Url(string)              ///
-      AUTOprompt                 ///
+      AUTOprompt               ///
       GIThub                   ///
       debug                    ///
       ]
