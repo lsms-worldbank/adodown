@@ -111,7 +111,7 @@ cap program drop   ad_publish
     local miss_docs :  list doc_cmds - sthfiles
 
     foreach ado of local cmds {
-      update_ado_version, header("`ado_v_header'") ado(`"`adofolder'/`ado'.ado"')
+      update_ado_version, version_header("`ado_v_header'") ado(`"`adofolder'/`ado'.ado"')
     }
 
     // Remove when command is no longer in beta
@@ -121,7 +121,7 @@ end
 cap program drop   update_ado_version
     program define update_ado_version
 
-    syntax, header(string) ado(string)
+    syntax, version_header(string) ado(string)
 
     noi di `"`ado'"'
 
