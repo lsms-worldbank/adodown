@@ -4,7 +4,7 @@ cap program drop   ad_publish
     program define ad_publish
 
     * Update the syntax. This is only a placeholder to make the command run
-    syntax, ADFolder(string) undoc_cmds(string) [debug]
+    syntax, ADFolder(string) [undoc_cmds(string) norender debug]
 
     ****
     ** Test folder input input
@@ -33,14 +33,22 @@ cap program drop   ad_publish
       exit
     }
 
-    ****
-    ** Test and initiate folder locals
-
-    local date
-
-    * test version number
-
+    * Get meta data from package file
     ad_get_pkg_meta, adfolder(`"`folderstd'"')
+    local vnum    "`r(package_version)'"
+    local vdate   "`r(date)'"
+    local author  "`r(author)'"
+    local contact "`r(contact)'"
+    local ado_v_header "*! version `vnum' `vdate' `author' `contact'"
+
+    if ("`render'" != "norender") {
+      cap ad_sthlp, adfolder(`"`folderstd'"')
+      if _rc {
+        noi di as error "{pstd}Error when rendering the .sthlp files from .mdhlp files. Run command {cmd:ad_sthlp()} and fix the error or use option {opt:norender} to not render the files and see if package can be published anyway.{p_end}"
+        * Run it again without cap to return the error
+        ad_sthlp, adfolder(`"`folderstd'"') vnum("`vnum'") vdate("`vdate'")
+      }
+    }
 
 
     ****
@@ -49,27 +57,29 @@ cap program drop   ad_publish
     * List ado-files
     local adofiles : dir `"`adofolder'"' files "*.ado"	, respectcase
     foreach adofile of local adofiles {
-      local cmds "`cmds'" + subinstr("`adofile'",".ado","",1)
+      local cmds = "`cmds' " + subinstr("`adofile'",".ado","",1)
     }
 
     * List sthlp files
     local sthfiles : dir `"`sthfolder'"' files "*.sthlp"	, respectcase
     foreach sthfile of local sthfiles {
-      local hlps "`hlps'" + subinstr("`sthfile'",".sthlp","",1)
+      local hlps = "`hlps' " + subinstr("`sthfile'",".sthlp","",1)
     }
 
+    noi di "Commands: `cmds'"
+    noi di "Helpfiles: `hlps'"
 
     * List docummented commands - i.e. ado files apart from undocummented files
     * These are the commands that we expect a helpfile for
-    local doc_cmds : cmds - undoc_cmds
+    local doc_cmds : list cmds - undoc_cmds
 
     * Get local with for docummented commands without helpfule and
     * helpfiles without documented commands
-    local doc_cmds_without_hlp : cmds - hlps
-    local hlps_without_doc_cmd : hlps - cmds
+    local doc_cmds_without_hlp : list cmds - hlps
+    local hlps_without_doc_cmd : list hlps - cmds
 
     * Test if any commands listed as undocummented commmands are not found
-    local undoc_cmds_not_found : undoc_cmds - cmds
+    local undoc_cmds_not_found : list undoc_cmds - cmds
 
     local ado_sthlp_error 0
 
@@ -92,23 +102,59 @@ cap program drop   ad_publish
     }
 
     * Throw error for missing files
-    if ("`ado_sthlp_error'" == 1) {
+    if (`ado_sthlp_error' == 1) {
       error 99
       exit
     }
 
-
-    ****
-    ** List all sthlp files
-
-
     *Make sure that all commands
-    local miss_docs : doc_cmds - sthfiles
+    local miss_docs :  list doc_cmds - sthfiles
 
-
-    //TODO : implement command here
-
+    foreach ado of local cmds {
+      update_ado_version, header("`ado_v_header'") ado(`"`adofolder'/`ado'.ado"')
+    }
 
     // Remove when command is no longer in beta
     noi adodown "beta ad_publish"
+end
+
+cap program drop   update_ado_version
+    program define update_ado_version
+
+    syntax, header(string) ado(string)
+
+    noi di `"`ado'"'
+
+    * Open template to read from and new tempfile to write to
+    tempname ado_old ado_new
+    tempfile new_adofile
+    file open `ado_old' using `"`ado'"', read
+    file open `ado_new' using `new_adofile' , write
+
+    local header = 1
+
+    * Skip old header
+    file read `ado_old' line
+    while (`header' == 1) {
+      if !missing("`line'") & (substr(trim("`line'"),1,10) == "*! version") {
+        local header 0
+      }
+    }
+
+    * Write new header
+    file write `ado_new' "`header'" _n _n
+
+    * Write remaining file
+    file read `ado_old' line
+    while r(eof)==0 {
+      file write `ado_new' macval(line) _n
+      file read `ado_old' line
+    }
+
+    file close `ado_old'
+    file close `ado_new'
+
+    copy "`new_adofile'" `"`ado'"', replace
+
+
 end
