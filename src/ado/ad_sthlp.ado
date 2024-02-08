@@ -4,7 +4,13 @@ cap program drop   ad_sthlp
     program define ad_sthlp
   qui {
 
-    syntax, ADFolder(string) [commands(string) debug]
+    syntax, ADFolder(string) ///
+      [ ///
+        commands(string) ///
+        vnum(string) ///
+        vdate(string) ///
+        debug ///
+      ]
 
     *******************************************************
     * Create locals
@@ -41,6 +47,14 @@ cap program drop   ad_sthlp
       error 99
       exit
     }
+
+    * Get default values if version number or date is missing
+    if missing("`vnum'") {
+      ad_get_pkg_meta, adfolder(`"`folderstd'"')
+      local vnum "`r(package_version)'"
+    }
+    if missing("`vdate'") local vdate = upper(subinstr("`c(current_date)'")," ","",.)
+
 
     *******************************************************
     * Prepare list of files to convert
@@ -97,7 +111,7 @@ cap program drop   ad_sthlp
       file open `st_fh' using ``file_name'' , write
 
       * Write the smcl tag at top of file to
-      file write `st_fh' "{smcl}" _n "{* 01 Jan 1960}{...}" _n ///
+      file write `st_fh' "{smcl}" _n "{* *! version `vnum' `vdate'}{...}" _n ///
         "{hline}" _n "{pstd}help file for {hi:`file_name'}{p_end}" _n "{hline}" _n _n
 
       * Read first line then iterate until end of file (eof)

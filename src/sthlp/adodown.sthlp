@@ -1,5 +1,5 @@
 {smcl}
-{* 01 Jan 1960}{...}
+{* *! version 0.1 20230724}{...}
 {hline}
 {pstd}help file for {hi:adodown}{p_end}
 {hline}
@@ -30,7 +30,7 @@ That is the main purpose of this command.
 
 {title:Feedback, bug reports and contributions}
 
-{pstd}Read more about the commands in this package on the {browse "https://github.com/lsms-worldbank/adodown":GitHub repository} for the {inp:adodown} package.
+{pstd}Read more about the commands in this package on the {browse "https://github.com/lsms-worldbank/adodown":GitHub repository} for the {inp:adodown} package. 
 {p_end}
 
 {pstd}Please use the {browse "https://github.com/lsms-worldbank/adodown/issues":issues feature} e to communicate any feedback, report bugs, or to make feature requests.

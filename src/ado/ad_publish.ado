@@ -4,7 +4,7 @@ cap program drop   ad_publish
     program define ad_publish
 
     * Update the syntax. This is only a placeholder to make the command run
-    syntax, ADFolder(string) pkgversion(string) undoc_cmds(string) [debug]
+    syntax, ADFolder(string) undoc_cmds(string) [debug]
 
     ****
     ** Test folder input input
@@ -40,6 +40,7 @@ cap program drop   ad_publish
 
     * test version number
 
+    ad_get_pkg_meta, adfolder(`"`folderstd'"')
 
 
     ****
