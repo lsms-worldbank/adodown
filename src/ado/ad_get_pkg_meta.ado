@@ -22,30 +22,28 @@ qui {
     * Local to the src/ folder
     local srcfolderstd `"`adfolder'/src"'
 
-
+    * List .pkg files in src folder and then make sure there is only one
     local pkgfile : dir `"`srcfolderstd'"' files "*.pkg"	, respectcase
-    noi di `"`pkgfile'"'
-
     local count_pkg : list sizeof pkgfile
+    if (`count_pkg' != 1) {
+      * Erros message for missing pkg file
+      if (`count_pkg' == 0) local pkgerr "No"
+      * Error message for multiple files
+      if (`count_pkg' > 1 ) local pkgerr "Multiple"
 
-    noi di `count_pkg'
-    if (`count_pkg' == 0) {
-      noi di as error `"{phang}No package files on format {res:.pkg} was found in {res:"`srcfolderstd'/}.{p_end}"'
-      error 99
-      exit
-    }
-    if (`count_pkg' > 1) {
-      noi di as error `"{phang}Multiple package files on format {res:.pkg} was found in {res:"`srcfolderstd'/}.{p_end}"'
+      noi di as error `"{phang}`pkgerr' package files on format {res:.pkg} was found in {res:"`srcfolderstd'/}. Exactly one is required.{p_end}"'
       error 99
       exit
     }
 
+    * Remove "" that was needed if multiple files found
     local pkgfile `pkgfile'
 
-    tempname fh
     * Open template to read from and new tempfile to write to
-    file open `fh' using "`srcfolderstd'/`pkgfile'", read
+    tempname fh
+    file open `fh' using `"`srcfolderstd'/`pkgfile'"', read
 
+    * Initiate section local
     local section ""
 
     * Read first line
