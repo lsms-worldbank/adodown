@@ -46,6 +46,10 @@ qui {
     * Initiate section local
     local section ""
 
+    local adofiles ""
+    local hlpfiles ""
+    local ancfiles ""
+
     * Read first line
     file read `fh' line
     while r(eof)==0 {
@@ -101,8 +105,27 @@ qui {
           local date "`r(value)'"
         }
 
+        else if ("`section'" == "adofiles") {
+          extract_value, line("`line'") line_lead("f ") ///
+            format_error("{res:f ado/<commandname>.ado} where {res:<commandname>} is the name of a command.")
+          local adofiles `"`adofiles' "`r(value)'""'
+        }
+
+        else if ("`section'" == "helpfiles") {
+          extract_value, line("`line'") line_lead("f ") ///
+            format_error("{res:f stlhp/<commandname>.sthlp} where {res:<commandname>} is the name of a command.")
+          local hlpfiles `"`hlpfiles' "`r(value)'""'
+        }
+
+        else if ("`section'" == "ancillaryfiles") {
+          noi extract_value, line("`line'") line_lead("f ") line_lead2("F ") ///
+            format_error("{res:f <path_and_file>} or {res:F <path_and_file>} where {res:<path_and_file>} is the relative path from {res:src/} and the file name of the ancillary files.")
+          local ancfiles `"`ancfiles' "`r(value)'""'
+        }
+
         else {
-          //noi di "`line'"
+          noi di "`section'"
+          noi di "`line'"
         }
       }
 
@@ -113,10 +136,14 @@ qui {
     * Return locals
     return local stata_version   `sta_v'
     return local package_version `pkg_v'
-    return local author "`author'"
-    return local contact "`contact'"
-    return local url "`url'"
-    return local date "`date'"
+    return local date            `date'
+
+    return local author          = trim("`author'")
+    return local contact         = trim("`contact'")
+    return local url             = trim("`url'")
+    return local adofiles        = trim(`"`adofiles'"')
+    return local hlpfiles        = trim(`"`hlpfiles'"')
+    return local ancfiles        = trim(`"`ancfiles'"')
 }
 end
 
@@ -178,12 +205,16 @@ end
 cap program drop   extract_value
     program define extract_value, rclass
 
-    syntax, line(string) line_lead(string) format_error(string)
+    syntax, line(string) line_lead(string) [line_lead2(string)] format_error(string)
 
     local ll_len = strlen("`line_lead'")
+    local ll_len2 = strlen("`line_lead2'")
 
     if (substr("`line'",1,`ll_len') == "`line_lead'") {
       return local value = trim(substr("`line'",`ll_len'+1,.))
+    }
+    else if !missing("`line_lead2'") & (substr("`line'",1,`ll_len2') == "`line_lead2'") {
+      return local value = trim(substr("`line'",`ll_len2'+1,.))
     }
     else {
       noi di as error `"{phang}.pkg file error in line {res:`line'}. Valid formats for this row is only `format_error' {p_end}"'
