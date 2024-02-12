@@ -1,4 +1,4 @@
-*! version XX XXXXXXXXX ADAUTHORNAME ASCONTACTINFO
+*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
 cap program drop   ad_publish
     program define ad_publish
@@ -131,23 +131,19 @@ cap program drop   update_ado_version
     file open `ado_old' using `"`ado'"', read
     file open `ado_new' using `new_adofile' , write
 
-    local header = 1
-
-    * Skip old header
-    file read `ado_old' line
-    while (`header' == 1) {
-      if !missing("`line'") & (substr(trim("`line'"),1,10) == "*! version") {
-        local header 0
-      }
-    }
-
-    * Write new header
-    file write `ado_new' "`header'" _n _n
-
     * Write remaining file
     file read `ado_old' line
     while r(eof)==0 {
-      file write `ado_new' macval(line) _n
+
+      if (substr(trim(`"`macval(line)'"'),1,10) == "*! version") {
+        * Write new header
+        file write `ado_new' "`version_header'" _n
+      }
+      else {
+        file write `ado_new' `"`macval(line)'"' _n
+      }
+
+
       file read `ado_old' line
     }
 
