@@ -5,7 +5,7 @@ cap program drop   ad_get_pkg_meta
 
 qui {
 
-    version /* ADD VERSION NUMBER HERE */
+version 14.1
 
     * Update the syntax. This is only a placeholder to make the command run
     syntax , ADFolder(string)

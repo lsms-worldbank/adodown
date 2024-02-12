@@ -3,6 +3,8 @@
 cap program drop   ad_publish
     program define ad_publish
 
+version 14.1
+
     * Update the syntax. This is only a placeholder to make the command run
     syntax, ADFolder(string) [undoc_cmds(string) norender debug]
 

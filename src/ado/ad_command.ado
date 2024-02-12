@@ -4,6 +4,9 @@ cap program drop   ad_command
     program define ad_command
 
 qui {
+
+version 14.1
+
     syntax anything , ADFolder(string) PKGname(string) [UNDOCumented debug]
 
     *******************************************************
