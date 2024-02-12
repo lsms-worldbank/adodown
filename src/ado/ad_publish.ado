@@ -6,7 +6,7 @@ cap program drop   ad_publish
 version 14.1
 
     * Update the syntax. This is only a placeholder to make the command run
-    syntax, ADFolder(string) [undoc_cmds(string) norender debug]
+    syntax, ADFolder(string) [UNDocumented(string) norender debug]
 
     ****
     ** Test folder input input
@@ -37,19 +37,19 @@ version 14.1
 
     * Get meta data from package file
     ad_get_pkg_meta, adfolder(`"`folderstd'"')
-    local stata_vnum    "`r(stata_version)'"
-    local vnum    "`r(package_version)'"
-    local vdate   "`r(date)'"
-    local author  "`r(author)'"
-    local contact "`r(contact)'"
-    local ado_v_header "*! version `vnum' `vdate' `author' `contact'"
+    local stata_vnum "`r(stata_version)'"
+    local pkg_vnum   "`r(package_version)'"
+    local vdate      "`r(date)'"
+    local author     "`r(author)'"
+    local contact    "`r(contact)'"
+    local ado_v_header "*! version `pkg_vnum' `vdate' `author' `contact'"
 
     if ("`render'" != "norender") {
       cap ad_sthlp, adfolder(`"`folderstd'"')
       if _rc {
         noi di as error "{pstd}Error when rendering the .sthlp files from .mdhlp files. Run command {cmd:ad_sthlp()} and fix the error or use option {opt:norender} to not render the files and see if package can be published anyway.{p_end}"
         * Run it again without cap to return the error
-        ad_sthlp, adfolder(`"`folderstd'"') vnum("`vnum'") vdate("`vdate'")
+        ad_sthlp, adfolder(`"`folderstd'"') vnum("`pkg_vnum'") vdate("`vdate'")
       }
     }
 
@@ -69,38 +69,30 @@ version 14.1
       local hlps = "`hlps' " + subinstr("`sthfile'",".sthlp","",1)
     }
 
-    //noi di "Commands: `cmds'"
-    //noi di "Helpfiles: `hlps'"
-
-    * List docummented commands - i.e. ado files apart from undocummented files
-    * These are the commands that we expect a helpfile for
-    local doc_cmds : list cmds - undoc_cmds
-
-    * Get local with for docummented commands without helpfule and
-    * helpfiles without documented commands
-    local doc_cmds_without_hlp : list cmds - hlps
-    local hlps_without_doc_cmd : list hlps - cmds
-
-    * Test if any commands listed as undocummented commmands are not found
-    local undoc_cmds_not_found : list undoc_cmds - cmds
+    noi di "Commands: `cmds'"
+    noi di "Helpfiles: `hlps'"
 
     local ado_sthlp_error 0
 
-    * List if there are any commands listed as undoccumented not found
-    if !missing("`miss_undoc_cmds'") {
-      noi di as error "{pstd}The commands {inp:`miss_undoc_cmds'} listed as undocummented commands were not found in the ado folder {inp:`adofolder'}.{p_end}"
+    * Test if cmd in undocumented is not a command
+    local invalid_undocumented : list undocumented - cmds
+    if !missing("`invalid_undocumented'") {
+      noi di as error "{pstd}The command(s) {inp:`invalid_undocumented'} used in {opt:undocumented(`undocumented')} is not a command in the ado-folder.{p_end}"
       local ado_sthlp_error 1
     }
 
-    * List if there are any commands listed as undoccumented not found
-    if !missing("`doc_cmds_without_hlp'") {
-      noi di as error "{pstd}The command(s) {inp:`doc_cmds_without_hlp'} in the {inp:`adofolder'} folder does not have any help-file(s) in the {inp:`sthfolder'} folder.{p_end}"
+    * Test for helpfiles without ado-files
+    local sthlp_without_ado : list hlps - cmds
+    if !missing("`sthlp_without_ado'") {
+      noi di as error "{pstd}The help-files(s) {inp:`sthlp_without_ado'} in the {inp:`sthfolder'} folder does not have any command(s) in the {inp:`adofolder'} folder.{p_end}"
       local ado_sthlp_error 1
     }
 
-    * List if there are any commands listed as undoccumented not found
-    if !missing("`hlps_without_doc_cmd'") {
-      noi di as error "{pstd}The help-file(s) {inp:`hlps_without_doc_cmd'} in the {inp:`sthfolder'} folder does not have any command(s) in the {inp:`adofolder'} folder.{p_end}"
+    * Test if any commands listed as undocummented commmands are not found
+    local ado_without_sthlp : list cmds - hlps
+    local ado_without_sthlp : list ado_without_sthlp - undocumented
+    if !missing("`ado_without_sthlp'") {
+      noi di as error "{pstd}The command(s) {inp:`ado_without_sthlp'} in the {inp:`adofolder'} folder does not have any help-file(s) in the {inp:`sthfolder'} folder.{p_end}"
       local ado_sthlp_error 1
     }
 
@@ -114,10 +106,12 @@ version 14.1
     local miss_docs :  list doc_cmds - sthfiles
 
     foreach ado of local cmds {
-      noi update_ado_version, ///
-        vhead("`ado_v_header'") ///
-        stata_vnum("`stata_vnum'") ///
-        file(`"`adofolder'/`ado'.ado"')
+      noi update_ado_version,           ///
+        vhead("`ado_v_header'")         ///
+        pkg_vnum("`pkg_vnum'")          ///
+        stata_vnum("`stata_vnum'")      ///
+        file(`"`adofolder'/`ado'.ado"') ///
+        vdate("`vdate'")
     }
 
     // Remove when command is no longer in beta
@@ -127,7 +121,7 @@ end
 cap program drop   update_ado_version
     program define update_ado_version
 
-    syntax, vhead(string) stata_vnum(string) file(string)
+    syntax, vhead(string) pkg_vnum(string) stata_vnum(string) file(string) vdate(string)
 
     * Open template to read from and new tempfile to write to
     tempname ado_old ado_new
@@ -170,7 +164,21 @@ cap program drop   update_ado_version
 
           * Test if line is stata version seting
           else if (substr(ustrtrim("`line'"),1,7) == "version") {
-            file write `ado_new' "version `stata_vnum'" _n
+            file write `ado_new' "    version `stata_vnum'" _n
+            * Indicate that version header is used
+            local version_setting_used  = 1
+          }
+
+          * Test if line is stata version seting
+          else if (substr(ustrtrim("`line'"),1,13) == "local version") {
+            file write `ado_new' `"    local version "`pkg_vnum'" "' _n
+            * Indicate that version header is used
+            local version_setting_used  = 1
+          }
+
+          * Test if line is stata version seting
+          else if (substr(ustrtrim("`line'"),1,17) == "local versionDate") {
+            file write `ado_new' `"    local versionDate "`vdate'" "' _n
             * Indicate that version header is used
             local version_setting_used  = 1
           }
