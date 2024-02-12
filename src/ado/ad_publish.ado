@@ -111,7 +111,9 @@ cap program drop   ad_publish
     local miss_docs :  list doc_cmds - sthfiles
 
     foreach ado of local cmds {
-      update_ado_version, version_header("`ado_v_header'") ado(`"`adofolder'/`ado'.ado"')
+      if ("`ado'" != "ad_publish") {
+        noi update_ado_version, version_header("`ado_v_header'") ado(`"`adofolder'/`ado'.ado"')
+      }
     }
 
     // Remove when command is no longer in beta
@@ -134,6 +136,10 @@ cap program drop   update_ado_version
     * Write remaining file
     file read `ado_old' line
     while r(eof)==0 {
+
+      local line : subinstr local line `"""' "_char(34)", all
+      local line : subinstr local line "'" "_char(39)", all
+      local line : subinstr local line "`" "_char(96)", all
 
       if (substr(trim(`"`macval(line)'"'),1,10) == "*! version") {
         * Write new header
