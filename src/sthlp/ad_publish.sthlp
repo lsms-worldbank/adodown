@@ -11,7 +11,7 @@
 
 {title:Syntax}
 
-{phang}{bf:ad_publish} , {bf:{ul:adf}older}({it:string}) [{bf:{ul:und}ocumented}({it:string}) {bf:nogen_sthlp}]
+{phang}{bf:ad_publish} , {bf:{ul:adf}older}({it:string}) [{bf:{ul:und}ocumented}({it:string}) {bf:ssczip} {bf:nogen_sthlp}]
 {p_end}
 
 {synoptset 20}{...}
@@ -19,6 +19,7 @@
 {synoptline}
 {synopt: {bf:{ul:adf}older}({it:string})}Location where package folder already exists{p_end}
 {synopt: {bf:{ul:und}ocumented}({it:string})}List undocumented ado-files expected to not have a help-file{p_end}
+{synopt: {bf:ssczip}}Generates a Zip-archive ready to send to SSC{p_end}
 {synopt: {bf:nogen_sthlp}}Do not run {inp:ad_sthlp} on the package{p_end}
 {synoptline}
 
@@ -36,6 +37,9 @@
 {p_end}
 
 {pstd}{bf:{ul:und}ocumented}({it:string}) lists commands that are undocumented. Undocumented commands are not expected to have an help-file. This command throws an error if an expected help-file is missing. Undocumented commands are typically commands for testing or commands used as a utility in other commands in this package.
+{p_end}
+
+{pstd}{bf:ssczip} generates a zip-archive ready to send to SSC. This zip-archive only include the ado-files, sthlp-files and ancillary files listed in the pkg-file. SSC require that all files are included without any subfolders, or any pkg-files or toc-files. 
 {p_end}
 
 {pstd}{bf:nogen_sthlp} disables the generation of {inp:.sthlp}-files from the {inp:.mdhlp}-files. If not used this command will run {inp:ad_sthlp()} on the package in {inp:adfolder()}. 

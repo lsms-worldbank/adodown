@@ -41,6 +41,6 @@
     net install adodown, from("${src}") replace
 
     * Test basic case of the command ad_get_pkg_meta
-    ad_publish, adf("${root}")
+    ad_publish, adf("${root}") und(ad_get_pkg_meta) ssczip
     return list
     // Add more tests here...

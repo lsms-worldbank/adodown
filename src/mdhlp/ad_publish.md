@@ -4,12 +4,13 @@ __ad_publish__ - This command is used for short description.
 
 # Syntax
 
-__ad_publish__ , __**adf**older__(_string_) [__**und**ocumented__(_string_) __nogen_sthlp__]
+__ad_publish__ , __**adf**older__(_string_) [__**und**ocumented__(_string_) __ssczip__ __nogen_sthlp__]
 
 | _options_ | Description |
 |-----------|-------------|
 | __**adf**older__(_string_) | Location where package folder already exists |
 | __**und**ocumented__(_string_) | List undocumented ado-files expected to not have a help-file |
+| __ssczip__ | Generates a Zip-archive ready to send to SSC  |
 | __nogen_sthlp__ | Do not run `ad_sthlp` on the package   |
 
 # Description
@@ -23,6 +24,8 @@ It then takes package version and Stata version from the `.pkg`-file in this pac
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
 __**und**ocumented__(_string_) lists commands that are undocumented. Undocumented commands are not expected to have an help-file. This command throws an error if an expected help-file is missing. Undocumented commands are typically commands for testing or commands used as a utility in other commands in this package.
+
+__ssczip__ generates a zip-archive ready to send to SSC. This zip-archive only include the ado-files, sthlp-files and ancillary files listed in the pkg-file. SSC require that all files are included without any subfolders, or any pkg-files or toc-files. 
 
 __nogen_sthlp__ disables the generation of `.sthlp`-files from the `.mdhlp`-files. If not used this command will run `ad_sthlp()` on the package in `adfolder()`.
 

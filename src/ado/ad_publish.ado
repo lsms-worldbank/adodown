@@ -3,10 +3,12 @@
 cap program drop   ad_publish
     program define ad_publish
 
+qui {
+
     version 14.1
 
     * Update the syntax. This is only a placeholder to make the command run
-    syntax, ADFolder(string) [UNDocumented(string) norender debug]
+    syntax, ADFolder(string) [UNDocumented(string) nogen_sthlp ssczip debug]
 
     ****
     ** Test folder input input
@@ -16,6 +18,7 @@ cap program drop   ad_publish
     local srcfolder	= `"`adfolder'/src"'
     local adofolder	= `"`srcfolder'/ado"'
     local sthfolder	= `"`srcfolder'/sthlp"'
+    local sscfolder	= `"`srcfolder'/dev/ssc"'
 
     * Test for adodown folders expected in the folder
     foreach ad_fld in folderstd srcfolder adofolder sthfolder {
@@ -35,26 +38,37 @@ cap program drop   ad_publish
       exit
     }
 
+    ********************************************************
+    ** Get Meta data
+
     * Get meta data from package file
     ad_get_pkg_meta, adfolder(`"`folderstd'"')
+    local pkgname    "`r(pkgname)'"
     local stata_vnum "`r(stata_version)'"
     local pkg_vnum   "`r(package_version)'"
     local vdate      "`r(date)'"
     local author     "`r(author)'"
     local contact    "`r(contact)'"
+    local pkg_ados  `"`r(adofiles)'"'
+    local pkg_hlps  `"`r(hlpfiles)'"'
+    local pkg_ancs  `"`r(ancfiles)'"'
+
     local ado_v_header "*! version `pkg_vnum' `vdate' `author' `contact'"
 
-    if ("`render'" != "norender") {
+    ********************************************************
+    ** Generate the sthlp files
+
+    if ("`render'" != "nogen_sthlp") {
       cap ad_sthlp, adfolder(`"`folderstd'"')
       if _rc {
-        noi di as error "{pstd}Error when rendering the .sthlp files from .mdhlp files. Run command {cmd:ad_sthlp()} and fix the error or use option {opt:norender} to not render the files and see if package can be published anyway.{p_end}"
+        noi di as error "{pstd}Error when rendering the .sthlp files from .mdhlp files. Run command {cmd:ad_sthlp()} and fix the error or use option {opt:nogen_sthlp} to not render the files and see if package can be published anyway.{p_end}"
         * Run it again without cap to return the error
-        ad_sthlp, adfolder(`"`folderstd'"') vnum("`pkg_vnum'") vdate("`vdate'")
+        noi ad_sthlp, adfolder(`"`folderstd'"') vnum("`pkg_vnum'") vdate("`vdate'")
       }
     }
 
 
-    ****
+    ********************************************************
     ** List all ado-files and helpfiles to make sure required files exists
 
     * List ado-files
@@ -99,8 +113,8 @@ cap program drop   ad_publish
       exit
     }
 
-    *Make sure that all commands
-    local miss_docs :  list doc_cmds - sthfiles
+    ********************************************************
+    ** pdate versioning meta data in adofiles
 
     foreach ado of local cmds {
       noi update_ado_version,           ///
@@ -111,8 +125,49 @@ cap program drop   ad_publish
         vdate("`vdate'")
     }
 
+    ********************************************************
+    ** generate the zip-file for ssc
+
+    if !missing("`ssczip'") {
+
+      local old_pwd `c(pwd)'
+
+      * Create the ssc-version folder
+      cap mkdir "`sscfolder'"
+      local vfldr "`sscfolder'/v`pkg_vnum'"
+      cap mkdir "`vfldr'"
+
+      * Copy all files in the pkg file to the ssc-version folder
+      foreach ado of local pkg_ados {
+        split_file_extentsion, file("`ado'")
+        copy `"`adofolder'/`r(file_name)'"' `"`vfldr'/`r(file_name)'"', replace
+      }
+      foreach hlp of local pkg_hlps {
+        split_file_extentsion, file("`hlp'")
+        copy `"`sthfolder'/`r(file_name)'"' `"`vfldr'/`r(file_name)'"', replace
+      }
+      foreach anc of local pkg_ancs {
+        split_file_extentsion, file("`anc'")
+        copy `"`srcfolder'/`anc'"' `"`vfldr'/`r(file_name)'"', replace
+      }
+
+      local zipfile "`vfldr'/`pkgname'.zip"
+      cap rm "`zipfile'"
+
+      * Change pwd to ssc-version folder
+      cd "`vfldr'"
+
+      * Compress the package the way ssc wants it
+      zipfile * , saving("`zipfile'", replace)
+      noi di as text "{pstd}Zip-archive ready to send to SSC was saved at  {res:`zipfile'}.{p_end}"
+
+      * Restore the pwd
+      cd "`old_pwd'"
+    }
+
     // Remove when command is no longer in beta
     noi adodown "beta ad_publish"
+}
 end
 
 cap program drop   update_ado_version
@@ -213,5 +268,20 @@ cap program drop   update_ado_version
 
     copy "`new_adofile'" `"`file'"', replace
 
+end
 
+
+* Splits a file name into its name and its extension
+cap program drop 	split_file_extentsion
+	program define	split_file_extentsion, rclass
+
+	syntax, file(string)
+
+  local file	= subinstr(`"`file'"',"\","/",.)
+
+	**Find the last / in the file path
+  local slash_index = strpos(strreverse("`file'"),"/")
+
+	** Find file name and extension based on the last / in the file
+	return local file_name  = substr("`file'",1-`slash_index',.)
 end
