@@ -3,7 +3,7 @@
 cap program drop   adodown
     program define adodown, rclass
 
-version 14.1
+    version 14.1
 
     * UPDATE THESE LOCALS FOR EACH NEW VERSION PUBLISHED
   	local version "1.0"
@@ -12,11 +12,9 @@ version 14.1
 
   	syntax [anything]
 
-  	version 12
-
     * Prepare returned locals
-    return local versiondate     "`versionDate'"
-    return local version		      = `version'
+    return local versiondate   "`versionDate'"
+    return local version		  = `version'
 
     if missing(`"`anything'"') {
       * Display output

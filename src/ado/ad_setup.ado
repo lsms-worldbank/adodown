@@ -4,7 +4,7 @@ cap program drop   ad_setup
     program define ad_setup
 qui {
 
-version 14.1
+    version 14.1
 
     syntax, ADFolder(string) [ ///
       Name(string)             ///

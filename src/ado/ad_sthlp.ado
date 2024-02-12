@@ -4,7 +4,7 @@ cap program drop   ad_sthlp
     program define ad_sthlp
   qui {
 
-version 14.1
+    version 14.1
 
     syntax, ADFolder(string) ///
       [ ///
