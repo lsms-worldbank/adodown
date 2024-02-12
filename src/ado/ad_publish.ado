@@ -69,8 +69,8 @@ version 14.1
       local hlps = "`hlps' " + subinstr("`sthfile'",".sthlp","",1)
     }
 
-    noi di "Commands: `cmds'"
-    noi di "Helpfiles: `hlps'"
+    //noi di "Commands: `cmds'"
+    //noi di "Helpfiles: `hlps'"
 
     * List docummented commands - i.e. ado files apart from undocummented files
     * These are the commands that we expect a helpfile for
