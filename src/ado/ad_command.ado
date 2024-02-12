@@ -1,4 +1,4 @@
-*! version XX XXXXXXXXX AUTHOR CONTACT
+*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
 cap program drop   ad_command
     program define ad_command

@@ -1,4 +1,4 @@
-*! version XX XXXXXXXXX ADAUTHORNAME ADCONTACTINFO
+*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
 cap program drop   ad_get_pkg_meta
     program define ad_get_pkg_meta, rclass

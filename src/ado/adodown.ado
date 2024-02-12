@@ -1,4 +1,4 @@
-*! version 1.0 05NOV2023 LSMS TEam lsms@worldbank.org
+*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
 cap program drop   adodown
     program define adodown, rclass
