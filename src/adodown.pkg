@@ -23,7 +23,6 @@ F ado/ad_setup.ado
 F ado/ad_command.ado
 F ado/ad_sthlp.ado
 *** helpfiles
-f sthlp/ad_get_pkg_meta.sthlp
 f sthlp/adodown.sthlp
 f sthlp/ad_publish.sthlp
 F sthlp/ad_command.sthlp
