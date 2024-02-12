@@ -123,40 +123,86 @@ end
 cap program drop   update_ado_version
     program define update_ado_version
 
-    syntax, version_header(string) ado(string)
+    syntax, vhead(string) vnum(string) file(string)
 
-    noi di `"`ado'"'
+    noi di `"`file'"'
 
     * Open template to read from and new tempfile to write to
     tempname ado_old ado_new
     tempfile new_adofile
-    file open `ado_old' using `"`ado'"', read
+    file open `ado_old' using `"`file'"', read
     file open `ado_new' using `new_adofile' , write
+
+    local syntax_over = 0
+    local version_header_used  = 0
+    local version_setting_used = 0
 
     * Write remaining file
     file read `ado_old' line
     while r(eof)==0 {
 
-      local line : subinstr local line `"""' "_char(34)", all
-      local line : subinstr local line "'" "_char(39)", all
-      local line : subinstr local line "`" "_char(96)", all
+        * Escape all characters that will mess with str end or start
+        local line : subinstr local line `"""' `"" _char(34) ""', all
+        local line : subinstr local line "'"   `"" _char(39) ""', all
+        local line : subinstr local line "`"   `"" _char(96) ""', all
 
-      if (substr(trim(`"`macval(line)'"'),1,10) == "*! version") {
-        * Write new header
-        file write `ado_new' "`version_header'" _n
-      }
-      else {
-        file write `ado_new' `"`macval(line)'"' _n
-      }
+        * This command only make changes to items before the first "syntax"
+        * So do not perform any replacements after the initial syntax
+        if (`syntax_over' != 1) {
 
+          * Test if this line is the syntax line
+          if (substr(ustrtrim("`line'"),1,6) == "syntax") {
+            * If it is, set local to 1 and just write the line
+            local syntax_over 1
+            else file write `ado_new' "`line'" _n
+          }
 
-      file read `ado_old' line
+          * Test if line is version header
+          else if (substr(ustrtrim("`line'"),1,10) == "*! version") {
+            * Update the version header
+            file write `ado_new' "`vhead'" _n
+            * Indicate that version header is used
+            local version_header_used  = 1
+          }
+
+          * Test if line is stata version seting
+          else if (substr(ustrtrim("`line'"),1,7) == "version") {
+            * Get current version setting
+            local current_vnum : word 2 of `line'
+            * Make sure that target version u used
+            local line = subinstr("`line'","`current_vnum'","`vnum'",1)
+
+            file write `ado_new' "`line'" _n
+            * Indicate that version header is used
+            local version_setting_used  = 1
+          }
+
+          * Before syntax but wite line as is
+          else file write `ado_new' "`line'" _n
+        }
+        * Before syntax but wite line as is
+        else file write `ado_new' "`line'" _n
+
+        * REad next line
+        file read `ado_old' line
     }
 
     file close `ado_old'
     file close `ado_new'
 
-    copy "`new_adofile'" `"`ado'"', replace
+    if (`version_header_used' == 0) {
+      noi di as error `"{pstd}The ado-file {inp:`file'} does not have a version header.{p_end}"'
+      error 99
+      exit
+    }
+
+    if (`version_setting_used' == 0) {
+      noi di as error `"{pstd}The ado-file {inp:`file'} does not set Stata version before syntax.{p_end}"'
+      error 99
+      exit
+    }
+
+    copy "`new_adofile'" `"`file'"', replace
 
 
 end
