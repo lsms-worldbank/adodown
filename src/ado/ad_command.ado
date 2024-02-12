@@ -154,7 +154,7 @@ qui {
           findfile `template'
         }
 
-        if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"
+        if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"'
       }
 
       *******************
