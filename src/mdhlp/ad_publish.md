@@ -4,12 +4,12 @@ __ad_publish__ - This command is used for short description.
 
 # Syntax
 
-__ad_publish__ , __**adf**older__(_string_) [__undoc_cmds__(_string_) __nogen_sthlp__]
+__ad_publish__ , __**adf**older__(_string_) [__**und**ocumented__(_string_) __nogen_sthlp__]
 
 | _options_ | Description |
 |-----------|-------------|
 | __**adf**older__(_string_) | Location where package folder already exists |
-| __undoc_cmds__(_string_) | List undocumented ado-files expected to not have a help-file |
+| __**und**ocumented__(_string_) | List undocumented ado-files expected to not have a help-file |
 | __nogen_sthlp__ | Do not run `ad_sthlp` on the package   |
 
 # Description
@@ -22,7 +22,7 @@ It then takes package version and Stata version from the `.pkg`-file in this pac
 
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
-__undoc_cmds__(_string_) lists commands that are undocumented. Undocumented commands are not expected to have an help-file. This command throws an error if an expected help-file is missing. Undocumented commands are typically commands for testing or commands used as a utility in other commands in this package.
+__**und**ocumented__(_string_) lists commands that are undocumented. Undocumented commands are not expected to have an help-file. This command throws an error if an expected help-file is missing. Undocumented commands are typically commands for testing or commands used as a utility in other commands in this package.
 
 __nogen_sthlp__ disables the generation of `.sthlp`-files from the `.mdhlp`-files. If not used this command will run `ad_sthlp()` on the package in `adfolder()`.
 
@@ -30,7 +30,7 @@ __nogen_sthlp__ disables the generation of `.sthlp`-files from the `.mdhlp`-file
 
 ## Example 1
 
-This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to, and that some commands have already been created. Any mdhlp-files in the `mdhlp` folder in the folder `myfolder` is pointing to will be rendered to Stata helpfile format and saved in the `sthlp` folder. Then the command will update the version meta data 
+This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to, and that some commands have already been created. Any mdhlp-files in the `mdhlp` folder in the folder `myfolder` is pointing to will be rendered to Stata helpfile format and saved in the `sthlp` folder. Then the command will update the version meta data
 
 ```
 * point a local to the folder where the package will be created
