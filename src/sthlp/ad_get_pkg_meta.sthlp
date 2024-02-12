@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1 20230724}{...}
+{* *! version 0.1 11FEB2024}{...}
 {hline}
 {pstd}help file for {hi:ad_get_pkg_meta}{p_end}
 {hline}
