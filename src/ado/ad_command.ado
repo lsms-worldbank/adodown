@@ -1,9 +1,12 @@
-*! version XX XXXXXXXXX AUTHOR CONTACT
+*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
 cap program drop   ad_command
     program define ad_command
 
 qui {
+
+version 14.1
+
     syntax anything , ADFolder(string) PKGname(string) [UNDOCumented debug]
 
     *******************************************************
@@ -154,7 +157,7 @@ qui {
           findfile `template'
         }
 
-        if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"
+        if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"'
       }
 
       *******************

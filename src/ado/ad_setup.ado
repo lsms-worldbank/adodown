@@ -1,8 +1,11 @@
-*! version XX XXXXXXXXX ADAUTHORNAME ASCONTACTINFO
+*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
 cap program drop   ad_setup
     program define ad_setup
 qui {
+
+version 14.1
+
     syntax, ADFolder(string) [ ///
       Name(string)             ///
       Description(string)      ///

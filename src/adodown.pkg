@@ -1,31 +1,29 @@
 * This package file is generated in the adodown workflow. Do not edit directly.
 *** version
-v 0.0
+v 0.1
 *** name
 d adodown
 *** description
 d mydescription
-d
 *** stata
 d Version: Stata 14.1
-d
 *** author
-d Author:
+d Author: LSMS Team, World Bank
 *** contact
-d Contact: test@mail.com
+d Contact: lsms@worldbank.org
 *** url
 d URL: https://github.com/lsms-worldbank/adodown
-d
 *** date
 d Distribution-Date: 20230724
-d
 *** adofiles
+f ado/ad_get_pkg_meta.ado
 f ado/adodown.ado
 f ado/ad_publish.ado
 F ado/ad_setup.ado
 F ado/ad_command.ado
 F ado/ad_sthlp.ado
 *** helpfiles
+f sthlp/ad_get_pkg_meta.sthlp
 f sthlp/adodown.sthlp
 f sthlp/ad_publish.sthlp
 F sthlp/ad_command.sthlp
