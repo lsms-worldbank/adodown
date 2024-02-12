@@ -10,7 +10,6 @@ qui {
     * Update the syntax. This is only a placeholder to make the command run
     syntax , ADFolder(string)
 
-
     * Test and standardize folder local
     local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
     mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'"))
@@ -71,7 +70,7 @@ qui {
         else if ("`section'" == "name") {
           local pkgname = subinstr("`pkgfile'",".pkg","",.)
           verify_name, line(`"`line'"') pkgname(`pkgname')
-          noi return list
+          local pkgname "`pkgname'"
         }
         else if ("`section'" == "description") {
           //do nothing for now
@@ -124,8 +123,8 @@ qui {
         }
 
         else {
-          noi di "`section'"
-          noi di "`line'"
+          //noi di "`section'"
+          //noi di "`line'"
         }
       }
 
@@ -134,6 +133,7 @@ qui {
     }
 
     * Return locals
+    return local pkgname        "`pkgname'"
     return local stata_version   `sta_v'
     return local package_version `pkg_v'
     return local date            `date'
