@@ -6,9 +6,9 @@ cap program drop   adodown
     version 14.1
 
     * UPDATE THESE LOCALS FOR EACH NEW VERSION PUBLISHED
-  	local version "1.0"
-  	local versionDate "05NOV2023"
-    local cmd    "adodown"
+  	local version     "1.0"
+    local versionDate "20230724" 
+    local cmd         "adodown"
 
   	syntax [anything]
 

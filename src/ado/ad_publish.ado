@@ -69,9 +69,6 @@ cap program drop   ad_publish
       local hlps = "`hlps' " + subinstr("`sthfile'",".sthlp","",1)
     }
 
-    noi di "Commands: `cmds'"
-    noi di "Helpfiles: `hlps'"
-
     local ado_sthlp_error 0
 
     * Test if cmd in undocumented is not a command
@@ -170,7 +167,7 @@ cap program drop   update_ado_version
           }
 
           * Test if line is stata version seting
-          else if (substr(ustrtrim("`line'"),1,13) == "local version") {
+          else if (substr(ustrtrim("`line'"),1,14) == "local version ") {
             file write `ado_new' `"    local version "`pkg_vnum'" "' _n
             * Indicate that version header is used
             local version_setting_used  = 1
