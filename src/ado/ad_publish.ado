@@ -112,12 +112,10 @@ cap program drop   ad_publish
     local miss_docs :  list doc_cmds - sthfiles
 
     foreach ado of local cmds {
-      if ("`ado'" != "ad_publish") {
-        noi update_ado_version, ///
-          vhead("`ado_v_header'") ///
-          stata_vnum("`stata_vnum'") ///
-          file(`"`adofolder'/`ado'.ado"')
-      }
+      noi update_ado_version, ///
+        vhead("`ado_v_header'") ///
+        stata_vnum("`stata_vnum'") ///
+        file(`"`adofolder'/`ado'.ado"')
     }
 
     // Remove when command is no longer in beta
@@ -128,8 +126,6 @@ cap program drop   update_ado_version
     program define update_ado_version
 
     syntax, vhead(string) stata_vnum(string) file(string)
-
-    noi di `"`file'"'
 
     * Open template to read from and new tempfile to write to
     tempname ado_old ado_new
@@ -190,6 +186,9 @@ cap program drop   update_ado_version
     file close `ado_old'
     file close `ado_new'
 
+    ************************
+    * Test that required items were found
+
     if (`version_header_used' == 0) {
       noi di as error `"{pstd}The ado-file {inp:`file'} does not have a version header.{p_end}"'
       error 99
@@ -201,6 +200,9 @@ cap program drop   update_ado_version
       error 99
       exit
     }
+
+    ************************
+    * Overwrite org fine with tempfile
 
     copy "`new_adofile'" `"`file'"', replace
 
