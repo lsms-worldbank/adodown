@@ -35,6 +35,7 @@ cap program drop   ad_publish
 
     * Get meta data from package file
     ad_get_pkg_meta, adfolder(`"`folderstd'"')
+    local stata_vnum    "`r(stata_version)'"
     local vnum    "`r(package_version)'"
     local vdate   "`r(date)'"
     local author  "`r(author)'"
@@ -112,7 +113,10 @@ cap program drop   ad_publish
 
     foreach ado of local cmds {
       if ("`ado'" != "ad_publish") {
-        noi update_ado_version, version_header("`ado_v_header'") ado(`"`adofolder'/`ado'.ado"')
+        noi update_ado_version, ///
+          vhead("`ado_v_header'") ///
+          stata_vnum("`stata_vnum'") ///
+          file(`"`adofolder'/`ado'.ado"')
       }
     }
 
@@ -123,7 +127,7 @@ end
 cap program drop   update_ado_version
     program define update_ado_version
 
-    syntax, vhead(string) vnum(string) file(string)
+    syntax, vhead(string) stata_vnum(string) file(string)
 
     noi di `"`file'"'
 
@@ -145,6 +149,7 @@ cap program drop   update_ado_version
         local line : subinstr local line `"""' `"" _char(34) ""', all
         local line : subinstr local line "'"   `"" _char(39) ""', all
         local line : subinstr local line "`"   `"" _char(96) ""', all
+        local line : subinstr local line "$"   `"" _char(36) ""', all
 
         * This command only make changes to items before the first "syntax"
         * So do not perform any replacements after the initial syntax
@@ -154,7 +159,7 @@ cap program drop   update_ado_version
           if (substr(ustrtrim("`line'"),1,6) == "syntax") {
             * If it is, set local to 1 and just write the line
             local syntax_over 1
-            else file write `ado_new' "`line'" _n
+            file write `ado_new' "`line'" _n
           }
 
           * Test if line is version header
@@ -167,12 +172,7 @@ cap program drop   update_ado_version
 
           * Test if line is stata version seting
           else if (substr(ustrtrim("`line'"),1,7) == "version") {
-            * Get current version setting
-            local current_vnum : word 2 of `line'
-            * Make sure that target version u used
-            local line = subinstr("`line'","`current_vnum'","`vnum'",1)
-
-            file write `ado_new' "`line'" _n
+            file write `ado_new' "version `stata_vnum'" _n
             * Indicate that version header is used
             local version_setting_used  = 1
           }
