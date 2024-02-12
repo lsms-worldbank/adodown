@@ -12,8 +12,4 @@
   cap net uninstall adodown
   net install adodown, from("${src_fldr}") replace
 
-
-  //ad_command create adodown , adf("${clone}") pkg(adodown)
-
-
-  ad_sthlp , adf("${clone}")
+  ad_publish, adf("${clone}") undocumented(ad_get_pkg_meta) ssczip
