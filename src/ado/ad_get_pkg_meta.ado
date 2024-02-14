@@ -199,8 +199,8 @@ end
 cap program drop   verify_stata_version
     program define verify_stata_version, rclass
     syntax, line(string)
-    if (substr("`line'",1,16) == "d Version: Stata") {
-      local sta_v = trim(substr("`line'",17,.))
+    if (substr("`line'",1,25) == "d Requires: Stata version") {
+      local sta_v = trim(substr("`line'",26,.))
       //TODO: test that version is valid
       return local sta_v `sta_v'
     }
