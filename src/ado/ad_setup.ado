@@ -471,9 +471,9 @@ cap program drop   populate_pkg
 
 
         if "`line'" == "*** version" local section "write_asis"
-        if "`line'" == "*** name" {
+        if "`line'" == "*** title" {
             local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d `name'" _n
+            file write `pkg_write' "`macval(line)'" _n `"d '`name'': module to <write short description here>"' _n
         }
         if "`line'" == "*** description" {
             local section "write_custom"

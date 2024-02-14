@@ -1,7 +1,7 @@
 * This package file is generated in the adodown workflow. Do not edit directly.
 *** version
 v 0.0
-*** name
+*** title
 d
 *** description
 d
@@ -18,7 +18,6 @@ d URL:
 d
 *** date
 d Distribution-Date:
-d
 *** adofiles
 
 *** helpfiles

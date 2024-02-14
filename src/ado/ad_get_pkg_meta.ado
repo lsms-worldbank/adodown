@@ -61,15 +61,23 @@ qui {
         local section = trim(substr("`line'",4,.))
       }
 
-      * If not, process content of section
+      * Test if empty line
+      else if (trim("`line'") == "d") {
+        * Empty lines are ok apart from in these sections.
+        if inlist("`section'","version", "title") {
+          noi di as error `"{phang}Empty {res:d} line is not allowed in section version or title.{p_end}"'
+        }
+      }
+
+      * If neither section head or empty line, process content of section
       else {
         if ("`section'" == "version") {
           verify_package_version, line(`"`line'"')
           local pkg_v `r(pkg_v)'
         }
-        else if ("`section'" == "name") {
+        else if ("`section'" == "title") {
           local pkgname = subinstr("`pkgfile'",".pkg","",.)
-          verify_name, line(`"`line'"') pkgname(`pkgname')
+          verify_title, line(`"`line'"') pkgname(`pkgname')
           local pkgname "`pkgname'"
         }
         else if ("`section'" == "description") {
@@ -165,19 +173,23 @@ cap program drop   verify_package_version
     }
 end
 
-cap program drop   verify_name
-    program define verify_name, rclass
+cap program drop   verify_title
+    program define verify_title, rclass
 
     syntax, line(string) pkgname(string)
 
+    local pkgname_upper = strupper("`pkgname'")
+
     * Test that line is "d <pkgname>".
-    * This verifies that the pkg file name matches the name in the file
-    if ("`line'" == "d `pkgname'") {
+    * This verifies that the pkg file name matches the title in the file
+    local ll_len = strlen("d '`pkgname_upper''")
+
+    if (substr("`line'",1,`ll_len') == "d '`pkgname_upper''") {
       // line is correclty formatted pkgname - OK
       // Nothing needs to be returned as this infor was already known
     }
     else {
-      noi di as error `"{phang}.pkg file error in line {res:`line'}. Only rows on format {res:d `pkgname'} are allowed in this section.{p_end}"'
+      noi di as error `"{phang}.pkg file error in title line {res:`line'}. Only rows on format {res:d '`pkgname_upper'' <title>} are allowed. Package name must be upper case only and {res:<title>} is the together with the package name the title that shows up when using {res:net}/{res:ssc} {res:describe}.{p_end}"'
       error 99
       exit
     }
