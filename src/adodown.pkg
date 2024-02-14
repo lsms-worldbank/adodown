@@ -7,7 +7,7 @@ d 'ADODOWN': module to set up and manage Stata packages
 d mydescription
 d
 *** stata
-d Version: Stata 14.1
+d Requires: Stata version 14.1
 d
 *** author
 d Author: LSMS Team, World Bank
