@@ -22,7 +22,6 @@
 !.gitattributes
 !.github/**/*.yaml
 
-
 # Git placeholder file (to commit empty folders)
 !/**/*.gitkeep
 
@@ -30,6 +29,9 @@
 !README.md
 !CONTRIBUTING.md
 !LICENSE*
+
+* Unignore reproot files
+!reproot*.yaml
 
 #######################
 # For performance reasons, if a folder is already ignored, then
