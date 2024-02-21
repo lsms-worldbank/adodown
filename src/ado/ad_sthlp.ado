@@ -2,7 +2,8 @@
 
 cap program drop   ad_sthlp
     program define ad_sthlp
-  qui {
+
+qui {
 
     version 14.1
 
@@ -356,8 +357,6 @@ cap program drop   	apply_inline_formatting
         if (`ital_span' == 0) local itag "{it:"
         else local itag "}"
 
-
-
         local pre   = substr("`line'",1,`i'-1)
         local post1 = substr("`line'",`i'+1,.)
         local post2 = substr("`line'",`i'+2,.)
@@ -578,17 +577,22 @@ cap program drop   	parse_hyperlinks
    local link = substr(`"`line'"',`lp2_i'+2,`lp3_i'-`lp2_i'-2)
 
    * Make a recurisive call on the rest of the line
-   local post = substr(`"`line'"',`lp3_i'+1,.)
+   local rest_of_line = substr(`"`line'"',`lp3_i'+1,.)
 
    * Remove smcl formatting from within links
    hyperlink_sanitize_smcl, link(`"`link'"') text(`"`text'"')
    local link `"`r(link)'"'
    local text `"`r(text)'"'
 
-   * Recursivley parse rest of line for more links and
-   * then return the line with smcl link
-   noi parse_hyperlinks, line(`"`post'"')
-   return local line `"`pre'{browse "`link'":`text'}`r(line)'"'
+   //If text exists after link, parse that string recurisively for more links
+   if !missing("`rest_of_line'") {
+     * Recursivley parse rest of line for more links and
+     * then return the line with smcl link
+     noi parse_hyperlinks, line(`"`rest_of_line'"')
+     local rest_of_line "`r(line)'"
+   }
+   //return the line
+   return local line `"`pre'{browse "`link'":`text'}`rest_of_line'"'
  }
 
  * No link found, return line as is
