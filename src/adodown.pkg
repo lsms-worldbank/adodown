@@ -19,6 +19,7 @@ d
 *** date
 d Distribution-Date: 20230724
 *** adofiles
+f ado/ad_update.ado
 f ado/ad_get_pkg_meta.ado
 f ado/adodown.ado
 f ado/ad_publish.ado
@@ -26,6 +27,7 @@ f ado/ad_setup.ado
 f ado/ad_command.ado
 f ado/ad_sthlp.ado
 *** helpfiles
+f sthlp/ad_update.sthlp
 f sthlp/adodown.sthlp
 f sthlp/ad_publish.sthlp
 f sthlp/ad_command.sthlp
