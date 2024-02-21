@@ -7,31 +7,47 @@ qui {
 
     version 14.1
 
-    syntax , ADFolder(string) [newtitle(string) newpkgversion(string) newstataversion(string) newauthor(string) newcontact(string) newurl(string)]
+    syntax ,  [ADFolder(string) pkgfile(string) pkgname(string) newtitle(string) newpkgversion(string) newstataversion(string) newauthor(string) newcontact(string) newurl(string) newdate(string)]
 
-    * Test and standardize folder local
-    local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
-    mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'"))
-    if `r(dirExist)' == 0  {
-      noi di as error `"{phang}The folder used in adfolder(`adfolder') does not exist.{p_end}"'
+    if missing("`adfolder'`pkgfile'") {
+      noi di as error `"{phang}Either {opt:adfolder()} or {opt:pkgfile()} must be used.{p_end}"'
       error 99
       exit
     }
-    * Local to the src/ folder
-    local srcfolderstd `"`adfolder'/src"'
 
-    * List .pkg files in src folder and then make sure there is only one
-    local pkgfile : dir `"`srcfolderstd'"' files "*.pkg"	, respectcase
-    local count_pkg : list sizeof pkgfile
-    if (`count_pkg' != 1) {
-      * Erros message for missing pkg file
-      if (`count_pkg' == 0) local pkgerr "No"
-      * Error message for multiple files
-      if (`count_pkg' > 1 ) local pkgerr "Multiple"
+    if !missing("`pkgfile'") {
+      assert !missing("`pkgname'")
+    }
+    else {
 
-      noi di as error `"{phang}`pkgerr' package files on format {res:.pkg} was found in {res:"`srcfolderstd'/}. Exactly one is required.{p_end}"'
-      error 99
-      exit
+      * Test and standardize folder local
+      local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
+      mata : st_numscalar("r(dirExist)", direxists("`adfolderstd'"))
+      if `r(dirExist)' == 0  {
+        noi di as error `"{phang}The folder used in adfolder(`adfolder') does not exist.{p_end}"'
+        error 99
+        exit
+      }
+      * Local to the src/ folder
+      local srcfolderstd `"`adfolder'/src/"'
+
+      * List .pkg files in src folder and then make sure there is only one
+      local pkgfile : dir `"`srcfolderstd'"' files "*.pkg"	, respectcase
+      local count_pkg : list sizeof pkgfile
+      if (`count_pkg' != 1) {
+        * Erros message for missing pkg file
+        if (`count_pkg' == 0) local pkgerr "No"
+        * Error message for multiple files
+        if (`count_pkg' > 1 ) local pkgerr "Multiple"
+
+        noi di as error `"{phang}`pkgerr' package files on format {res:.pkg} was found in {res:"`srcfolderstd'}. Exactly one is required.{p_end}"'
+        error 99
+        exit
+      }
+
+      * Remove "" that was needed if multiple files found
+      local pkgfile `pkgfile'
+      local pkgname = subinstr("`pkgfile'",".pkg","",.)
     }
 
     * Test if file should be updated
@@ -40,25 +56,26 @@ qui {
       local update "update"
     }
 
+    * Tests and handling of new date
+    if !missing("`newdate'") & !missing("`newpkgversion'") {
+      noi di as error `"{phang}{opt:newdate()} may only be used if {opt:newpkgversion()} is also used.{p_end}"'
+      error 99
+      exit
+    }
+    if missing("`newdate'") & !missing("`newpkgversion'") {
+      qui adodown formatteddate
+      local newdate = `"`r(formatteddate)'"'
+    }
+
     * Add Stata's weird description requirement that when listing multiple emails, @@ must be used.
     if !missing("`newcontact'") {
       local newcontact = subinstr("`newcontact'","@","@@",.)
     }
 
-    * If updating the pkg version, update the date aswell
-    local newdate ""
-    if !missing("`newpkgversion'") {
-      qui adodown formatteddate
-      local newdate "`r(formatteddate)'"
-    }
-
-    * Remove "" that was needed if multiple files found
-    local pkgfile `pkgfile'
-
     * Open template to read from and new tempfile to write to
     tempname fh newpkg_write
     tempfile pkg_out
-    file open `fh' using `"`srcfolderstd'/`pkgfile'"', read
+    file open `fh' using `"`srcfolderstd'`pkgfile'"', read
     file open `newpkg_write' using `pkg_out', write
 
     * Initiate section local
@@ -101,7 +118,6 @@ qui {
             local pkg_v `r(pkg_v)'
           }
           else if ("`section'" == "title") {
-            local pkgname = subinstr("`pkgfile'",".pkg","",.)
             verify_title, line(`"`line'"') pkgname(`pkgname') newtitle("`newtitle'")
             file write `newpkg_write' "`r(newline)'" _n
             local pkgname "`pkgname'"
@@ -162,6 +178,7 @@ qui {
             noi extract_value, line("`line'") line_lead("f ") line_lead2("F ") ///
               format_error("{res:f <path_and_file>} or {res:F <path_and_file>} where {res:<path_and_file>} is the relative path from {res:src/} and the file name of the ancillary files.")
             local ancfiles `"`ancfiles' "`r(value)'""'
+            noi di "`line'"
             file write `newpkg_write' "`line'" _n
           }
 
@@ -181,6 +198,9 @@ qui {
       file read `fh' line
     }
 
+    file close `fh'
+    file close `newpkg_write'
+
     * Return locals
     return local pkgname        "`pkgname'"
     return local stata_version   `sta_v'
@@ -193,6 +213,19 @@ qui {
     return local adofiles        = trim(`"`adofiles'"')
     return local hlpfiles        = trim(`"`hlpfiles'"')
     return local ancfiles        = trim(`"`ancfiles'"')
+
+    if ("`update'" != "update") {
+      noi di as result "{pstd}Package file {it:`pkgfile'} verified.{p_end}"
+    }
+    else {
+
+      * Run the new file again in the command to make sure the output is valid
+      ad_pkg_meta, pkgfile(`"`pkg_out'"') pkgname("`pkgname'")
+
+      * Output is valid, overwrite file
+      copy "`pkg_out'"  `"`srcfolderstd'`pkgfile'"', replace
+      noi di as result `"{pstd}Package file {it:`srcfolderstd'`pkgfile'} updated.{p_end}"'
+    }
 
 }
 end

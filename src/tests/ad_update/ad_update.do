@@ -40,7 +40,28 @@
     cap net uninstall adodown
     net install adodown, from("${src}") replace
 
-    * Test basic case of the command ad_update
-    ad_update
+    local name "test1"
+    local ad_update_out "${tests}/outputs/ad_update"
+    local test_fldr "`ad_update_out'/test1"
+    
+    * Reset the folder
+    if 1 {
+      rec_rmdir, folder("`ad_update_out'") okifnotexist
+      rec_mkdir, folder("`test_fldr'")
+      //Set up test project
+      ad_setup, adfolder("`test_fldr'") autoprompt name("`name'") author("Krikkan") 
+    }
 
-    // Add more tests here...
+    
+  * Test basic case of the command ad_update
+  ad_update, adfolder("`test_fldr'") pkgname("`name'") newtitle("test title")
+    
+  ad_update, adfolder("`test_fldr'") pkgname("`name'") newcontact("krik@kan.com")
+    
+  ad_update, adfolder("`test_fldr'") pkgname("`name'") newpkgversion("minor, samedayok")
+    
+  ad_update, adfolder("`test_fldr'") pkgname("`name'") newpkgversion("minor, samedayok")
+    
+  ad_update, adfolder("`test_fldr'") pkgname("`name'") newpkgversion("major, samedayok")
+
+  ad_update, adfolder("`test_fldr'") pkgname("`name'") newpkgversion("minor, samedayok")    // Add more tests here...
