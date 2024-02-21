@@ -455,6 +455,7 @@ cap program drop   populate_pkg
     syntax, pkg_template(string) name(string) [description(string) author(string) contact(string) url(string)]
 
     local upper_name = strupper("`name'")
+    local contact = subinstr("`contact'","@","@@",.)
 
     * Initiate the tempfile handlers and tempfiles needed
     tempname pkg_read pkg_write
