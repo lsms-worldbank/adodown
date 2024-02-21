@@ -7,7 +7,7 @@ cap program drop   adodown
 
     * UPDATE THESE LOCALS FOR EACH NEW VERSION PUBLISHED
   	local version     "1.0"
-    local versionDate "20230724" 
+    local versionDate "20230724"
     local cmd         "adodown"
 
   	syntax [anything]
@@ -42,6 +42,13 @@ cap program drop   adodown
         noi di as text "{pstd}Please note that during the beta release we might rename or remove options without building in backward compatibility, and some still experimental features might not be fully documented.{p_end}" _n
         noi di _n "{hline}"
       }
+
+      * Get standardized date
+      else if ("`subcmd'" == "formatteddate") {
+          local formatteddate: display %tdCCYYNNDD `= date("`c(current_date)'","DMY")'
+          return local formatteddate "`formatteddate'"
+      }
+
 
       else {
         noi di "{pstd}The sub-command [`subcmd'] used with `cmd' is not valid.{p_end}"

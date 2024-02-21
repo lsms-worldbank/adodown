@@ -98,14 +98,14 @@ qui {
           }
 
           else if ("`section'" == "contact") {
-            extract_value, line("`line'") line_lead("d Contact: ") ///
-              format_error("{res:d Contact: <contact>} where {res:<contact>} is any string.")
+            extract_value, line("`line'") line_lead("d Contact:") ///
+              format_error("{res:d Contact: <contact>} where {res:<contact>} is any string.") emptyok
             local contact =subinstr("`r(value)'","@@","@",.)
           }
 
           else if ("`section'" == "url") {
-            extract_value, line("`line'") line_lead("d URL: ") ///
-              format_error("{res:d URL: <url>} where {res:<url>} is any string.")
+            extract_value, line("`line'") line_lead("d URL:") ///
+              format_error("{res:d URL: <url>} where {res:<url>} is any string.") emptyok
             local url "`r(value)'"
           }
 
@@ -209,7 +209,7 @@ cap program drop   verify_stata_version
       return local sta_v `sta_v'
     }
     else {
-      noi di as error `"{phang}.pkg file error in line {res:`line'}. Only rows on format {res:v x.y} where {res:x} and {res:y} are integers are allowed.{p_end}"'
+      noi di as error `"{phang}.pkg file error in line {res:`line'}. Only rows on format {res:d Requires: Stata version x.y} where {res:x} and {res:y} are integers are allowed.{p_end}"'
       error 99
       exit
     }
@@ -221,7 +221,7 @@ end
 cap program drop   extract_value
     program define extract_value, rclass
 
-    syntax, line(string) line_lead(string) [line_lead2(string)] format_error(string)
+    syntax, line(string) line_lead(string) [line_lead2(string)] format_error(string) [emptyok]
 
     local ll_len = strlen("`line_lead'")
     local ll_len2 = strlen("`line_lead2'")

@@ -276,7 +276,7 @@ qui {
     local prompt_intro `"Please enter the package meta information needed to set up this package template. Type "BREAK" to cancel."'
     local name_prompt "Enter name of Stata package {it:(required)}:"
     local description_prompt "Enter package description {it:(optional)}:"
-    local author_prompt "Enter name of author(s) {it:(optional)}:"
+    local author_prompt "Enter name of author(s) {it:(required)}:"
     local contact_prompt "Enter contact information {it:(optional)}:"
     local url_prompt  "Enter package URL. For example GitHub repo {it:(optional)}:"
 
@@ -454,6 +454,8 @@ cap program drop   populate_pkg
 
     syntax, pkg_template(string) name(string) [description(string) author(string) contact(string) url(string)]
 
+    local upper_name = strupper("`name'")
+
     * Initiate the tempfile handlers and tempfiles needed
     tempname pkg_read pkg_write
     tempfile pkg_output
@@ -473,7 +475,7 @@ cap program drop   populate_pkg
         if "`line'" == "*** version" local section "write_asis"
         if "`line'" == "*** title" {
             local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n `"d '`name'': module to <write short description here>"' _n
+            file write `pkg_write' "`macval(line)'" _n `"d '`upper_name'': module to <write short description here>"' _n
         }
         if "`line'" == "*** description" {
             local section "write_custom"
@@ -481,7 +483,7 @@ cap program drop   populate_pkg
         }
         if "`line'" == "*** stata" {
             local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d Version: Stata 14.1" _n "d" _n
+            file write `pkg_write' "`macval(line)'" _n "d Requires: Stata version 1.1" _n "d" _n
         }
         if "`line'" == "*** author" {
             local section "write_custom"
@@ -497,8 +499,8 @@ cap program drop   populate_pkg
         }
         if "`line'" == "*** date" {
             local section "write_custom"
-            local date: display %tdCCYYNNDD `= date("`c(current_date)'","DMY")'
-            file write `pkg_write' "`macval(line)'" _n "d Distribution-Date: `date'" _n "d" _n
+            qui adodown formatteddate
+            file write `pkg_write' "`macval(line)'" _n "d Distribution-Date: `r(formatteddate)'" _n "d" _n
         }
         if "`line'" == "*** adofiles" local section "write_asis"
         if "`line'" == "*** helpfiles" local section "write_asis"

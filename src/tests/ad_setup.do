@@ -45,7 +45,7 @@
     rec_mkdir, folder("`test2_fldr'")              //Make sure folder exists
 
     * Run ad_setup with all required info specified in options
-    ad_setup, adfolder("`test2_fldr'") autoprompt name("testautoprompt")
+    ad_setup, adfolder("`test2_fldr'") autoprompt name("testautoprompt") author("Krikkan")
 
 
     *********
