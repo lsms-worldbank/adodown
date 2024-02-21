@@ -1,14 +1,13 @@
 *! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
 
-cap program drop   ad_get_pkg_meta
-    program define ad_get_pkg_meta, rclass
+cap program drop   ad_pkg_meta
+    program define ad_pkg_meta, rclass
 
 qui {
 
     version 14.1
 
-    * Update the syntax. This is only a placeholder to make the command run
-    syntax , ADFolder(string)
+    syntax , ADFolder(string) [newtitle(string) newpkgversion(string) newstataversion(string) newauthor(string) newcontact(string) newurl(string)]
 
     * Test and standardize folder local
     local adfolderstd	= subinstr(`"`adfolder'"',"\","/",.)
@@ -35,12 +34,32 @@ qui {
       exit
     }
 
+    * Test if file should be updated
+    local update ""
+    if !missing( "`newtitle'`newpkgversion'`newstataversion'`newauthor'`newcontact'`newurl'" ) {
+      local update "update"
+    }
+
+    * Add Stata's weird description requirement that when listing multiple emails, @@ must be used.
+    if !missing("`newcontact'") {
+      local newcontact = subinstr("`newcontact'","@","@@",.)
+    }
+
+    * If updating the pkg version, update the date aswell
+    local newdate ""
+    if !missing("`newpkgversion'") {
+      qui adodown formatteddate
+      local newdate "`r(formatteddate)'"
+    }
+
     * Remove "" that was needed if multiple files found
     local pkgfile `pkgfile'
 
     * Open template to read from and new tempfile to write to
-    tempname fh
+    tempname fh newpkg_write
+    tempfile pkg_out
     file open `fh' using `"`srcfolderstd'/`pkgfile'"', read
+    file open `newpkg_write' using `pkg_out', write
 
     * Initiate section local
     local section ""
@@ -62,6 +81,7 @@ qui {
         * Test if line is beginning of next section
         if (substr("`line'",1,3) == "***") {
           local section = trim(substr("`line'",4,.))
+          file write `newpkg_write' "`line'" _n
         }
 
         * Test if empty line
@@ -70,48 +90,57 @@ qui {
           if inlist("`section'","version", "title") {
             noi di as error `"{phang}Empty {res:d} line is not allowed in section version or title.{p_end}"'
           }
+          file write `newpkg_write' "`line'" _n
         }
 
         * If neither section head or empty line, process content of section
         else {
           if ("`section'" == "version") {
-            verify_package_version, line(`"`line'"')
+            verify_package_version, line(`"`line'"') newpkgversion("`newpkgversion'")
+            file write `newpkg_write' "`r(newline)'" _n
             local pkg_v `r(pkg_v)'
           }
           else if ("`section'" == "title") {
             local pkgname = subinstr("`pkgfile'",".pkg","",.)
-            verify_title, line(`"`line'"') pkgname(`pkgname')
+            verify_title, line(`"`line'"') pkgname(`pkgname') newtitle("`newtitle'")
+            file write `newpkg_write' "`r(newline)'" _n
             local pkgname "`pkgname'"
           }
           else if ("`section'" == "description") {
             //do nothing for now
+            file write `newpkg_write' "`line'" _n
           }
           else if ("`section'" == "stata") {
-            verify_stata_version, line(`"`line'"')
+            verify_stata_version, line(`"`line'"') newstataversion("`newstataversion'")
+            file write `newpkg_write' "`r(newline)'" _n
             local sta_v `r(sta_v)'
           }
 
           else if ("`section'" == "author") {
             extract_value, line("`line'") line_lead("d Author: ") ///
-              format_error("{res:d Author: <name>} where {res:<name>} is any string.")
+              format_error("{res:d Author: <name>} where {res:<name>} is any string.") newvalue("`newauthor'")
+              file write `newpkg_write' "`r(newline)'" _n
             local author "`r(value)'"
           }
 
           else if ("`section'" == "contact") {
             extract_value, line("`line'") line_lead("d Contact:") ///
-              format_error("{res:d Contact: <contact>} where {res:<contact>} is any string.") emptyok
+              format_error("{res:d Contact: <contact>} where {res:<contact>} is any string.") emptyok  newvalue("`newcontact'")
+              file write `newpkg_write' "`r(newline)'" _n
             local contact =subinstr("`r(value)'","@@","@",.)
           }
 
           else if ("`section'" == "url") {
             extract_value, line("`line'") line_lead("d URL:") ///
-              format_error("{res:d URL: <url>} where {res:<url>} is any string.") emptyok
+              format_error("{res:d URL: <url>} where {res:<url>} is any string.") emptyok  newvalue("`newurl'")
+              file write `newpkg_write' "`r(newline)'" _n
             local url "`r(value)'"
           }
 
           else if ("`section'" == "date") {
             extract_value, line("`line'") line_lead("d Distribution-Date: ") ///
-              format_error("{res:d Distribution-Date: <date>} where {res:<date>} is a date on format {res:YYYYMMDD}.")
+              format_error("{res:d Distribution-Date: <date>} where {res:<date>} is a date on format {res:YYYYMMDD}.") newvalue("`newdate'")
+              file write `newpkg_write' "`r(newline)'" _n
             local date "`r(value)'"
           }
 
@@ -119,25 +148,33 @@ qui {
             extract_value, line("`line'") line_lead("f ") ///
               format_error("{res:f ado/<commandname>.ado} where {res:<commandname>} is the name of a command.")
             local adofiles `"`adofiles' "`r(value)'""'
+            file write `newpkg_write' "`line'" _n
           }
 
           else if ("`section'" == "helpfiles") {
             extract_value, line("`line'") line_lead("f ") ///
               format_error("{res:f stlhp/<commandname>.sthlp} where {res:<commandname>} is the name of a command.")
             local hlpfiles `"`hlpfiles' "`r(value)'""'
+            file write `newpkg_write' "`line'" _n
           }
 
           else if ("`section'" == "ancillaryfiles") {
             noi extract_value, line("`line'") line_lead("f ") line_lead2("F ") ///
               format_error("{res:f <path_and_file>} or {res:F <path_and_file>} where {res:<path_and_file>} is the relative path from {res:src/} and the file name of the ancillary files.")
             local ancfiles `"`ancfiles' "`r(value)'""'
+            file write `newpkg_write' "`line'" _n
           }
 
           else {
             //noi di "`section'"
             //noi di "`line'"
+
+            file write `newpkg_write' "`line'" _n
           }
         }
+      }
+      else {
+        file write `newpkg_write' "`line'" _n
       }
 
       * Read next line
@@ -156,6 +193,7 @@ qui {
     return local adofiles        = trim(`"`adofiles'"')
     return local hlpfiles        = trim(`"`hlpfiles'"')
     return local ancfiles        = trim(`"`ancfiles'"')
+
 }
 end
 
@@ -163,12 +201,20 @@ end
 cap program drop   verify_package_version
     program define verify_package_version, rclass
 
-    syntax, line(string)
+    syntax, line(string) [newpkgversion(string)]
 
     if (substr("`line'",1,2) == "v ") {
+      // Get current version
       local pkg_v = substr("`line'",3,.)
+
+      //Update to new verison if applicatble
+      if !missing("`newpkgversion'") local pkg_v "`newpkgversion'"
+
       //TODO: test that version is valid
-      return local pkg_v `pkg_v'
+
+      //Return values
+      return local pkg_v "`pkg_v'"
+      return local newline "v `pkg_v'"
     }
     else {
       noi di as error `"{phang}.pkg file error in line {res:`line'}. Only rows on format {res:v x.y} where {res:x} and {res:y} are integers are allowed.{p_end}"'
@@ -180,17 +226,23 @@ end
 cap program drop   verify_title
     program define verify_title, rclass
 
-    syntax, line(string) pkgname(string)
+    syntax, line(string) pkgname(string) [newtitle(string)]
 
     local pkgname_upper = strupper("`pkgname'")
 
-    * Test that line is "d <pkgname>".
+    * Test that line is "d <PKGNAME>".
     * This verifies that the pkg file name matches the title in the file
     local ll_len = strlen("d '`pkgname_upper''")
-
     if (substr("`line'",1,`ll_len') == "d '`pkgname_upper''") {
-      // line is correclty formatted pkgname - OK
-      // Nothing needs to be returned as this infor was already known
+
+      //Update to new verison if applicatble
+      if !missing("`newtitle'") {
+        local line "d '`pkgname_upper'': `newtitle'"
+      }
+
+      //Return values
+      return local newline "`line'"
+
     }
     else {
       noi di as error `"{phang}.pkg file error in title line {res:`line'}. Only rows on format {res:d '`pkgname_upper'' <title>} are allowed. Package name must be upper case only and {res:<title>} is the together with the package name the title that shows up when using {res:net}/{res:ssc} {res:describe}.{p_end}"'
@@ -202,11 +254,19 @@ end
 
 cap program drop   verify_stata_version
     program define verify_stata_version, rclass
-    syntax, line(string)
+    syntax, line(string) [newstataversion(string)]
     if (substr("`line'",1,25) == "d Requires: Stata version") {
       local sta_v = trim(substr("`line'",26,.))
+
+      //Update to new verison if applicatble
+      if !missing("`newstataversion'") local sta_v "`newstataversion'"
+
       //TODO: test that version is valid
-      return local sta_v `sta_v'
+
+      //Return values
+      return local sta_v "`sta_v'"
+      return local newline "d Requires: Stata version `sta_v'"
+
     }
     else {
       noi di as error `"{phang}.pkg file error in line {res:`line'}. Only rows on format {res:d Requires: Stata version x.y} where {res:x} and {res:y} are integers are allowed.{p_end}"'
@@ -221,16 +281,24 @@ end
 cap program drop   extract_value
     program define extract_value, rclass
 
-    syntax, line(string) line_lead(string) [line_lead2(string)] format_error(string) [emptyok]
+    syntax, line(string) line_lead(string) [line_lead2(string)] format_error(string) [emptyok newvalue(string)]
 
     local ll_len = strlen("`line_lead'")
     local ll_len2 = strlen("`line_lead2'")
 
     if (substr("`line'",1,`ll_len') == "`line_lead'") {
       return local value = trim(substr("`line'",`ll_len'+1,.))
+      if !missing("`newvalue'") {
+        local line "`line_lead' `newvalue'"
+      }
+      return local newline "`line'"
     }
     else if !missing("`line_lead2'") & (substr("`line'",1,`ll_len2') == "`line_lead2'") {
       return local value = trim(substr("`line'",`ll_len2'+1,.))
+      if !missing("`newvalue'") {
+        local line "`line_lead2' `newvalue'"
+      }
+      return local newline "`line'"
     }
     else {
       noi di as error `"{phang}.pkg file error in line {res:`line'}. Valid formats for this row is only `format_error' {p_end}"'
