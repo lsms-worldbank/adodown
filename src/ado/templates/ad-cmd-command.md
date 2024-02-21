@@ -18,6 +18,9 @@ __ADCOMMANDNAME__ , __**opt**ion1__(_string_)
 
 __**opt**ion1__(_string_) is used for xyz. Longer description (paragraph length) of all options, their intended use case and best practices related to them.
 
+# Stored results
+<!-- Document all results this command returns as either r-class, e-class or s-class macros -->
+
 # Examples
 <!-- A couple of examples to help the user get started and a short explanation of each of them. -->
 
