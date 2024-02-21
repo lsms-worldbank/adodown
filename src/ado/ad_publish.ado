@@ -53,7 +53,7 @@ qui {
     local pkg_hlps  `"`r(hlpfiles)'"'
     local pkg_ancs  `"`r(ancfiles)'"'
 
-    local ado_v_header "*! version `pkg_vnum' `vdate' `author' `contact'"
+    local ado_v_header "*! version `pkg_vnum' `vdate' - `author' - `contact'"
 
     ********************************************************
     ** Generate the sthlp files
