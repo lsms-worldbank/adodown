@@ -1,23 +1,25 @@
-* This package file is generated in the adodown workflow. Do not edit directly.
+* This package file is generated in the adodown workflow.
+* Do not edit directly.
+* Use the command ad_update to update this file
 *** version
 v 0.0
 *** title
-d
+d '<UPPERNAME>': <TITLE>
 *** description
-d 
+d <DESC>
 d
 *** stata
 d Requires: Stata version 0.0
 d
 *** author
-d Author:
+d Author: <AUTHOR>
 *** contact
-d Contact:
+d Contact: <CONTACT>
 *** url
-d URL:
+d URL: <URL>
 d
 *** date
-d Distribution-Date:
+d Distribution-Date: <DATE>
 *** adofiles
 
 *** helpfiles

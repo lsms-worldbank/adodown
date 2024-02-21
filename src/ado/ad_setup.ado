@@ -210,7 +210,7 @@ qui {
     * Populate templates
 
     * Populate the pkg tempfile
-    populate_pkg, pkg_template(`src_package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'")
+    populate_pkg, pkg_template(`src_package_pkg') name("`name'") description("`description'") author("`author'") contact("`contact'") url("`url'") title("`title'")
 
     * Populate the toc tempfile
     populate_toc, toc_template(`src_stata_toc') name("`name'")
@@ -323,9 +323,6 @@ qui {
         return local inputbreak "`inputbreak'"
       }
     }
-
-
-
 }
 end
 
@@ -448,14 +445,13 @@ cap program drop   template_parser
 
 end
 
-* Populating the tempfile
+* Populating package name in tempfile
 cap program drop   populate_pkg
     program define populate_pkg, rclass
 
-    syntax, pkg_template(string) name(string) [description(string) author(string) contact(string) url(string)]
+    syntax, pkg_template(string) name(string) [description(string) author(string) contact(string) url(string) title(string)]
 
     local upper_name = strupper("`name'")
-    local contact = subinstr("`contact'","@","@@",.)
 
     * Initiate the tempfile handlers and tempfiles needed
     tempname pkg_read pkg_write
@@ -465,59 +461,32 @@ cap program drop   populate_pkg
     file open `pkg_read'  using `pkg_template', read
     file open `pkg_write' using `pkg_output'  , write
 
+    qui adodown formatteddate
+    local date = `"`r(formatteddate)'"'
+
     * Read first line
     file read `pkg_read' line
 
     * Write lines as-is until section
-    local section "write_asis"
     while r(eof)==0 {
-
-
-        if "`line'" == "*** version" local section "write_asis"
-        if "`line'" == "*** title" {
-            local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n `"d '`upper_name'': module to <write short description here>"' _n
-        }
-        if "`line'" == "*** description" {
-            local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d `description'" _n "d" _n
-        }
-        if "`line'" == "*** stata" {
-            local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d Requires: Stata version 1.1" _n "d" _n
-        }
-        if "`line'" == "*** author" {
-            local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d Author: `author'" _n
-        }
-        if "`line'" == "*** contact" {
-            local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d Contact: `contact'" _n
-        }
-        if "`line'" == "*** url" {
-            local section "write_custom"
-            file write `pkg_write' "`macval(line)'" _n "d URL: `url'" _n "d" _n
-        }
-        if "`line'" == "*** date" {
-            local section "write_custom"
-            qui adodown formatteddate
-            file write `pkg_write' "`macval(line)'" _n "d Distribution-Date: `r(formatteddate)'" _n "d" _n
-        }
-        if "`line'" == "*** adofiles" local section "write_asis"
-        if "`line'" == "*** helpfiles" local section "write_asis"
-        if "`line'" == "*** ancillaryfiles" local section "write_asis"
-        if "`line'" == "*** end" local section "write_asis"
-
-        * Write as-is sections
-        if "`section'" == "write_asis" file write `pkg_write' "`macval(line)'" _n
-
+        * Replace placeholders
+        local line = subinstr(`"`line'"',"<NAME>","`name'",.)
+        local line = subinstr(`"`line'"',"<UPPERNAME>","`upper_name'",.)
+        local line = subinstr(`"`line'"',"<TITLE>","`title'",.)
+        local line = subinstr(`"`line'"',"<DESC>","`description'",.)
+        local line = subinstr(`"`line'"',"<AUTHOR>","`author'",.)
+        local line = subinstr(`"`line'"',"<CONTACT>","`contact'",.)
+        local line = subinstr(`"`line'"',"<URL>","`url'",.)
+        local line = subinstr(`"`line'"',"<DATE>","`date'",.)
+        * Write the populated line
+        file write `pkg_write' "`line'" _n
         * Read next line
         file read `pkg_read' line
     }
     file close `pkg_read'
     file close `pkg_write'
 
-    * Overwrite the template tempfiel with the populated file
+    * Overwrite the template tempfile with the populated file
     copy `pkg_output' `pkg_template', replace
 end
 
