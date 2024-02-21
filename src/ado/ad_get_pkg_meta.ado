@@ -56,83 +56,87 @@ qui {
       * Trim spaces leading and trailing line
       local line = trim("`line'")
 
-      * Test if line is beginning of next section
-      if (substr("`line'",1,3) == "***") {
-        local section = trim(substr("`line'",4,.))
-      }
+      * Skip empty lines
+      if !missing("`line'") {
 
-      * Test if empty line
-      else if (trim("`line'") == "d") {
-        * Empty lines are ok apart from in these sections.
-        if inlist("`section'","version", "title") {
-          noi di as error `"{phang}Empty {res:d} line is not allowed in section version or title.{p_end}"'
-        }
-      }
-
-      * If neither section head or empty line, process content of section
-      else {
-        if ("`section'" == "version") {
-          verify_package_version, line(`"`line'"')
-          local pkg_v `r(pkg_v)'
-        }
-        else if ("`section'" == "title") {
-          local pkgname = subinstr("`pkgfile'",".pkg","",.)
-          verify_title, line(`"`line'"') pkgname(`pkgname')
-          local pkgname "`pkgname'"
-        }
-        else if ("`section'" == "description") {
-          //do nothing for now
-        }
-        else if ("`section'" == "stata") {
-          verify_stata_version, line(`"`line'"')
-          local sta_v `r(sta_v)'
+        * Test if line is beginning of next section
+        if (substr("`line'",1,3) == "***") {
+          local section = trim(substr("`line'",4,.))
         }
 
-        else if ("`section'" == "author") {
-          extract_value, line("`line'") line_lead("d Author: ") ///
-            format_error("{res:d Author: <name>} where {res:<name>} is any string.")
-          local author "`r(value)'"
+        * Test if empty line
+        else if (trim("`line'") == "d") {
+          * Empty lines are ok apart from in these sections.
+          if inlist("`section'","version", "title") {
+            noi di as error `"{phang}Empty {res:d} line is not allowed in section version or title.{p_end}"'
+          }
         }
 
-        else if ("`section'" == "contact") {
-          extract_value, line("`line'") line_lead("d Contact: ") ///
-            format_error("{res:d Contact: <contact>} where {res:<contact>} is any string.")
-          local contact "`r(value)'"
-        }
-
-        else if ("`section'" == "url") {
-          extract_value, line("`line'") line_lead("d URL: ") ///
-            format_error("{res:d URL: <url>} where {res:<url>} is any string.")
-          local url "`r(value)'"
-        }
-
-        else if ("`section'" == "date") {
-          extract_value, line("`line'") line_lead("d Distribution-Date: ") ///
-            format_error("{res:d Distribution-Date: <date>} where {res:<date>} is a date on format {res:YYYYMMDD}.")
-          local date "`r(value)'"
-        }
-
-        else if ("`section'" == "adofiles") {
-          extract_value, line("`line'") line_lead("f ") ///
-            format_error("{res:f ado/<commandname>.ado} where {res:<commandname>} is the name of a command.")
-          local adofiles `"`adofiles' "`r(value)'""'
-        }
-
-        else if ("`section'" == "helpfiles") {
-          extract_value, line("`line'") line_lead("f ") ///
-            format_error("{res:f stlhp/<commandname>.sthlp} where {res:<commandname>} is the name of a command.")
-          local hlpfiles `"`hlpfiles' "`r(value)'""'
-        }
-
-        else if ("`section'" == "ancillaryfiles") {
-          noi extract_value, line("`line'") line_lead("f ") line_lead2("F ") ///
-            format_error("{res:f <path_and_file>} or {res:F <path_and_file>} where {res:<path_and_file>} is the relative path from {res:src/} and the file name of the ancillary files.")
-          local ancfiles `"`ancfiles' "`r(value)'""'
-        }
-
+        * If neither section head or empty line, process content of section
         else {
-          //noi di "`section'"
-          //noi di "`line'"
+          if ("`section'" == "version") {
+            verify_package_version, line(`"`line'"')
+            local pkg_v `r(pkg_v)'
+          }
+          else if ("`section'" == "title") {
+            local pkgname = subinstr("`pkgfile'",".pkg","",.)
+            verify_title, line(`"`line'"') pkgname(`pkgname')
+            local pkgname "`pkgname'"
+          }
+          else if ("`section'" == "description") {
+            //do nothing for now
+          }
+          else if ("`section'" == "stata") {
+            verify_stata_version, line(`"`line'"')
+            local sta_v `r(sta_v)'
+          }
+
+          else if ("`section'" == "author") {
+            extract_value, line("`line'") line_lead("d Author: ") ///
+              format_error("{res:d Author: <name>} where {res:<name>} is any string.")
+            local author "`r(value)'"
+          }
+
+          else if ("`section'" == "contact") {
+            extract_value, line("`line'") line_lead("d Contact: ") ///
+              format_error("{res:d Contact: <contact>} where {res:<contact>} is any string.")
+            local contact =subinstr("`r(value)'","@@","@",.)
+          }
+
+          else if ("`section'" == "url") {
+            extract_value, line("`line'") line_lead("d URL: ") ///
+              format_error("{res:d URL: <url>} where {res:<url>} is any string.")
+            local url "`r(value)'"
+          }
+
+          else if ("`section'" == "date") {
+            extract_value, line("`line'") line_lead("d Distribution-Date: ") ///
+              format_error("{res:d Distribution-Date: <date>} where {res:<date>} is a date on format {res:YYYYMMDD}.")
+            local date "`r(value)'"
+          }
+
+          else if ("`section'" == "adofiles") {
+            extract_value, line("`line'") line_lead("f ") ///
+              format_error("{res:f ado/<commandname>.ado} where {res:<commandname>} is the name of a command.")
+            local adofiles `"`adofiles' "`r(value)'""'
+          }
+
+          else if ("`section'" == "helpfiles") {
+            extract_value, line("`line'") line_lead("f ") ///
+              format_error("{res:f stlhp/<commandname>.sthlp} where {res:<commandname>} is the name of a command.")
+            local hlpfiles `"`hlpfiles' "`r(value)'""'
+          }
+
+          else if ("`section'" == "ancillaryfiles") {
+            noi extract_value, line("`line'") line_lead("f ") line_lead2("F ") ///
+              format_error("{res:f <path_and_file>} or {res:F <path_and_file>} where {res:<path_and_file>} is the relative path from {res:src/} and the file name of the ancillary files.")
+            local ancfiles `"`ancfiles' "`r(value)'""'
+          }
+
+          else {
+            //noi di "`section'"
+            //noi di "`line'"
+          }
         }
       }
 
