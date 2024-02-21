@@ -42,7 +42,7 @@ qui {
     ** Get Meta data
 
     * Get meta data from package file
-    ad_get_pkg_meta, adfolder(`"`folderstd'"')
+    ad_pkg_meta, adfolder(`"`folderstd'"')
     local pkgname    "`r(pkgname)'"
     local stata_vnum "`r(stata_version)'"
     local pkg_vnum   "`r(package_version)'"

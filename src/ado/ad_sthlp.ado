@@ -53,7 +53,7 @@ qui {
 
     * Get default values if version number or date is missing
     if missing("`vnum'") {
-      ad_get_pkg_meta, adfolder(`"`folderstd'"')
+      ad_pkg_meta, adfolder(`"`folderstd'"')
       local vnum "`r(package_version)'"
     }
     if missing("`vdate'") local vdate = upper(subinstr("`c(current_date)'")," ","",.)

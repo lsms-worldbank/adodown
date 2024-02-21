@@ -40,7 +40,9 @@
     cap net uninstall adodown
     net install adodown, from("${src}") replace
 
-    * Test basic case of the command ad_get_pkg_meta
-    ad_get_pkg_meta, adf("${root}")
+    * Test basic case of the command ad_pkg_meta
+    ad_pkg_meta, adf("${root}")
     return list
     // Add more tests here...
+    
+    
