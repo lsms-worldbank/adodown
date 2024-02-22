@@ -30,17 +30,26 @@
     cap which repkit
     if _rc == 111 ssc install repkit
 
-    /* TODO: Uncomment once adodown is published
-    * If not already installed, add adodown to the dev environment
-    cap which adodown
-    if _rc == 111 ssc install adodown
-    */
-
     * Install the latest version of adodown to the dev environment
     cap net uninstall adodown
     net install adodown, from("${src}") replace
     
+    local pkg "test1"
+    local ad_publish_out "${tests}/outputs/ad_publish"
+    local test_fldr "`ad_publish_out'/test1"
+    
+    * Reset the folder
+    if 1 {
+      rec_rmdir, folder("`ad_publish_out'") okifnotexist
+      rec_mkdir, folder("`test_fldr'")
+      //Set up test project
+      ad_setup, adfolder("`test_fldr'") autoprompt name("`pkg'") author("Krikkan") 
+      ad_command create mycmd1, adf("`test_fldr'") pkg("`pkg'")
+      ad_command create mycmd2, adf("`test_fldr'") pkg("`pkg'")
+      ad_command create mycmd3, adf("`test_fldr'") pkg("`pkg'")
+    }
+
     * Test basic case of the command ad_get_pkg_meta
-    ad_publish, adf("${root}") und(ad_pkg_meta) ssczip
+    ad_publish, adf("`test_fldr'") ssczip
     return list
     // Add more tests here...

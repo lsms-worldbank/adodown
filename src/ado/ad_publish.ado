@@ -117,12 +117,16 @@ qui {
     ** pdate versioning meta data in adofiles
 
     foreach ado of local cmds {
+      local pkgcommand ""
+      if ("`ado'" == "`pkgname'") local pkgcommand "pkgcommand"
+
       noi update_ado_version,           ///
         vhead("`ado_v_header'")         ///
         pkg_vnum("`pkg_vnum'")          ///
         stata_vnum("`stata_vnum'")      ///
         file(`"`adofolder'/`ado'.ado"') ///
-        vdate("`vdate'")
+        vdate("`vdate'") ///
+        `pkgcommand'
     }
 
     ********************************************************
@@ -173,7 +177,7 @@ end
 cap program drop   update_ado_version
     program define update_ado_version
 
-    syntax, vhead(string) pkg_vnum(string) stata_vnum(string) file(string) vdate(string)
+    syntax, vhead(string) pkg_vnum(string) stata_vnum(string) file(string) vdate(string) [pkgcommand]
 
     * Open template to read from and new tempfile to write to
     tempname ado_old ado_new
@@ -222,14 +226,14 @@ cap program drop   update_ado_version
           }
 
           * Test if line is stata version seting
-          else if (substr(ustrtrim("`line'"),1,14) == "local version ") {
+          else if (!missing("`pkgcommand'") & substr(ustrtrim("`line'"),1,14) == "local version") {
             file write `ado_new' `"    local version "`pkg_vnum'" "' _n
             * Indicate that version header is used
             local version_setting_used  = 1
           }
 
           * Test if line is stata version seting
-          else if (substr(ustrtrim("`line'"),1,17) == "local versionDate") {
+          else if (!missing("`pkgcommand'") & substr(ustrtrim("`line'"),1,17) == "local versionDate") {
             file write `ado_new' `"    local versionDate "`vdate'" "' _n
             * Indicate that version header is used
             local version_setting_used  = 1

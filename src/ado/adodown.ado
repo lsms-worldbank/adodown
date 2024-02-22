@@ -5,9 +5,9 @@ cap program drop   adodown
 
     version 14.1
 
-    * UPDATE THESE LOCALS FOR EACH NEW VERSION PUBLISHED
-  	local version     "1.0"
-    local versionDate "20240222" 
+    * Do not manually edit these locals. They are updated with ad_publish in the adodown workflow
+    local version     "1.0"
+    local versionDate "20240222"
     local cmd         "adodown"
 
   	syntax [anything]
