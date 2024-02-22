@@ -1,11 +1,11 @@
-*! version XX XXXXXXXXX ADAUTHORNAME ADCONTACTINFO
+*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_update
     program define ad_update
 
 qui {
 
-    version /* ADD VERSION NUMBER HERE */
+    version 14.1
 
     * Update the syntax. This is only a placeholder to make the command run
     syntax, ADFolder(string) PKGname(string) ///

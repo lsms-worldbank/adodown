@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1 20230724}{...}
+{* *! version 0.5 20240222}{...}
 {hline}
 {pstd}help file for {hi:ad_setup}{p_end}
 {hline}

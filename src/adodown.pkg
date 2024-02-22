@@ -1,6 +1,6 @@
 * This package file is generated in the adodown workflow. Do not edit directly.
 *** version
-v 0.1
+v 0.5
 *** title
 d 'ADODOWN': module to set up and manage Stata packages
 *** description
@@ -17,7 +17,7 @@ d Contact: lsms@worldbank.org
 d URL: https://github.com/lsms-worldbank/adodown
 d
 *** date
-d Distribution-Date: 20230724
+d Distribution-Date: 20240222
 *** adofiles
 f ado/ad_update.ado
 f ado/ad_pkg_meta.ado

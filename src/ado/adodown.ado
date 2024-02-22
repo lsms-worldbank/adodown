@@ -1,4 +1,4 @@
-*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
+*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   adodown
     program define adodown, rclass
@@ -7,7 +7,7 @@ cap program drop   adodown
 
     * UPDATE THESE LOCALS FOR EACH NEW VERSION PUBLISHED
   	local version     "1.0"
-    local versionDate "20230724"
+    local versionDate "20240222" 
     local cmd         "adodown"
 
   	syntax [anything]
