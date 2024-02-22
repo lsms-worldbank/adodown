@@ -40,4 +40,5 @@
     ad_command create mycmd3, adf("`mvp_f'") pkg("`pkg'")
 
     * Test rendering files
+    ad_sthlp, adf("`mvp_f'") nopkgmeta
     ad_sthlp, adf("`mvp_f'")
