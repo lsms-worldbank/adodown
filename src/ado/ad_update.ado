@@ -9,7 +9,7 @@ qui {
 
     * Update the syntax. This is only a placeholder to make the command run
     syntax, ADFolder(string) PKGname(string) ///
-      [ newtitle(string) newpkgversion(string) newstataversion(string) newauthor(string) newcontact(string) newurl(string)]
+      [ NEWTITle(string) NEWPKGversion(string) NEWSTAtaversion(string) NEWAUThor(string) NEWCONtact(string) newurl(string)]
 
     * Standardize folder
     local folderstd	= subinstr(`"`adfolder'"',"\","/",.)
