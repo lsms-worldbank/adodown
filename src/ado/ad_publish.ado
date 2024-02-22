@@ -88,7 +88,7 @@ qui {
     * Test if cmd in undocumented is not a command
     local invalid_undocumented : list undocumented - cmds
     if !missing("`invalid_undocumented'") {
-      noi di as error "{pstd}The command(s) {inp:`invalid_undocumented'} used in {opt:undocumented(`undocumented')} is not a command in the ado-folder.{p_end}"
+      noi di as error "{pstd}The command(s) {inp:`invalid_undocumented'} used in {res:undocumented(`undocumented')} is not a command in the ado-folder.{p_end}"
       local ado_sthlp_error 1
     }
 
