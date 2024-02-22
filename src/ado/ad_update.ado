@@ -20,14 +20,14 @@ qui {
     local current_pkgv = "`r(package_version)'"
     cap assert "`pkgname'" == "`r(pkgname)'"
     if _rc {
-      noi di as error `"{pstd}The package name used in {opt:pkgname()} does not match the pkg-file found in location "`adfolder'".{p_end}"'
+      noi di as error `"{pstd}The package name used in {res:pkgname()} does not match the pkg-file found in location "`adfolder'".{p_end}"'
       error 99
       exit
     }
 
     * Test that at least some option is provided
     if missing( "`newtitle'`newpkgversion'`newstataversion'`newauthor'`newcontact'`newurl'" ) {
-      noi di as error "{pstd}At least one meta data of {opt:newpkgversion()}, {opt:newstataversion()}, {opt:newauthor()}, or {opt:newcontact()} must be provided.{p_end}"
+      noi di as error "{pstd}At least one meta data of {res:newpkgversion()}, {res:newstataversion()}, {res:newauthor()}, or {res:newcontact()} must be provided.{p_end}"
       error 99
       exit
     }
@@ -41,14 +41,14 @@ qui {
       local sameday = trim(subinstr("`sameday'",",","",1))
 
       if !(inlist("`newpkg_type'", "minor", "major")) {
-        noi di as error "{pstd}The new version type valu in {opt:pkgversion()} is only allowed to be either {it:minor} or {it:major}.{p_end}"
+        noi di as error "{pstd}The new version type valu in {res:pkgversion()} is only allowed to be either {it:minor} or {it:major}.{p_end}"
         error 99
         exit
       }
 
       if !missing("`sameday'") {
         if "`sameday'" != "samedayok" {
-          noi di as error "{pstd}The only allowed sub-option in  {opt:pkgversion()} is {it:samedayok}. Meaning that only these values are allowed: {opt:pkgversion(minor)}, {opt:pkgversion(minor, samedayok)}, {opt:pkgversion(major)}, or {opt:pkgversion(major, samedayok)}.{p_end}"
+          noi di as error "{pstd}The only allowed sub-option in  {res:pkgversion()} is {it:samedayok}. Meaning that only these values are allowed: {res:pkgversion(minor)}, {res:pkgversion(minor, samedayok)}, {res:pkgversion(major)}, or {res:pkgversion(major, samedayok)}.{p_end}"
           error 99
           exit
         }
@@ -58,7 +58,7 @@ qui {
         local new_pkgdate = `"`r(formatteddate)'"'
         cap assert `current_pkgdate' < `new_pkgdate'
         if _rc {
-          noi di as error "{pstd}The sub-option in {it:samedayok} was not used in {opt:pkgversion()} but the current date in the pkg-file is not older than today.{p_end}"
+          noi di as error "{pstd}The sub-option in {it:samedayok} was not used in {res:pkgversion()} but the current date in the pkg-file is not older than today.{p_end}"
           error 99
           exit
         }
