@@ -178,7 +178,6 @@ qui {
             noi extract_value, line("`line'") line_lead("f ") line_lead2("F ") ///
               format_error("{res:f <path_and_file>} or {res:F <path_and_file>} where {res:<path_and_file>} is the relative path from {res:src/} and the file name of the ancillary files.")
             local ancfiles `"`ancfiles' "`r(value)'""'
-            noi di "`line'"
             file write `newpkg_write' "`line'" _n
           }
 
@@ -240,14 +239,15 @@ cap program drop   verify_package_version
       // Get current version
       local pkg_v = substr("`line'",3,.)
 
-      //Update to new verison if applicatble
+      //Update to new verison if applicable
       if !missing("`newpkgversion'") local pkg_v "`newpkgversion'"
 
       //TODO: test that version is valid
 
       //Return values
       return local pkg_v "`pkg_v'"
-      return local newline "v `pkg_v'"
+      local line = trim(itrim("v `pkg_v'"))
+      return local newline "`line'"
     }
     else {
       noi di as error `"{phang}.pkg file error in line {res:`line'}. Only rows on format {res:v x.y} where {res:x} and {res:y} are integers are allowed.{p_end}"'
@@ -274,6 +274,7 @@ cap program drop   verify_title
       }
 
       //Return values
+      local line = trim(itrim(`"`line'"'))
       return local newline "`line'"
 
     }
@@ -298,7 +299,8 @@ cap program drop   verify_stata_version
 
       //Return values
       return local sta_v "`sta_v'"
-      return local newline "d Requires: Stata version `sta_v'"
+      local line = trim(itrim("d Requires: Stata version `sta_v'"))
+      return local newline "`line'"
 
     }
     else {
@@ -324,18 +326,18 @@ cap program drop   extract_value
       if !missing("`newvalue'") {
         local line "`line_lead' `newvalue'"
       }
-      return local newline "`line'"
     }
     else if !missing("`line_lead2'") & (substr("`line'",1,`ll_len2') == "`line_lead2'") {
       return local value = trim(substr("`line'",`ll_len2'+1,.))
       if !missing("`newvalue'") {
         local line "`line_lead2' `newvalue'"
       }
-      return local newline "`line'"
     }
     else {
       noi di as error `"{phang}.pkg file error in line {res:`line'}. Valid formats for this row is only `format_error' {p_end}"'
       error 99
       exit
     }
+    local line = trim(itrim("`line'"))
+    return local newline "`line'"
 end
