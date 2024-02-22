@@ -39,8 +39,8 @@
     * Install the latest version of adodown to the dev environment
     cap net uninstall adodown
     net install adodown, from("${src}") replace
-
+    
     * Test basic case of the command ad_get_pkg_meta
-    ad_publish, adf("${root}") und(ad_get_pkg_meta) ssczip
+    ad_publish, adf("${root}") und(ad_pkg_meta) ssczip
     return list
     // Add more tests here...
