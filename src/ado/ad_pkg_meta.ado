@@ -246,7 +246,7 @@ cap program drop   verify_package_version
 
       //Return values
       return local pkg_v "`pkg_v'"
-      local line = trim(itrim("v `pkg_v'"))
+      local line = ustrtrim(stritrim("v `pkg_v'"))
       return local newline "`line'"
     }
     else {
@@ -274,7 +274,7 @@ cap program drop   verify_title
       }
 
       //Return values
-      local line = trim(itrim(`"`line'"'))
+      local line = ustrtrim(stritrim(`"`line'"'))
       return local newline "`line'"
 
     }
@@ -299,7 +299,7 @@ cap program drop   verify_stata_version
 
       //Return values
       return local sta_v "`sta_v'"
-      local line = trim(itrim("d Requires: Stata version `sta_v'"))
+      local line = ustrtrim(stritrim("d Requires: Stata version `sta_v'"))
       return local newline "`line'"
 
     }
@@ -338,6 +338,6 @@ cap program drop   extract_value
       error 99
       exit
     }
-    local line = trim(itrim("`line'"))
+    local line = ustrtrim(stritrim("`line'"))
     return local newline "`line'"
 end
