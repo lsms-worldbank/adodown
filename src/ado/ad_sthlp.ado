@@ -10,8 +10,7 @@ qui {
     syntax, ADFolder(string) ///
       [ ///
         commands(string) ///
-        vnum(string) ///
-        vdate(string) ///
+        nopkgmeta ///
         debug ///
       ]
 
@@ -52,12 +51,15 @@ qui {
     }
 
     * Get default values if version number or date is missing
-    if missing("`vnum'") {
-      ad_pkg_meta, adfolder(`"`folderstd'"')
-      local vnum "`r(package_version)'"
+    if ("`pkgmeta'" == "nopkgmeta") {
+      local vnum  "NOPKGMETA"
+      local vdate "NOPKGMETA"
     }
-    if missing("`vdate'") local vdate = upper(subinstr("`c(current_date)'")," ","",.)
-
+    else {
+      ad_pkg_meta, adfolder(`"`folderstd'"')
+      local vnum  "`r(package_version)'"
+      local vdate "`r(date)'"
+    }
 
     *******************************************************
     * Prepare list of files to convert

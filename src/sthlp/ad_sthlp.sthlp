@@ -11,14 +11,15 @@
 
 {title:Syntax}
 
-{phang}{bf:ad_sthlp} , {bf:{ul:adf}older}({it:string}) [{bf:commands}({it:string})]
+{phang}{bf:ad_sthlp} , {bf:{ul:adf}older}({it:string}) [{bf:commands}({it:string}) {bf:nopkgmeta}]
 {p_end}
 
 {synoptset 16}{...}
 {synopthdr:options}
 {synoptline}
 {synopt: {bf:{ul:adf}older}({it:string})}Location where package folder already exists{p_end}
-{synopt: {bf:commands}({it:string})}List specific command to convert. Default is all in package.{p_end}
+{synopt: {bf:commands}({it:string})}List specific command to convert. Default is all in package{p_end}
+{synopt: {bf:nopkgmeta}}Do not look for a {inp:.pkg} file for package metadata{p_end}
 {synoptline}
 
 {title:Description}
@@ -39,6 +40,12 @@ either {inp:ssc install} or {inp:net install}.
 {p_end}
 
 {pstd}{bf:commands}({it:string}) is used list individual commands to convert from {inp:mdhlp} to {inp:sthlp}. One or several commands can be listed. The default when this option is not used is to convert all {inp:mdhlp} files in the package. 
+{p_end}
+
+{pstd}{bf:nopkgmeta} tells the command to not look for a {inp:.pkg} file for version number and version date. 
+The default is that the header of the {inp:.sthlp} file is populated from the meta information in the {inp:.pkg} file. 
+This option allows this command to be used for {inp:.mdhlp} files not part of an {inp:adodown} styled package. 
+If this option is used, the string {it:NOPKGMETA} is used as both version number and version date in the header.
 {p_end}
 
 {title:Examples}

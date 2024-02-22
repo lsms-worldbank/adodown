@@ -4,12 +4,13 @@ __ad_sthlp__ - Converts mdhlp-files to sthlp-files in the `adodown` workflow.
 
 # Syntax
 
-__ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_)]
+__ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_) __nopkgmeta__]
 
 | _options_ | Description |
 |------------------|-------------|
 | __**adf**older__(_string_) | Location where package folder already exists |
-| __commands__(_string_) | List specific command to convert. Default is all in package. |
+| __commands__(_string_) | List specific command to convert. Default is all in package |
+| __nopkgmeta__ | Do not look for a `.pkg` file for package metadata |
 
 
 # Description
@@ -27,6 +28,11 @@ In the `adodown` workflow the mdhlp-files are expected to be stored in a folder 
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
 __commands__(_string_) is used list individual commands to convert from `mdhlp` to `sthlp`. One or several commands can be listed. The default when this option is not used is to convert all `mdhlp` files in the package.
+
+__nopkgmeta__ tells the command to not look for a `.pkg` file for version number and version date.
+The default is that the header of the `.sthlp` file is populated from the meta information in the `.pkg` file.
+This option allows this command to be used for `.mdhlp` files not part of an `adodown` styled package.
+If this option is used, the string _NOPKGMETA_ is used as both version number and version date in the header.
 
 # Examples
 
