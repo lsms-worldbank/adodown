@@ -1,4 +1,4 @@
-*! version 0.1 20230724 LSMS Team, World Bank lsms@worldbank.org
+*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_publish
     program define ad_publish
@@ -58,7 +58,7 @@ qui {
     ********************************************************
     ** Generate the sthlp files
 
-    if ("`render'" != "nogen_sthlp") {
+    if ("`gen_sthlp'" != "nogen_sthlp") {
       cap ad_sthlp, adfolder(`"`folderstd'"')
       if _rc {
         noi di as error "{pstd}Error when rendering the .sthlp files from .mdhlp files. Run command {cmd:ad_sthlp()} and fix the error or use option {opt:nogen_sthlp} to not render the files and see if package can be published anyway.{p_end}"
