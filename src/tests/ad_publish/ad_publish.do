@@ -4,12 +4,12 @@
     version 14.1
 
     reproot, project("adodown") roots("clone") prefix("adwn_")
-    global testfldr "${adwn_clone}/src/tests"
+    local testfldr "${adwn_clone}/src/tests"
 
     * Install the version of this package in
     * the plus-ado folder in the test folder
-    cap mkdir    "${testfldr}/dev-env"
-    repado using "${testfldr}/dev-env"
+    cap mkdir    "`testfldr'/dev-env"
+    repado using "`testfldr'/dev-env"
 
     cap net uninstall adodown
     net install adodown, from("${adwn_clone}/src") replace
@@ -18,7 +18,7 @@
     * Run tests
 
     local pkg "test1"
-    local ad_publish_out "${testfldr}/ad_publish/outputs"
+    local ad_publish_out "`testfldr'/ad_publish/outputs"
     local pkg_fldr "`ad_publish_out'/test1"
 
     * Reset the folder

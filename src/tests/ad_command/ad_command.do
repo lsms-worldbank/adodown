@@ -4,12 +4,16 @@
     version 14.1
 
     reproot, project("adodown") roots("clone") prefix("adwn_")
-    global testfldr "${adwn_clone}/src/tests"
+    local testfldr "${adwn_clone}/src/tests"
 
     * Install the version of this package in
     * the plus-ado folder in the test folder
-    cap mkdir    "${testfldr}/dev-env"
-    repado using "${testfldr}/dev-env"
+    cap mkdir    "`testfldr'/dev-env"
+    repado using "`testfldr'/dev-env"
+    
+    * If not already installed in dev-env, add repkit to the dev environment
+    cap which repkit
+    if _rc == 111 ssc install repkit
 
     cap net uninstall adodown
     net install adodown, from("${adwn_clone}/src") replace
@@ -18,10 +22,10 @@
     * Set up command specific test folders and resources
 
     * Load utility functions that delete old test putput and set up folders
-    run "${testfldr}/test_utils.do"
+    run "`testfldr'/test_utils.do"
 
     * Command specific test outputs
-    local out_command "${testfldr}/ad_command/outputs"
+    local out_command "`testfldr'/ad_command/outputs"
 
     * Clean up and recreate the test output folders
     local mvp_fldr "`out_command'/test-mvp"
