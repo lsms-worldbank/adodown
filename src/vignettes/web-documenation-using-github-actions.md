@@ -51,9 +51,9 @@ so if this information is important to you, then please confirm costs at the
 
 ## Step-by-step guide
 
-_THIS GUIDE IS A DRAFT TO BE USED IN DEVELPMENT - FOR NOW, THIS GUIDE IS EUQALLY MUCH A TODO LIST FOR THE DEVELOPMENT TEAM AS IT IS A GUIDE FOR A USER_
+If you already have an adodown styled package you can skip to section `B.1`
 
-#### 1. Create and clone a repository for your Stata package
+### A.1. Create and clone a repository for your Stata package
 
 Create a GitHub repository for the Stata package.
 Initiate the repository by creating a `README.md` file in the top directory.
@@ -64,16 +64,16 @@ Clone the repository to your computer.
 
 **TODO:** Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions.
 
-**TODO:** Suggest a gitignore template - see [Stata adodown issue #3](https://github.com/lsms-worldbank/adodown/issues/3).
-
-#### 2. Set up adodown styled Stata package
+### A.2. Set up adodown styled Stata package
 
 Use the command `ad_setup` to create an
 `adodown` styled Stata package in the clone.
 
-**TODO:** Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions.
+### B.1 Make sure GitHub Actions workflow settings exists
 
-#### 3. Add GitHub Actions workflow
+If you have set up your package with `ad_setup` using the `github` option then this step is already set up.
+You only need to follow these steps manually if this was not done.
+If you are not sure, then follow these instructions and make sure everything is setup.
 
 In the top directory of your clone, create a folder called `.github`
 (the `.` is important).
@@ -84,34 +84,11 @@ https://github.com/lsms-worldbank/adodown/blob/main/src/ado/templates/ad-build_a
 and paste the into the yaml-file you just created.
 Commit this file to the repository.
 
-**TODO:** Automate this step to be part of `ad_setup` - see [Stata adodown issue #2](https://github.com/lsms-worldbank/adodown/issues/2).
-
-**TODO:** When implemented as a part of `ad_setup`, consider replacing this with a manual step to add this if it was not added from before.
-
-#### 4. Add a logo icon
-
-The [R tool adodown ](https://github.com/arthur-shaw/adodown)
-requires that you add a logo icon to the repo.
-This logo must be for format `.png` and called `logo.png`.
-It can be stored anywhere in the repo.
-It is not allowed to have two files with the name `logo.png` in the repo.
-
-**TODO:** Have a default behavior when this file does not exists such that it is not a requirement. - see [R adodown issue #6](https://github.com/arthur-shaw/adodown/issues/6).
-
-#### 5. Make sure that there is only one file with format `.pkg`
-
-The [R tool adodown ](https://github.com/arthur-shaw/adodown)
-requires that you only have one file of the format `.pkg` in the repository.
-One `.pkg` is created by `ad_setup` and
-if you have not created any other `.pkg` manually this will not be an issue.
-
-**TODO:** Only look for the `.pkg` file in the exact location `/src/` - see [R adodown issue #5](https://github.com/arthur-shaw/adodown/issues/5).
-
-#### 6. Allow GitHub Actions
+### B.2. Allow GitHub Actions
 
 While `build_adodown_site.yaml` includes all instructions needed to
 build and deploy the web site with the web documentation,
-you need to enable GitHub Actions for those instructions to be applied.
+you need to enable GitHub Actions in your repository for those instructions to be applied.
 
 To enable GitHub Actions,
 go to `https://github.com/<account_name>/<repo_name>/settings/actions`.
@@ -135,7 +112,7 @@ then these settings might be affected by global organization account settings.
 The organization account admin can set these changes globally at
 `https://github.com/organizations/<account_name>/settings/actions`
 
-#### 7. Make one commit to the `main` branch
+### B.3 Make one commit to the `main` branch
 
 In this section we will refer to the default branch as `main`.
 This is synonymous with `master`,
@@ -150,7 +127,7 @@ This includes making a merge to the `main` branch.
 The GitHub Action workflow creates a new branch called `gh-pages`.
 This branch should never be modified manually.
 
-#### 8. Set up GitHub Pages
+### B.4 Set up GitHub Pages
 
 The last step is to tell GitHub there is a web site intended to be shown
 as a GitHub Pages site in the `gh-pages` branch.
@@ -168,7 +145,7 @@ On this page, make the following changes:
   * In the sub-section "_Source_" make sure "_Deployed from a branch_" is selected.
   * In the sub-section "_Branch_" make sure "_gh-pages_" is selected as branch and that "_/docs_" is selected as the root folder.
 
-#### 9. View the web site
+### 9. View the web site
 
 Wait a minute or two after completing the previous step
 and then refresh the page
@@ -179,11 +156,21 @@ From now on, this page is updated each time
 anything is pushed to the `main` branch.
 Not that a merge to the `main` branch is considered a push.
 
+## Optional steps
+
+### Add a your own logo icon
+
+The [R tool adodownr](https://github.com/arthur-shaw/adodown) used to build this web documentation
+allows you to add a custom logo to the web browser tab of your web documentation.
+To do so, save the logo in a square sized `.png` file called `logo.png`.
+Save the file in `/src/dev/assets/logo.png`.
+Push the file to the repo and then the web documentation will be recreated with this logo in the web browser tab.
+
 ## Web documentation in other locations
 
-It is possible to use the `adodown` tools to generate web documentation
+It is possible to use the `adodown(r)` tools to generate web documentation
 even when not using a GitHub repository to host the code or
 when not using GitHub pages to host documentation.
-However, then you need to install the R-tool adodown on your own computer,
+However, then you need to install the R-tool `adodownr` on your own computer,
 and run it yourself to build the website.
-See the documentation for the R-tool adodown (TODO: ADD LINK) for how to do that.
+See the documentation for adodownr for more [details](https://github.com/lsms-worldbank/adodownr).
