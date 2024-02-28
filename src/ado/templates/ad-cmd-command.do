@@ -1,44 +1,36 @@
-
+    * This test file use utilities from the repkit package - https://github.com/worldbank/repkit
+    * Test if package is installed, otherwise throw error telling user to install repkit
     cap which repkit
     if _rc == 111 {
-        di as error `"{pstd}This test file use features from the package {browse "https://dime-worldbank.github.io/repkit/":repkit}. Click {stata ssc install repkit} to install it and run this file again.{p_end}"'
+        di as error "{pstd}You need to have {cmd:repkit} installed to run this reproducibility package. Click {stata ssc install repkit, replace} to do so.{p_end}"
     }
 
-    *************************************
-    * Set root path
-    * TODO: Update with reprun once published
+    ************************
+    * Set up root paths (if not already set), and set up dev environment
 
-    di "Your username: `c(username)'"
-    * Set each user's root path
-    if "`c(username)'" == "`c(username)'" {
-        global root "ADCLONEPATH"
-    }
-    * Set all other user's root paths on this format
-    if "`c(username)'" == "" {
-        global root ""
-    }
+    * Always important to version control built-in Stata functions
+    version 14.1
 
-    * Set global to the test folder
-    global src   "${root}/src"
-    global tests "${src}/tests"
+    * Use reproot to manage root path
+    reproot, project("ADPKGNAME") roots("clone") prefix("ADPKGNAME_")
 
-    * Set up a dev environement for testing locally
-    cap mkdir    "${tests}/dev-env"
-    repado using "${tests}/dev-env"
+    * Use locals for all non-root paths
+    local testfldr "${adwn_clone}/src/tests"
 
-    * If not already installed in dev-env, add repkit to the dev environment
+    * Use the /dev-env folder as a dev environment
+    cap mkdir    "`testfldr'/dev-env"
+    repado using "`testfldr'/dev-env"
+
+    * Make sure repkit is installed also in the dev environment
     cap which repkit
     if _rc == 111 ssc install repkit
 
-    /* TODO: Uncomment once adodown is published
-    * If not already installed, add adodown to the dev environment
-    cap which adodown
-    if _rc == 111 ssc install adodown
-    */
-
-    * Install the latest version of ADPKGNAME to the dev environment
+    * Make sure the version of ADPKGNAME in the dev environment us up to date with all edits.
     cap net uninstall ADPKGNAME
-    net install ADPKGNAME, from("${src}") replace
+    net install ADPKGNAME, from("${ADPKGNAME_clone}/src") replace
+
+    ************************
+    * Run tests
 
     * Test basic case of the command ADCOMMANDNAME
     ADCOMMANDNAME

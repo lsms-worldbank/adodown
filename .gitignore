@@ -60,6 +60,7 @@
 !src/ado/templates/*.pkg
 !src/ado/templates/*.gitignore
 !src/ado/templates/*.png
+!src/ado/templates/*.yaml
 
 # Markdown and web docs files
 !/**/*.md
@@ -71,7 +72,7 @@
 src/dev/ssc
 
 # Ignore test outputs
-src/tests/outputs/
+src/tests/**/outputs/
 
 * Ignore the local dev env set up by repado
 src/tests/dev-env/

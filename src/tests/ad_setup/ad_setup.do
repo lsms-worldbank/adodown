@@ -1,24 +1,25 @@
-    * KB root path
-    if c(username) == "wb462869" {
-        local clone "C:\Users\wb462869\github\adodown"
-    }
+    ************************
+    * Set up root paths if not already set, and set up dev environment
 
-    * AS root path
-    if c(username) == "<computer username>" {
-        local clone "<clone file path>"
-    }
+    version 14.1
 
-    * Folder paths
-    local tests        "`clone'/src/tests"
-    local ad_setup_out "`tests'/outputs/ad_setup"
+    reproot, project("adodown") roots("clone") prefix("adwn_")
+    local testfldr "${adwn_clone}/src/tests"
 
-    * Set up a dev environement for testing locally
-    repado , adopath("`tests'/dev-env/") mode(strict)
+    * Install the version of this package in
+    * the plus-ado folder in the test folder
+    cap mkdir    "`testfldr'/dev-env"
+    repado using "`testfldr'/dev-env"
+
     cap net uninstall adodown
-    net install adodown, from("`clone'/src") replace
+    net install adodown, from("${adwn_clone}/src") replace
+
+    ************************
+    * Run tests
 
     * Load utility functions that delete old test putput and set up folders
-    run "`tests'/test_utils.do"
+    run "`testfldr'/test_utils.do"
+    local ad_setup_out "`testfldr'/ad_setup/outputs"
 
     rec_rmdir, folder("`ad_setup_out'") okifnotexist //Delete existing test results
     rec_mkdir, folder("`ad_setup_out'")              //Make sure folder exists
@@ -51,7 +52,7 @@
     *********
     * Test 3 - manually enter all package meta information
     *Change to if 1 to run this section
-        if 0 {
+    if 0 {
         * Set up the folders needed for ths
         local test3_fldr "`ad_setup_out'/test3-manual"
         rec_mkdir, folder("`test3_fldr'")              //Make sure folder exists
