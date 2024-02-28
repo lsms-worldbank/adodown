@@ -145,7 +145,7 @@ On this page, make the following changes:
   * In the sub-section "_Source_" make sure "_Deployed from a branch_" is selected.
   * In the sub-section "_Branch_" make sure "_gh-pages_" is selected as branch and that "_/docs_" is selected as the root folder.
 
-### 9. View the web site
+### View the web site
 
 Wait a minute or two after completing the previous step
 and then refresh the page
