@@ -21,7 +21,7 @@
     run "${testfldr}/test_utils.do"
 
     * Command specific test outputs
-    local out_command "${testfldr}/outputs/ad_command"
+    local out_command "${testfldr}/ad_command/outputs"
 
     * Clean up and recreate the test output folders
     local mvp_fldr "`out_command'/test-mvp"
