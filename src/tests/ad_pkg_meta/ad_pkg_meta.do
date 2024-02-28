@@ -1,48 +1,22 @@
+    ************************
+    * Set up root paths if not already set, and set up dev environment
 
-    cap which repkit
-    if _rc == 111 {
-        di as error `"{pstd}This test file use features from the package {browse "https://dime-worldbank.github.io/repkit/":repkit}. Click {stata ssc install repkit} to install it and run this file again.{p_end}"'
-    }
+    version 14.1
 
-    *************************************
-    * Set root path
-    * TODO: Update with reprun once published
+    reproot, project("adodown") roots("clone") prefix("adwn_")
+    global testfldr "${adwn_clone}/src/tests"
 
-    di "Your username: `c(username)'"
-    * Set each user's root path
-    if "`c(username)'" == "wb462869" {
-        global root "C:/Users/wb462869/github/adodown"
-    }
-    * Set all other user's root paths on this format
-    if "`c(username)'" == "" {
-        global root ""
-    }
+    * Install the version of this package in
+    * the plus-ado folder in the test folder
+    cap mkdir    "${testfldr}/dev-env"
+    repado using "${testfldr}/dev-env"
 
-    * Set global to the test folder
-    global src   "${root}/src"
-    global tests "${src}/tests"
-
-    * Set up a dev environement for testing locally
-    cap mkdir    "${tests}/dev-env"
-    repado using "${tests}/dev-env"
-
-    * If not already installed in dev-env, add repkit to the dev environment
-    cap which repkit
-    if _rc == 111 ssc install repkit
-
-    /* TODO: Uncomment once adodown is published
-    * If not already installed, add adodown to the dev environment
-    cap which adodown
-    if _rc == 111 ssc install adodown
-    */
-
-    * Install the latest version of adodown to the dev environment
     cap net uninstall adodown
-    net install adodown, from("${src}") replace
+    net install adodown, from("${adwn_clone}/src") replace
+
+    ************************
+    * Run tests
 
     * Test basic case of the command ad_pkg_meta
-    ad_pkg_meta, adf("${root}")
+    ad_pkg_meta, adf("${adwn_clone}/src)
     return list
-    // Add more tests here...
-    
-    

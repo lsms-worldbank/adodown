@@ -1,24 +1,27 @@
-   * KB root path
-    if c(username) == "wb462869" {
-        local clone "C:\Users\wb462869\github\adodown"
-    }
+    ************************
+    * Set up root paths if not already set, and set up dev environment
 
-    * AS root path
-    if c(username) == "<computer username>" {
-        local clone "<clone file path>"
-    }
+    version 14.1
+
+    reproot, project("adodown") roots("clone") prefix("adwn_")
+    global testfldr "${adwn_clone}/src/tests"
+
+    * Install the version of this package in
+    * the plus-ado folder in the test folder
+    cap mkdir    "${testfldr}/dev-env"
+    repado using "${testfldr}/dev-env"
+
+    cap net uninstall adodown
+    net install adodown, from("${adwn_clone}/src") replace
+
+    ************************
+    * Run tests
 
     * Folder paths
-    local tests     "`clone'/src/tests"
-    local out_sthlp "`tests'/outputs/ad_sthlp"
-
-    * Set up a dev environement for testing locally
-    repado , adopath("`tests'/dev-env/") mode(strict)
-    cap net uninstall adodown
-    net install adodown, from("`clone'/src") replace
+    local out_sthlp "${testfldr}/outputs/ad_sthlp"
 
     * Load utility functions that delete old test putput and set up folders
-    run "`tests'/test_utils.do"
+    run "${testfldr}/test_utils.do"
 
     * Set up the folders needed for ths
     local mvp_f "`out_sthlp'/test-mvp"
