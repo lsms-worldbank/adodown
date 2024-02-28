@@ -1,38 +1,41 @@
 * This package file is generated in the adodown workflow. Do not edit directly.
 *** version
-v 0.0
-*** name
-d adodown
+v 0.5
+*** title
+d 'ADODOWN': module to set up and manage Stata packages
 *** description
 d mydescription
 d
 *** stata
-d Version: Stata 14.1
+d Requires: Stata version 14.1
 d
 *** author
-d Author:
+d Author: LSMS Team, World Bank
 *** contact
-d Contact: test@mail.com
+d Contact: lsms@worldbank.org
 *** url
 d URL: https://github.com/lsms-worldbank/adodown
 d
 *** date
-d Distribution-Date: 20230724
-d
+d Distribution-Date: 20240222
 *** adofiles
+f ado/ad_update.ado
+f ado/ad_pkg_meta.ado
 f ado/adodown.ado
 f ado/ad_publish.ado
-F ado/ad_setup.ado
-F ado/ad_command.ado
-F ado/ad_sthlp.ado
+f ado/ad_setup.ado
+f ado/ad_command.ado
+f ado/ad_sthlp.ado
 *** helpfiles
+f sthlp/ad_update.sthlp
 f sthlp/adodown.sthlp
 f sthlp/ad_publish.sthlp
-F sthlp/ad_command.sthlp
-F sthlp/ad_setup.sthlp
-F sthlp/ad_sthlp.sthlp
+f sthlp/ad_command.sthlp
+f sthlp/ad_setup.sthlp
+f sthlp/ad_sthlp.sthlp
 *** ancillaryfiles
 F ado/templates/ad-cmd-command.ado
+F ado/templates/ad-cmd-command.do
 F ado/templates/ad-cmd-command.md
 F ado/templates/ad-gh-workflows.yaml
 F ado/templates/ad-gh.gitignore

@@ -1,10 +1,10 @@
 # Title
 
-__ADCOMMANDNAME__ - This command is used for short description.
+__ad_update__ - This command is used for short description.
 
 # Syntax
 
-__ADCOMMANDNAME__ , __**opt**ion1__(_string_)
+__ad_update__ , __**opt**ion1__(_string_)
 
 | _options_ | Description |
 |-----------|-------------|

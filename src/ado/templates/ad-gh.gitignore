@@ -20,8 +20,7 @@
 # These files include GitHub settings
 !.gitignore
 !.gitattributes
-!*.yaml
-
+!.github/**/*.yaml
 
 # Git placeholder file (to commit empty folders)
 !/**/*.gitkeep
@@ -30,6 +29,9 @@
 !README.md
 !CONTRIBUTING.md
 !LICENSE*
+
+* Unignore reproot files
+!reproot*.yaml
 
 #######################
 # For performance reasons, if a folder is already ignored, then
@@ -51,8 +53,17 @@
 !src/stata.toc
 !src/*.pkg
 
-# Markdown
+# Markdown and web docs files
 !/**/*.md
+!src/dev/assets/*.png
+!src/dev/assets/*.css
 
-* Ignore the local env
-/**/plus-ado/
+####################################
+# Ignore ssc outputs
+src/dev/ssc
+
+# Ignore test outputs
+src/tests/outputs/
+
+* Ignore the local dev env set up by repado
+src/tests/dev-env/

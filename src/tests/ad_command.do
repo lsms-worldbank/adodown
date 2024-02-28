@@ -12,9 +12,8 @@
     local tests       "`clone'/src/tests"
     local out_command "`tests'/outputs/ad_command"
 
-    * Install the version of this package in 
-    * the plus-ado folder in the test folder
-    repado , adopath("`tests'/plus-ado/") mode(strict)
+    * Set up a dev environement for testing locally
+    repado , adopath("`tests'/dev-env/") mode(strict)
     cap net uninstall adodown
     net install adodown, from("`clone'/src") replace
 
@@ -29,7 +28,7 @@
     ad_setup, adfolder("`mvp_fldr'") autoprompt ///
         author("A") name("my_mvp_pkg") ///
         description("d") url("u")  ///
-        contact("c")
+        contact("c") github
 
     ad_command create mycmd1, adfolder("`mvp_fldr'") pkgname("my_mvp_pkg")
     ad_command create mycmd2, adfolder("`mvp_fldr'") pkgname("my_mvp_pkg")

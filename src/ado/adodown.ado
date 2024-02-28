@@ -1,22 +1,20 @@
-*! version 1.0 05NOV2023 LSMS TEam lsms@worldbank.org
+*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   adodown
     program define adodown, rclass
 
-    version 13.0
+    version 14.1
 
-    * UPDATE THESE LOCALS FOR EACH NEW VERSION PUBLISHED
-  	local version "1.0"
-  	local versionDate "05NOV2023"
-    local cmd    "adodown"
+    * Do not manually edit these locals. They are updated with ad_publish in the adodown workflow
+    local version     "1.0"
+    local versionDate "20240222"
+    local cmd         "adodown"
 
   	syntax [anything]
 
-  	version 12
-
     * Prepare returned locals
-    return local versiondate     "`versionDate'"
-    return local version		      = `version'
+    return local versiondate   "`versionDate'"
+    return local version		  = `version'
 
     if missing(`"`anything'"') {
       * Display output
@@ -44,6 +42,13 @@ cap program drop   adodown
         noi di as text "{pstd}Please note that during the beta release we might rename or remove options without building in backward compatibility, and some still experimental features might not be fully documented.{p_end}" _n
         noi di _n "{hline}"
       }
+
+      * Get standardized date
+      else if ("`subcmd'" == "formatteddate") {
+          local formatteddate: display %tdCCYYNNDD `= date("`c(current_date)'","DMY")'
+          return local formatteddate "`formatteddate'"
+      }
+
 
       else {
         noi di "{pstd}The sub-command [`subcmd'] used with `cmd' is not valid.{p_end}"

@@ -1,10 +1,18 @@
-*! version XX XXXXXXXXX ADAUTHORNAME ASCONTACTINFO
+*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_sthlp
     program define ad_sthlp
-  qui {
 
-    syntax, ADFolder(string) [debug]
+qui {
+
+    version 14.1
+
+    syntax, ADFolder(string) ///
+      [ ///
+        commands(string) ///
+        nopkgmeta ///
+        debug ///
+      ]
 
     *******************************************************
     * Create locals
@@ -42,6 +50,17 @@ cap program drop   ad_sthlp
       exit
     }
 
+    * Get default values if version number or date is missing
+    if ("`pkgmeta'" == "nopkgmeta") {
+      local vnum  "NOPKGMETA"
+      local vdate "NOPKGMETA"
+    }
+    else {
+      ad_pkg_meta, adfolder(`"`folderstd'"')
+      local vnum  "`r(package_version)'"
+      local vdate "`r(date)'"
+    }
+
     *******************************************************
     * Prepare list of files to convert
 
@@ -65,10 +84,21 @@ cap program drop   ad_sthlp
     }
 
     if (!missing("`notmd_files'")) {
-      noi di as text `"{pstd}{red:Warning:}Only files on format {inp:.md} is expected to be in the "`fld'hlp" folder. In the adodown workflow only markdown files should be saved in this folder. The follwoing file(s) will be skipped:{p_end}"'
+      noi di as text `"{pstd}{red:Warning:}Only files on format {inp:.md} is expected to be in the "`fld'hlp" folder. In the adodown workflow only markdown files should be saved in this folder. The following file(s) will be skipped:{p_end}"'
       foreach notmd_files of local notmd_files {
         noi di as text `"{pstd}- `notmd_files'{p_end}"'
       }
+    }
+
+    * If running st_hlp on only specific commands
+    if !missing("`commands'") {
+      * Make sure all commands in comamnds() were found
+      local commands_not_found : list commands - file_names
+      if !missing("`commands_not_found'") {
+        noi di as error `"{pstd}.mdhlp help files was not found for all commands listed in option {opt commands(`commands')}. For the command(s) [`commands_not_found'] no .mdhlp was found in the "src/mdhlp" folder.{p_end}"'
+      }
+      * Only use the commands
+      local file_names "`commands'"
     }
 
     *******************************************************
@@ -86,7 +116,7 @@ cap program drop   ad_sthlp
       file open `st_fh' using ``file_name'' , write
 
       * Write the smcl tag at top of file to
-      file write `st_fh' "{smcl}" _n "{* 01 Jan 1960}{...}" _n ///
+      file write `st_fh' "{smcl}" _n "{* *! version `vnum' `vdate'}{...}" _n ///
         "{hline}" _n "{pstd}help file for {hi:`file_name'}{p_end}" _n "{hline}" _n _n
 
       * Read first line then iterate until end of file (eof)
@@ -107,6 +137,11 @@ cap program drop   ad_sthlp
         local line : subinstr local line "```" "%%%CODEBLOCK%%%", count(local has_CODEBLOCK)
         local line : subinstr local line "`"   "%%%CODEINLINE%%%", all
 
+        * Add trailing space to line with ` as it
+        * prevents lines to evaluate with trailing `" which breaks the code
+        local hasinline = strpos(`"`macval(line)'"',"%%%CODEINLINE%%%")
+        if (`hasinline') local line = `"`macval(line)' "'
+
         * Write codeblock by itself as it should allow
         * special characters tricky in the rest of the code flow
         if (`codeblock' == 1 & `has_CODEBLOCK' == 0) {
@@ -126,7 +161,7 @@ cap program drop   ad_sthlp
           * Apply all inline formatting ` _ __ ** and escape $ { }
           * and get position of beg and end comment tags
           if (`codeblock' == 0 & !missing(`"`macval(line)'"')) {
-            apply_inline_formatting, line(`"`macval(line)'"')
+            noi apply_inline_formatting, line(`"`macval(line)'"')
             local line       `"`r(line)'"'
             local com_pos_beg `r(com_pos_beg)'
             local com_pos_end `r(com_pos_end)'
@@ -247,7 +282,7 @@ cap program drop   ad_sthlp
     }
 
     * Output confirmation of files converted
-    noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The follwoing sthlp file(s) were created:{p_end}"'
+    noi di as res `"{pstd}Mdhlp files successfully converted to sthlp files. The following sthlp file(s) were created:{p_end}"'
     foreach file_name of local file_names {
       noi di as text `"{pstd}- {view "`sthlp'/`file_name'.sthlp":`file_name'.sthlp}{p_end}"'
     }
@@ -324,8 +359,6 @@ cap program drop   	apply_inline_formatting
         if (`ital_span' == 0) local itag "{it:"
         else local itag "}"
 
-
-
         local pre   = substr("`line'",1,`i'-1)
         local post1 = substr("`line'",`i'+1,.)
         local post2 = substr("`line'",`i'+2,.)
@@ -390,7 +423,7 @@ cap program drop   	apply_inline_formatting
     }
 
     * Parse and convert hyperlinks
-    parse_hyperlinks, line(`"`line'"')
+    noi parse_hyperlinks, line(`"`line'"')
 
     * Return line with inline smcl formatting
     return local line `"`r(line)'"'
@@ -500,48 +533,33 @@ cap program drop   	parse_hyperlinks
    local s1 = substr(`"`line'"',`i',1)
    local s2 = substr(`"`line'"',`i',2)
 
-   * Add smcl tags count - always reset link part when encountering smcl tag
-   if (`"`s1'"'=="{") {
-     local curly_open `++curly_open'
-     local link_part 0
-   }
-
-   * Reduce smcl tag count
-   else if (`"`s1'"'=="}") {
-     local curly_open `--curly_open'
-   }
-
-   * If not withing any smcl formatting, test for link
-   else if (`curly_open' == 0) {
-
-       * Beg of link token, if expected increment link part otherwise reset
-       if (`"`s1'"'=="[") {
-           if (`link_part' == 0) {
-               local link_part = 1
-               local lp1_i = `i'
-           }
-           else local link_part = 0
+   * Beg of link token, if expected increment link part otherwise reset
+   if (`"`s1'"'=="[") {
+       if (`link_part' == 0) {
+           local link_part = 1
+           local lp1_i = `i'
        }
-       * Mid of link token, if expected increment link part otherwise reset
-       else if (`"`s2'"'=="](") {
-           if (`link_part' == 1) {
-               local link_part = 2
-               local lp2_i = `i'
-               local `++i'
-           }
-           else local link_part = 0
-       }
-       * End of link token, if expected increment link part otherwise reset
-       else if (`"`s1'"'==")") {
-           if (`link_part' == 2) {
-               local link_part = 3
-               local lp3_i = `i'
-           }
-           else local link_part = 0
-       }
-       * This is not a corrctly formatted link
-       else if (`"`s1'"'=="]") | ("`s1'"=="(") local link_part = 0
+       else local link_part = 0
    }
+   * Mid of link token, if expected increment link part otherwise reset
+   else if (`"`s2'"'=="](") {
+       if (`link_part' == 1) {
+           local link_part = 2
+           local lp2_i = `i'
+           local `++i'
+       }
+       else local link_part = 0
+   }
+   * End of link token, if expected increment link part otherwise reset
+   else if (`"`s1'"'==")") {
+       if (`link_part' == 2) {
+           local link_part = 3
+           local lp3_i = `i'
+       }
+       else local link_part = 0
+   }
+   * This is not a corrctly formatted link
+   else if (`"`s1'"'=="]") | ("`s1'"=="(") local link_part = 0
 
    * Link found - therefore end the while loop
    if (`link_part' == 3) local i = `n'
@@ -549,6 +567,7 @@ cap program drop   	parse_hyperlinks
    * go to next character in string
    local `++i'
  }
+
 
  * While loop ended, if link found, build smcl link and recurse on remainder
  if (`link_part' == 3) {
@@ -560,16 +579,60 @@ cap program drop   	parse_hyperlinks
    local link = substr(`"`line'"',`lp2_i'+2,`lp3_i'-`lp2_i'-2)
 
    * Make a recurisive call on the rest of the line
-   local post = substr(`"`line'"',`lp3_i'+1,.)
-   parse_hyperlinks, line(`"`post'"')
+   local rest_of_line = substr(`"`line'"',`lp3_i'+1,.)
 
-   * Return the line with smcl link
-   return local line `"`pre'{browse "`link'":`text'}`r(line)'"'
+   * Remove smcl formatting from within links
+   hyperlink_sanitize_smcl, link(`"`link'"') text(`"`text'"')
+   local link `"`r(link)'"'
+   local text `"`r(text)'"'
+
+   //If text exists after link, parse that string recurisively for more links
+   if !missing("`rest_of_line'") {
+     * Recursivley parse rest of line for more links and
+     * then return the line with smcl link
+     noi parse_hyperlinks, line(`"`rest_of_line'"')
+     local rest_of_line "`r(line)'"
+   }
+   //return the line
+   return local line `"`pre'{browse "`link'":`text'}`rest_of_line'"'
  }
+
  * No link found, return line as is
  else return local line `"`line'"'
+end
+
+* If a hyperlink is identified, then there should be no smcl formatting in it
+* Most common is _ as in "[sel_add_metadata]" that
+* becomes "[sel{it:add}metadata"
+cap program drop 	hype]rlink_sanitize_smcl
+	program define	hyperlink_sanitize_smcl, rclass
+
+  syntax , link(string) text(string)
+
+  * Loop over link and text to find {it and return them back to _
+  foreach link_part in link text {
+    * test if there are any {it: in link_part
+    local smcl_it_exist = strpos(`"``link_part''"',"{it:")
+    while (`smcl_it_exist') {
+      * Get part before and after {it:
+      local first = substr(`"``link_part''"',1,`smcl_it_exist'-1)
+      local rest  = substr(`"``link_part''"',`smcl_it_exist',.)
+
+      * Replace {it: and }
+      local rest = subinstr(`"`rest'"',"{it:","_",1)
+      local rest = subinstr(`"`rest'"',"}","_",1)
+
+      * Combine the two parts and test if there are more {it:
+      local `link_part' = "`first'`rest'"
+      local smcl_it_exist = strpos(`"``link_part''"',"{it:")
+    }
+  }
+  return local link `"`link'"'
+  return local text `"`text'"'
 
 end
+
+
 
 cap program drop 	display_len
 	program define	display_len, rclass

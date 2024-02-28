@@ -1,10 +1,13 @@
-*! version XX XXXXXXXXX AUTHOR CONTACT
+*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_command
     program define ad_command
 
 qui {
-    syntax anything , ADFolder(string) PKGname(string) [debug]
+
+    version 14.1
+
+    syntax anything , ADFolder(string) PKGname(string) [UNDOCumented debug]
 
     *******************************************************
     * Test inputs
@@ -19,7 +22,7 @@ qui {
     *Parse out the sub-command and the command name
     gettoken scmd cname : anything
     local scmd  = trim("`scmd'")
-    local cname = trim("`cname'")
+    local cname = trim(subinstr("`cname'",".ado","",.))
 
     * Test that subcommand is either create or remove
     if !(inlist("`scmd'","create", "remove")) {
@@ -45,7 +48,7 @@ qui {
     }
 
     * Test for adodown folders expected in the folder
-    foreach ad_fld in ado mdhlp sthlp {
+    foreach ad_fld in ado mdhlp sthlp tests {
       mata : st_numscalar("r(dirExist)", direxists("`srcfolder'/`ad_fld'"))
       if `r(dirExist)' == 0  {
         local folder_error "TRUE"
@@ -77,15 +80,15 @@ qui {
 
     if !missing("`debug'") noi di as text "Checking files already exist"
 
-    local cname = subinstr("`cname'",".ado","",.)
-
     * Locals for refrences to the files assocaited with this command
-    local adof "`srcfolder'/ado/`cname'.ado"
-    local mdhf "`srcfolder'/mdhlp/`cname'.md"
-    local sthf "`srcfolder'/sthlp/`cname'.sthlp"
+    local adof     "`srcfolder'/ado/`cname'.ado"
+    local mdhf     "`srcfolder'/mdhlp/`cname'.md"
+    local sthf     "`srcfolder'/sthlp/`cname'.sthlp"
+    local tst_fldr "`srcfolder'/tests/`cname'"
+    local tstf     "`tst_fldr'/`cname'.do"
 
     * Checking if file exists or not
-    foreach f in adof mdhf sthf {
+    foreach f in adof mdhf sthf tstf {
       cap confirm file "``f''"
       if _rc {
         local `f'_exists "FALSE"
@@ -123,12 +126,19 @@ qui {
 
       *******************
       * Get all templates and store in temporary files
-      local ad_templates ado mdh
+      local ad_templates "ado tst"
+
+      * Unless undocumented is used, add mdh
+      if missing("`undocumented'") {
+        local ad_templates "`ad_templates' mdh"
+      }
+
       foreach adt of local ad_templates {
 
         tempfile `adt'_template
         if "`adt'" == "ado" local template "ad-cmd-command.ado"
         if "`adt'" == "mdh" local template "ad-cmd-command.md"
+        if "`adt'" == "tst" local template "ad-cmd-command.do"
 
         * Get template file and store in temporary file
         if !missing("`debug'") noi di as text `"Get template file: `template' and store in `adt'_template "'
@@ -147,7 +157,7 @@ qui {
           findfile `template'
         }
 
-        if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"
+        if !missing("`debug'") noi di as text `"  Saved in ``adt'_template'"'
       }
 
       *******************
@@ -166,8 +176,10 @@ qui {
         file read ``adt'_read' line
         while r(eof)==0 {
           * Replace placeholder with command name
-          local line = subinstr("`macval(line)'","ADCOMMANDNAME","`cname'",.)
-          file write ``adt'_write' "`macval(line)'" _n
+          local line = subinstr(`"`macval(line)'"',"ADCOMMANDNAME","`cname'",.)
+          local line = subinstr(`"`macval(line)'"',"ADCLONEPATH",`"`adfolder'"',.)
+          local line = subinstr(`"`macval(line)'"',"ADPKGNAME","`pkgname'",.)
+          file write ``adt'_write' `"`macval(line)'"' _n
           * Read next line
           file read ``adt'_read' line
         }
@@ -194,7 +206,9 @@ qui {
           file write `pkg_write' "`macval(line)'" _n "f ado/`cname'.ado" _n
         }
         else if (strpos("`macval(line)'","*** helpfiles")) {
-          file write `pkg_write' "`macval(line)'" _n "f sthlp/`cname'.sthlp" _n
+          * Only add sthlp file if command is documented
+          file write `pkg_write' "`macval(line)'" _n
+          if missing("`undocumented'") file write `pkg_write' "f sthlp/`cname'.sthlp" _n
         }
         else {
           file write `pkg_write' "`macval(line)'" _n
@@ -210,12 +224,20 @@ qui {
 
       *******************
       * Write files to disk
-      * Write .ado and .mdhlp files
+      * Write .ado and .mdhlp files and .do test file
+
+      cap mkdir "`tst_fldr'"
+
       foreach adt of local ad_templates {
           copy "``adt'_out'" "``adt'f'"
       }
       *Write package file
       copy "`pkg_out'" "`srcfolder'/`pkgname'.pkg", replace
+
+      * Convert the first version of the sthlp file
+      if missing("`undocumented'") {
+        qui ad_sthlp, adfolder("`adfolder'") commands("`cname'")
+      }
 
       noi di as res "{pstd}Command {it:`cname'} was succesfully added to package {it:`pkgname'}.{p_end}"
 
