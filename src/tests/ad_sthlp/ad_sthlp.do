@@ -18,7 +18,7 @@
     * Run tests
 
     * Folder paths
-    local out_sthlp "${testfldr}/outputs/ad_sthlp"
+    local out_sthlp "${testfldr}/ad_sthlp/outputs"
 
     * Load utility functions that delete old test putput and set up folders
     run "${testfldr}/test_utils.do"

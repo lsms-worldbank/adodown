@@ -17,12 +17,8 @@
     ************************
     * Run tests
 
-    * Test basic case of the command ad_pkg_meta
-    ad_pkg_meta, adf("${adwn_clone}/src")
-    return list
-
     local name "mvp1"
-    local ad_update_out "${testfldr}/outputs/ad_update"
+    local ad_update_out "${testfldr}/ad_update/outputs"
     local mvp1_fldr "`ad_update_out'/mvp1"
 
     * Reset the folder

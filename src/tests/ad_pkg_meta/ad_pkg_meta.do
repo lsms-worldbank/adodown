@@ -18,5 +18,5 @@
     * Run tests
 
     * Test basic case of the command ad_pkg_meta
-    ad_pkg_meta, adf("${adwn_clone}/src)
+    ad_pkg_meta, adf("${adwn_clone}")
     return list
