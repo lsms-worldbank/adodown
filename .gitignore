@@ -60,6 +60,7 @@
 !src/ado/templates/*.pkg
 !src/ado/templates/*.gitignore
 !src/ado/templates/*.png
+!src/ado/templates/*.yaml
 
 # Markdown and web docs files
 !/**/*.md
