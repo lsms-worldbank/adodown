@@ -38,15 +38,17 @@ qui {
 
     * Locals pointing to all template files to be used in the src folder
     local src_tfs ""
-    local src_tfs "`src_tfs' ad-src-package.pkg"
-    local src_tfs "`src_tfs' ad-src-stata.toc"
+    local src_tfs "`src_tfs' ad-reproot.yaml"
     local src_tfs "`src_tfs' ad-src-ado-README.md"
+    local src_tfs "`src_tfs' ad-src-dev-description.txt"
     local src_tfs "`src_tfs' ad-src-dev-README.md"
     local src_tfs "`src_tfs' ad-src-mdhlp-README.md"
+    local src_tfs "`src_tfs' ad-src-package.pkg"
+    local src_tfs "`src_tfs' ad-src-stata.toc"
     local src_tfs "`src_tfs' ad-src-sthlp-README.md"
     local src_tfs "`src_tfs' ad-src-tests-README.md"
     local src_tfs "`src_tfs' ad-src-vignettes-README.md"
-    local src_tfs "`src_tfs' ad-src-dev-description.txt"
+
 
     * Extract from template names all folders needed
     local src_folders ""
