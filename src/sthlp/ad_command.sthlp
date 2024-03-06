@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.5 20240222}{...}
+{* *! version 0.1 20240306}{...}
 {hline}
 {pstd}help file for {hi:ad_command}{p_end}
 {hline}
@@ -20,10 +20,13 @@
 {synoptset 16}{...}
 {synopthdr:options}
 {synoptline}
-{synopt: {bf:{ul:adf}older}({it:string})}Location where package folder already exists{p_end}
+{synopt: {bf:{ul:adf}older}({it:string})}Location of the adodown-styled package{p_end}
 {synopt: {bf:{ul:pkg}name}({it:string})}Name of package that exists in the location {inp:adfolder()} points to.{p_end}
 {synopt: {bf:{ul:undoc}umented}}used to create an undocumented command.{p_end}
 {synoptline}
+
+{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_command.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{p_end}
 
 {title:Description}
 
@@ -34,15 +37,12 @@
 and the ado-file and the sthlp file is addended to the pkg-file in that package folder.
 {p_end}
 
-{pstd}Note that the using {inp:net install} will not work immediately after creating a command with this file as the pkg-file points to the sthlp-file that is not yet rendered. Use the command {inp:ad_sthlp} to render that command. 
-{p_end}
-
 {title:Options}
 
 {pstd}{it:subcommand} as specified in {inp:ad_command <subcommand> <commandname>} can either be {inp:create} or {inp:remove}. {inp:create} is used when creating a new command and {inp:remove} when removing and existing command. 
 {p_end}
 
-{pstd}{it:commandname} as specified in {inp:ad_command <subcommand> <commandname>} is the name of the command to be created or removed. If a command is created then an error is thrown if the name is already used by an existing command, and an error will be thrown when removing a command if the name is not used by any existing commands. 
+{pstd}{it:commandname} as specified in {inp:ad_command <subcommand> <commandname>} is the name of the command to be created or removed. An error is thrown if a command with this name already exists when using sub-command {inp:create}, and an error will be thrown when removing a command if no command with name already exists. 
 {p_end}
 
 {pstd}{bf:{ul:adf}older}({it:string}) is used to indicate the location of where the adodown-styled package folder already exist.
@@ -54,7 +54,7 @@ and the ado-file and the sthlp file is addended to the pkg-file in that package 
 {pstd}{bf:{ul:undoc}umented}  is used to create an undocumented command.
 An undocumented command is a command that not intended to be used by the user,
 and only be used by other commands in the same package.
-In practice, this means that no helpfile is created for this command.
+In practice, this only means that no helpfile is created for this command.
 {p_end}
 
 {title:Examples}
@@ -64,7 +64,7 @@ In practice, this means that no helpfile is created for this command.
 {pstd}This example assumes that there is already a adodown-styled package folder at the location the local {inp:myfolder} is pointing to. 
 {p_end}
 
-{input}{space 8}* point a local to the folder where the package will be created
+{input}{space 8}* point a local to the folder with the package where a new command will be created
 {space 8}local myfolder "path/to/folder"
 {space 8}
 {space 8}* Package meta info

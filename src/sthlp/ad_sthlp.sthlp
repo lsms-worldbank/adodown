@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.5 20240222}{...}
+{* *! version 0.1 20240306}{...}
 {hline}
 {pstd}help file for {hi:ad_sthlp}{p_end}
 {hline}
@@ -17,10 +17,13 @@
 {synoptset 16}{...}
 {synopthdr:options}
 {synoptline}
-{synopt: {bf:{ul:adf}older}({it:string})}Location where package folder already exists{p_end}
+{synopt: {bf:{ul:adf}older}({it:string})}Location of the adodown-styled package{p_end}
 {synopt: {bf:commands}({it:string})}List specific command to convert. Default is all in package{p_end}
 {synopt: {bf:nopkgmeta}}Do not look for a {inp:.pkg} file for package metadata{p_end}
 {synoptline}
+
+{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{p_end}
 
 {title:Description}
 
@@ -39,7 +42,7 @@ either {inp:ssc install} or {inp:net install}.
 {pstd}{bf:{ul:adf}older}({it:string}) is used to indicate the location of where the adodown-styled package folder already exist.
 {p_end}
 
-{pstd}{bf:commands}({it:string}) is used list individual commands to convert from {inp:mdhlp} to {inp:sthlp}. One or several commands can be listed. The default when this option is not used is to convert all {inp:mdhlp} files in the package. 
+{pstd}{bf:commands}({it:string}) is used to list individual commands to convert from {inp:mdhlp} to {inp:sthlp}. One or several commands can be listed. The default when this option is not used is to convert all {inp:mdhlp} files in the mdhlp folder to sthlp-files. 
 {p_end}
 
 {pstd}{bf:nopkgmeta} tells the command to not look for a {inp:.pkg} file for version number and version date. 
@@ -55,7 +58,7 @@ If this option is used, the string {it:NOPKGMETA} is used as both version number
 {pstd}This example assumes that there is already a adodown-styled package folder at the location the local {inp:myfolder} is pointing to, and that some commands have already been created. Any mdhlp-files in the {inp:mdhlp} folder in the folder {inp:myfolder} is pointing to will be rendered to Stata helpfile format and saved in the {inp:sthlp} folder. 
 {p_end}
 
-{input}{space 8}* point a local to the folder where the package will be created
+{input}{space 8}* point a local to the folder where the package is located
 {space 8}local myfolder "path/to/folder"
 {space 8}
 {space 8}* Render the Stata helpfiles
@@ -66,7 +69,7 @@ If this option is used, the string {it:NOPKGMETA} is used as both version number
 {pstd}This example includes the steps for how to create the adodown-styled package folder in the location the local {inp:myfolder} is pointing to, creating some commands and then render the template mdhlp-files to Stata helpfiles. 
 {p_end}
 
-{input}{space 8}* point a local to the folder where the package will be created
+{input}{space 8}* point a local to the folder where the package is located
 {space 8}local myfolder "path/to/folder"
 {space 8}
 {space 8}* Package meta info
