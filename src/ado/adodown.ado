@@ -3,6 +3,8 @@
 cap program drop   adodown
     program define adodown, rclass
 
+qui {
+  
     version 14.1
 
     * Do not manually edit these locals. They are updated with ad_publish in the adodown workflow
@@ -56,4 +58,5 @@ cap program drop   adodown
         exit
       }
     }
+}
 end

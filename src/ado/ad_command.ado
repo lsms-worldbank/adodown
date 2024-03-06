@@ -7,7 +7,7 @@ qui {
 
     version 14.1
 
-    syntax anything , ADFolder(string) PKGname(string) [UNDOCumented debug]
+    syntax anything , ADFolder(string) PKGname(string) [UNDOCumented pkgcommand debug]
 
     *******************************************************
     * Test inputs
@@ -175,11 +175,24 @@ qui {
         * Read first line
         file read ``adt'_read' line
         while r(eof)==0 {
-          * Replace placeholder with command name
-          local line = subinstr(`"`macval(line)'"',"ADCOMMANDNAME","`cname'",.)
-          local line = subinstr(`"`macval(line)'"',"ADCLONEPATH",`"`adfolder'"',.)
-          local line = subinstr(`"`macval(line)'"',"ADPKGNAME","`pkgname'",.)
-          file write ``adt'_write' `"`macval(line)'"' _n
+
+          if (!missing("`pkgcommand'") & (strpos(`"`macval(line)'"',"version /*"))) {
+
+            * Write the regular version line
+            file write ``adt'_write' `"`macval(line)'"' _n _n
+
+            * Add the version locals unique to the pkgcommand
+            file write ``adt'_write' "    * Do not manually edit these locals. They are updated with ad_publish in the adodown workflow" _n
+            file write ``adt'_write' `"    local version     """' _n `"    local versionDate """' _n `"    local cmd         "`cname'""' _n
+          }
+          else {
+            * Replace placeholder with command name
+            local line = subinstr(`"`macval(line)'"',"ADCOMMANDNAME","`cname'",.)
+            local line = subinstr(`"`macval(line)'"',"ADCLONEPATH",`"`adfolder'"',.)
+            local line = subinstr(`"`macval(line)'"',"ADPKGNAME","`pkgname'",.)
+            file write ``adt'_write' `"`macval(line)'"' _n
+          }
+
           * Read next line
           file read ``adt'_read' line
         }
