@@ -13,6 +13,8 @@ __ad_publish__ , __**adf**older__(_string_) [__**und**ocumented__(_string_) __ss
 | __ssczip__ | Generates a Zip-archive ready to send to SSC  |
 | __nogen_sthlp__ | Do not run `ad_sthlp` on the package   |
 
+Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_publish.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
+
 # Description
 
 This command is intended to be used when preparing a package for publication. Unless the option `nogen_sthlp` is used, this command uses the command `ad_sthlp()` (also in this `adodown` package) to generates the `.sthlp`-files from the `.mdhlp`-files.

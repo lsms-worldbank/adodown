@@ -10,6 +10,8 @@ __ad_update__ , __**opt**ion1__(_string_)
 |-----------|-------------|
 | __**opt**ion1__(_string_) | Short description of option1 |
 
+Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_update.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
+
 # Description
 <!-- Longer description of the intended use of the command and best practices related to the usage. -->
 
