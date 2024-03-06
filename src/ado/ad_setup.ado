@@ -264,7 +264,7 @@ qui {
     }
 
     * Add a command with the same name as the package to the package template
-    qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
+    qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'") pkgcommand
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
 
     // Remove when command is no longer in beta
