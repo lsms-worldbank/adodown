@@ -8,7 +8,7 @@ __ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_) __nopkgmeta__]
 
 | _options_ | Description |
 |------------------|-------------|
-| __**adf**older__(_string_) | Location where package folder already exists |
+| __**adf**older__(_string_) | Location of the adodown-styled package |
 | __commands__(_string_) | List specific command to convert. Default is all in package |
 | __nopkgmeta__ | Do not look for a `.pkg` file for package metadata |
 
@@ -28,7 +28,7 @@ In the `adodown` workflow the mdhlp-files are expected to be stored in a folder 
 
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
-__commands__(_string_) is used list individual commands to convert from `mdhlp` to `sthlp`. One or several commands can be listed. The default when this option is not used is to convert all `mdhlp` files in the package.
+__commands__(_string_) is used to list individual commands to convert from `mdhlp` to `sthlp`. One or several commands can be listed. The default when this option is not used is to convert all `mdhlp` files in the mdhlp folder to sthlp-files.
 
 __nopkgmeta__ tells the command to not look for a `.pkg` file for version number and version date.
 The default is that the header of the `.sthlp` file is populated from the meta information in the `.pkg` file.
