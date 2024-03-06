@@ -17,7 +17,7 @@ d Contact: lsms@worldbank.org
 d URL: https://github.com/lsms-worldbank/adodown
 d
 *** date
-d Distribution-Date: 20240222
+d Distribution-Date: 20240306
 *** adofiles
 f ado/ad_update.ado
 f ado/ad_pkg_meta.ado
