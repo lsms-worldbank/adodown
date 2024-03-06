@@ -42,7 +42,7 @@ If this option is used, the string _NOPKGMETA_ is used as both version number an
 This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to, and that some commands have already been created. Any mdhlp-files in the `mdhlp` folder in the folder `myfolder` is pointing to will be rendered to Stata helpfile format and saved in the `sthlp` folder.
 
 ```
-* point a local to the folder where the package will be created
+* point a local to the folder where the package is located
 local myfolder "path/to/folder"
 
 * Render the Stata helpfiles
@@ -54,7 +54,7 @@ ad_sthlp, adf("`myfolder'")
 This example includes the steps for how to create the adodown-styled package folder in the location the local `myfolder` is pointing to, creating some commands and then render the template mdhlp-files to Stata helpfiles.
 
 ```
-* point a local to the folder where the package will be created
+* point a local to the folder where the package is located
 local myfolder "path/to/folder"
 
 * Package meta info

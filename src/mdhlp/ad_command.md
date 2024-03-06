@@ -45,7 +45,7 @@ In practice, this only means that no helpfile is created for this command.
 This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to.
 
 ```
-* point a local to the folder where the package will be created
+* point a local to the folder with the package where a new command will be created
 local myfolder "path/to/folder"
 
 * Package meta info
