@@ -4,14 +4,14 @@ __ad_update__ - This command is used for short description.
 
 # Syntax
 
-__ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newtit**le__(_string_) __**newpkg**version__( { _minor_ | _major_ } [, _samedayok_] ) __**newsta**taversion__(_stata_ _version_) __**newaut**hor__(_string_) __**newcon**tact__(_string_) __newurl__(_string_)]
+__ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newtit**le__(_string_) __**newpkg**version__({_minor_/_major_}[,_samedayok_]) __**newsta**taversion__(_stata_ _version_) __**newaut**hor__(_string_) __**newcon**tact__(_string_) __newurl__(_string_)]
 
 | _options_ | Description |
 |-----------|-------------|
 | __**adf**older__(_string_) | Location of the adodown-styled package |
 | __**pkg**name__(_string_) | Name of package that exists in the location `adfolder()` points to. |
 | __**newtit**le__(_string_) | Update the title row shown in `net describe <pkgname>` |
-| __**newpkg**version__({ _minor_ | _major_ } [, _samedayok_] ) | Increments the package version number with an "minor" (X.++X) or "major" (++X.X) increase |
+| __**newpkg**version__({_minor_/_major_}[,_samedayok_]) | Increments the package version number with an "minor" (X.++X) or "major" (++X.X) increase |
 | __**newsta**taversion__(_stata_ _version_) | Update the version the Stata package targets |
 | __**newaut**hor__(_string_) | Update the name of the author or authors of the package |
 | __**newcon**tact__(_string_) | Update the contact information for support |
@@ -34,7 +34,7 @@ __**pkg**name__(_string_) is the name of the package expected to be found in the
 
 __**newtit**le__(_string_) updates the title row shown in, for example, `ssc describe adodown`. This should be a short description of the package. The title will be the name of the package followed by a colon and then the content provided in this option. While not technically required, the practice is to start the title with the word module. Such as in "module to", "module that generates" etc. See `ssc describe` for packages you like for more examples.
 
-__**newpkg**version__({ _minor_ | _major_ } [, _samedayok_] ) increments the package version number. This option takes either the string _minor_ or the string _major_. A package version number is on the format X.X where the number before the decimal point indicates major version and the number after the decimal point indicates minor version. If using _major_ in this option then the major version is incremented by 1 and the minor is reset to 0. If _minor_ is used, then the major version is unchanged and the minor version is incremented by 1. When the package version is updated, then the package distribution date is also updated.
+__**newpkg**version__({_minor_/_major_}[,_samedayok_]) increments the package version number. This option takes either the string _minor_ or the string _major_. A package version number is on the format X.X where the number before the decimal point indicates major version and the number after the decimal point indicates minor version. If using _major_ in this option then the major version is incremented by 1 and the minor is reset to 0. If _minor_ is used, then the major version is unchanged and the minor version is incremented by 1. When the package version is updated, then the package distribution date is also updated.
 
 After _minor_/_major_ this option allows the sub-option _samedayok_. Without this sub-option, this command throws an error if the version is tried to be incremented a second time the same day. This is to prevent that the package version is updated multiple times if the command for whatever reason is run several times after each other.
 
