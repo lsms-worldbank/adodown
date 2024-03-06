@@ -6,6 +6,8 @@ __adodown__ - Package command with utilities for the rest of the package
 
 __adodown__
 
+Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/adodown.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
+
 # Description
 
 This command only returns the version number and version data to the user.

@@ -8,10 +8,11 @@ __ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_) __nopkgmeta__]
 
 | _options_ | Description |
 |------------------|-------------|
-| __**adf**older__(_string_) | Location where package folder already exists |
+| __**adf**older__(_string_) | Location of the adodown-styled package |
 | __commands__(_string_) | List specific command to convert. Default is all in package |
 | __nopkgmeta__ | Do not look for a `.pkg` file for package metadata |
 
+Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
 
 # Description
 
@@ -27,7 +28,7 @@ In the `adodown` workflow the mdhlp-files are expected to be stored in a folder 
 
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
-__commands__(_string_) is used list individual commands to convert from `mdhlp` to `sthlp`. One or several commands can be listed. The default when this option is not used is to convert all `mdhlp` files in the package.
+__commands__(_string_) is used to list individual commands to convert from `mdhlp` to `sthlp`. One or several commands can be listed. The default when this option is not used is to convert all `mdhlp` files in the mdhlp folder to sthlp-files.
 
 __nopkgmeta__ tells the command to not look for a `.pkg` file for version number and version date.
 The default is that the header of the `.sthlp` file is populated from the meta information in the `.pkg` file.
@@ -41,7 +42,7 @@ If this option is used, the string _NOPKGMETA_ is used as both version number an
 This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to, and that some commands have already been created. Any mdhlp-files in the `mdhlp` folder in the folder `myfolder` is pointing to will be rendered to Stata helpfile format and saved in the `sthlp` folder.
 
 ```
-* point a local to the folder where the package will be created
+* point a local to the folder where the package is located
 local myfolder "path/to/folder"
 
 * Render the Stata helpfiles
@@ -53,7 +54,7 @@ ad_sthlp, adf("`myfolder'")
 This example includes the steps for how to create the adodown-styled package folder in the location the local `myfolder` is pointing to, creating some commands and then render the template mdhlp-files to Stata helpfiles.
 
 ```
-* point a local to the folder where the package will be created
+* point a local to the folder where the package is located
 local myfolder "path/to/folder"
 
 * Package meta info

@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.5 20240222}{...}
+{* *! version 0.1 20240306}{...}
 {hline}
 {pstd}help file for {hi:adodown}{p_end}
 {hline}
@@ -12,6 +12,9 @@
 {title:Syntax}
 
 {phang}{bf:adodown}
+{p_end}
+
+{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/adodown.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
 {p_end}
 
 {title:Description}

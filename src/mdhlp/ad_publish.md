@@ -1,6 +1,6 @@
 # Title
 
-__ad_publish__ - This command is used for short description.
+__ad_publish__ - This command is used to set up a package for publication
 
 # Syntax
 
@@ -8,10 +8,12 @@ __ad_publish__ , __**adf**older__(_string_) [__**und**ocumented__(_string_) __ss
 
 | _options_ | Description |
 |-----------|-------------|
-| __**adf**older__(_string_) | Location where package folder already exists |
+| __**adf**older__(_string_) | Location of the adodown-styled package |
 | __**und**ocumented__(_string_) | List undocumented ado-files expected to not have a help-file |
 | __ssczip__ | Generates a Zip-archive ready to send to SSC  |
 | __nogen_sthlp__ | Do not run `ad_sthlp` on the package   |
+
+Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_publish.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
 
 # Description
 
@@ -25,7 +27,7 @@ __**adf**older__(_string_) is used to indicate the location of where the adodown
 
 __**und**ocumented__(_string_) lists commands that are undocumented. Undocumented commands are not expected to have an help-file. This command throws an error if an expected help-file is missing. Undocumented commands are typically commands for testing or commands used as a utility in other commands in this package.
 
-__ssczip__ generates a zip-archive ready to send to SSC. This zip-archive only include the ado-files, sthlp-files and ancillary files listed in the pkg-file. SSC require that all files are included without any subfolders, or any pkg-files or toc-files. 
+__ssczip__ generates a zip-archive ready to send to SSC. This zip-archive only include the ado-files, sthlp-files and ancillary files listed in the pkg-file. SSC require that all files are included without any subfolders, or any pkg-files or toc-files.
 
 __nogen_sthlp__ disables the generation of `.sthlp`-files from the `.mdhlp`-files. If not used this command will run `ad_sthlp()` on the package in `adfolder()`.
 
@@ -36,7 +38,7 @@ __nogen_sthlp__ disables the generation of `.sthlp`-files from the `.mdhlp`-file
 This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to, and that some commands have already been created. Any mdhlp-files in the `mdhlp` folder in the folder `myfolder` is pointing to will be rendered to Stata helpfile format and saved in the `sthlp` folder. Then the command will update the version meta data
 
 ```
-* point a local to the folder where the package will be created
+* point a local to the folder where the package is located
 local myfolder "path/to/folder"
 
 * Render the Stata helpfiles

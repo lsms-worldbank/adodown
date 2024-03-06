@@ -1,12 +1,12 @@
 {smcl}
-{* *! version 0.5 20240222}{...}
+{* *! version 0.1 20240306}{...}
 {hline}
 {pstd}help file for {hi:ad_publish}{p_end}
 {hline}
 
 {title:Title}
 
-{phang}{bf:ad_publish} - This command is used for short description.
+{phang}{bf:ad_publish} - This command is used to set up a package for publication
 {p_end}
 
 {title:Syntax}
@@ -17,11 +17,14 @@
 {synoptset 20}{...}
 {synopthdr:options}
 {synoptline}
-{synopt: {bf:{ul:adf}older}({it:string})}Location where package folder already exists{p_end}
+{synopt: {bf:{ul:adf}older}({it:string})}Location of the adodown-styled package{p_end}
 {synopt: {bf:{ul:und}ocumented}({it:string})}List undocumented ado-files expected to not have a help-file{p_end}
 {synopt: {bf:ssczip}}Generates a Zip-archive ready to send to SSC{p_end}
 {synopt: {bf:nogen_sthlp}}Do not run {inp:ad_sthlp} on the package{p_end}
 {synoptline}
+
+{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_publish.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{p_end}
 
 {title:Description}
 
@@ -39,7 +42,7 @@
 {pstd}{bf:{ul:und}ocumented}({it:string}) lists commands that are undocumented. Undocumented commands are not expected to have an help-file. This command throws an error if an expected help-file is missing. Undocumented commands are typically commands for testing or commands used as a utility in other commands in this package.
 {p_end}
 
-{pstd}{bf:ssczip} generates a zip-archive ready to send to SSC. This zip-archive only include the ado-files, sthlp-files and ancillary files listed in the pkg-file. SSC require that all files are included without any subfolders, or any pkg-files or toc-files. 
+{pstd}{bf:ssczip} generates a zip-archive ready to send to SSC. This zip-archive only include the ado-files, sthlp-files and ancillary files listed in the pkg-file. SSC require that all files are included without any subfolders, or any pkg-files or toc-files.
 {p_end}
 
 {pstd}{bf:nogen_sthlp} disables the generation of {inp:.sthlp}-files from the {inp:.mdhlp}-files. If not used this command will run {inp:ad_sthlp()} on the package in {inp:adfolder()}. 
@@ -52,7 +55,7 @@
 {pstd}This example assumes that there is already a adodown-styled package folder at the location the local {inp:myfolder} is pointing to, and that some commands have already been created. Any mdhlp-files in the {inp:mdhlp} folder in the folder {inp:myfolder} is pointing to will be rendered to Stata helpfile format and saved in the {inp:sthlp} folder. Then the command will update the version meta data 
 {p_end}
 
-{input}{space 8}* point a local to the folder where the package will be created
+{input}{space 8}* point a local to the folder where the package is located
 {space 8}local myfolder "path/to/folder"
 {space 8}
 {space 8}* Render the Stata helpfiles

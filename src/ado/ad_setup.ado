@@ -1,7 +1,8 @@
-*! version 0.5 20240222 - LSMS Team, World Bank - lsms@worldbank.org
+*! version 0.1 20240306 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_setup
     program define ad_setup
+    
 qui {
 
     version 14.1
@@ -38,15 +39,17 @@ qui {
 
     * Locals pointing to all template files to be used in the src folder
     local src_tfs ""
-    local src_tfs "`src_tfs' ad-src-package.pkg"
-    local src_tfs "`src_tfs' ad-src-stata.toc"
+    local src_tfs "`src_tfs' ad-reproot.yaml"
     local src_tfs "`src_tfs' ad-src-ado-README.md"
+    local src_tfs "`src_tfs' ad-src-dev-description.txt"
     local src_tfs "`src_tfs' ad-src-dev-README.md"
     local src_tfs "`src_tfs' ad-src-mdhlp-README.md"
+    local src_tfs "`src_tfs' ad-src-package.pkg"
+    local src_tfs "`src_tfs' ad-src-stata.toc"
     local src_tfs "`src_tfs' ad-src-sthlp-README.md"
     local src_tfs "`src_tfs' ad-src-tests-README.md"
     local src_tfs "`src_tfs' ad-src-vignettes-README.md"
-    local src_tfs "`src_tfs' ad-src-dev-description.txt"
+
 
     * Extract from template names all folders needed
     local src_folders ""
@@ -215,6 +218,9 @@ qui {
     * Populate the toc tempfile
     populate_toc, toc_template(`src_stata_toc') name("`name'")
 
+    * Populate the reproot root file
+    populate_reproot_yaml, yaml_template(`reproot_yaml') name("`name'")
+
     *****************************************************
     * Everything is ready - create template on disk
 
@@ -259,7 +265,7 @@ qui {
     }
 
     * Add a command with the same name as the package to the package template
-    qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'")
+    qui ad_command create `name', adfolder("`adfolder'") pkgname("`name'") pkgcommand
     noi di as res `"{pstd}Package template for package {inp:`name'} successfully created in: `adfolder'{p_end}"'
 
     // Remove when command is no longer in beta
@@ -527,6 +533,44 @@ cap program drop   populate_toc
 
     * Overwrite the template tempfiel with the populated file
     copy `toc_output' `toc_template', replace
+end
+
+* Populate package name in the reproot yaml file
+cap program drop   populate_reproot_yaml
+    program define populate_reproot_yaml, rclass
+
+    syntax, yaml_template(string) name(string)
+
+    * Initiate the tempfile handlers and tempfiles needed
+    tempname yaml_read yaml_write
+    tempfile yaml_output
+
+    * Open template to read from and new tempfile to write to
+    file open `yaml_read'  using `yaml_template', read
+    file open `yaml_write' using `yaml_output'  , write
+
+    * Read first line
+    file read `yaml_read' line
+
+    * Write lines as-is until section
+    local section "write_asis"
+    while r(eof)==0 {
+
+        if "`line'" == "project_name : ADPKGNAME" {
+            file write `yaml_write' "project_name : `name'" _n
+        }
+        else {
+          file write `yaml_write' "`line'" _n
+        }
+
+        * Read next line
+        file read `yaml_read' line
+    }
+    file close `yaml_read'
+    file close `yaml_write'
+
+    * Overwrite the template tempfiel with the populated file
+    copy `yaml_output' `yaml_template', replace
 end
 
 * Recursively create folders, such that folder(abc/def) first create a folder

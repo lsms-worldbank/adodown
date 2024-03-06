@@ -1,6 +1,5 @@
 * This package file is generated in the adodown workflow.
-* Do not edit directly.
-* Use the command ad_update to update this file
+* Do not edit manually - instead, use the command ad_update in the adodown package
 *** version
 v 0.0
 *** title
