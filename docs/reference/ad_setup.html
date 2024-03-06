@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>adodown - ad_setup</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../images/logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../index.html">
+    <img src="../images/logo.png" alt="">
+    <span class="navbar-title">adodown</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../reference/index.html">Reference</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-articles" role="button" data-bs-toggle="dropdown" aria-expanded="false">Articles</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-articles">    
+        <li>
+    <a class="dropdown-item" href="../articles/adodown-workflow.html">
+ <span class="dropdown-text">adodown-workflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../articles/mdhlp-syntax.html">
+ <span class="dropdown-text">mdhlp-syntax</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../articles/web-documenation-using-github-actions.html">
+ <span class="dropdown-text">web-documenation-using-github-actions</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/lsms-worldbank/adodown"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#title" id="toc-title" class="nav-link active" data-scroll-target="#title">Title</a></li>
+  <li><a href="#syntax" id="toc-syntax" class="nav-link" data-scroll-target="#syntax">Syntax</a></li>
+  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description">Description</a></li>
+  <li><a href="#options" id="toc-options" class="nav-link" data-scroll-target="#options">Options</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a></li>
+  <li><a href="#feedback-bug-reports-and-contributions" id="toc-feedback-bug-reports-and-contributions" class="nav-link" data-scroll-target="#feedback-bug-reports-and-contributions">Feedback, bug reports and contributions</a></li>
+  <li><a href="#authors" id="toc-authors" class="nav-link" data-scroll-target="#authors">Authors</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ad_setup</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="title" class="level1">
+<h1>Title</h1>
+<p><strong>ad_setup</strong> - Sets up the initial package folder in the <code>adodown</code> workflow.</p>
+</section>
+<section id="syntax" class="level1">
+<h1>Syntax</h1>
+<p><strong>ad_setup</strong> , <strong><strong>adf</strong>older</strong>(<em>string</em>) [ <strong><strong>n</strong>ame</strong>(<em>string</em>) <strong><strong>d</strong>escription</strong>(<em>string</em>) <strong><strong>a</strong>uthor</strong>(<em>string</em>) <strong><strong>c</strong>ontact</strong>(<em>string</em>) <strong><strong>u</strong>rl</strong>(<em>string</em>) <strong><strong>auto</strong>prompt</strong> <strong><strong>git</strong>hub</strong> ]</p>
+<table class="table">
+<colgroup>
+<col style="width: 60%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><em>options</em></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><strong>adf</strong>older</strong>(<em>string</em>)</td>
+<td>Location where to create the adodown-styled package</td>
+</tr>
+<tr class="even">
+<td><strong><strong>n</strong>ame</strong>(<em>string</em>)</td>
+<td>Name of package</td>
+</tr>
+<tr class="odd">
+<td><strong><strong>d</strong>escription</strong>(<em>string</em>)</td>
+<td>Description of package</td>
+</tr>
+<tr class="even">
+<td><strong><strong>a</strong>uthor</strong>(<em>string</em>)</td>
+<td>Author or authors</td>
+</tr>
+<tr class="odd">
+<td><strong><strong>c</strong>ontact</strong>(<em>string</em>)</td>
+<td>Contact information</td>
+</tr>
+<tr class="even">
+<td><strong><strong>u</strong>rl</strong>(<em>string</em>)</td>
+<td>URL (for example to repo hosting the package)</td>
+</tr>
+<tr class="odd">
+<td><strong><strong>auto</strong>prompt</strong></td>
+<td>Suppress the prompt for missing non-required input</td>
+</tr>
+<tr class="even">
+<td><strong><strong>git</strong>hub</strong></td>
+<td>Add GitHub files without prompting</td>
+</tr>
+</tbody>
+</table>
+<p>Read <a href="https://lsms-worldbank.github.io/adodown/reference/ad_setup.html">this helpfile</a> in the <code>adodown</code>’s package web-documentation where you also find articles with guides and best practices related to the commands in this package.</p>
+</section>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>This command creates the initial folder template needed to write and document Stata command packages in the <code>adodown</code> workflow.</p>
+<p>This workflow makes it easier to create Stata command and packages both ready for distribution on SSC and from a GitHub repository. This workflow also makes writing both web-documentation and helpfiles easier. The helpfiles are written in markdown files that are then used both to render Stata helpfile in <code>.sthlp</code>-format using the <code>ad_sthlp</code> command, and to render web documentation that can, for example, be hosted in a GitHub Page.</p>
+</section>
+<section id="options" class="level1">
+<h1>Options</h1>
+<p><strong><strong>adf</strong>older</strong>(<em>string</em>) is used to indicate the location where package folder will be created. This folder can, for example, be a newly created GitHub repository cloned to the local computer.</p>
+<p><strong><strong>n</strong>ame</strong>(<em>string</em>) specifies the name of the package that will be created. This is the name that will then be used in <code>ssc install &lt;name&gt;</code> or <code>net install &lt;name&gt;</code>. A command with the same name will be created and added to the package. While this option is optional, this package meta data is required. If a name is not provided in this option, then the user will be prompted to enter the name interactively.</p>
+<p><strong><strong>d</strong>escription</strong>(<em>string</em>) specifies the description of the package. This is the description paragraph that will displayed when using <code>ssc describe &lt;name&gt;</code> or <code>net describe &lt;name&gt;</code>. If a description is not provided in this option, then the user will be prompted to enter the description interactively. Since this meta data is not required, the user can leave it empty.</p>
+<p><strong><strong>a</strong>uthor</strong>(<em>string</em>) specifies the name of the author or authors of this package. This information will be included when using <code>ssc describe &lt;name&gt;</code> or <code>net describe &lt;name&gt;</code>. While this option is optional, this package meta data is required. If an author is not provided in this option, then the user will be prompted to enter the name interactively.</p>
+<p><strong><strong>c</strong>ontact</strong>(<em>string</em>) specifies the contact information where a users of this package can ask for support. This information will be included when using <code>ssc describe &lt;name&gt;</code> or <code>net describe &lt;name&gt;</code>. If contact information is not provided in this option, then the user will be prompted to enter the contact information interactively. Since this meta data is not required, the user can leave it empty.</p>
+<p><strong><strong>u</strong>rl</strong>(<em>string</em>) specifies a website for where this code is hosted. This should not be where the web-documentation generated in the adodown is hosted, but where the source code is hosted. The web-documentation will include a link pointing to the URL. If using GitHub, then the intended URL should be on this format: https://github.com/lsms-worldbank/adodown. This information will be included when using <code>ssc describe &lt;name&gt;</code> or <code>net describe &lt;name&gt;</code>. If a URL is not provided in this option, then the user will be prompted to enter the URL interactively. Since this meta data is not required, the user can leave it empty.</p>
+<p><strong><strong>auto</strong>prompt</strong> suppresses the prompt for missing non-required input, such as package description or author. If this options is used, the command will assume that GitHub templates should not be used. When this option is used, the command will still prompt the user for the package name unless that is provided in <code>name()</code> or <code>author()</code> as that information is required.</p>
+<p><strong><strong>git</strong>hub</strong> makes the command add files useful if the package is stored in a GitHub repository. The two files that are added are a <code>.gitignore</code> file and a GitHub Actions workflow <code>.yaml</code> file. The <code>.gitignore</code> is tailored to <code>adodown</code> styled packages such that only required files are pushed to the repository. This ignore template may be modified if preferred or needed. The Github Actions workflow file includes instructions for an automated workflow to generate web based documentation. Read more about this workflow and how to enable it in your repository here. TODO: Add link to vignette when live.</p>
+</section>
+<section id="examples" class="level1">
+<h1>Examples</h1>
+<p>This example creates a package folder for a package named <code>my_package</code> in the location that the local <code>myfolder</code> points to.</p>
+<pre><code>* point a local to the folder where the package will be created
+local myfolder "path/to/folder"
+
+* Package meta info
+local pkg "my_package"
+local aut "John Doe"
+local des "This packages does amazing thing A, B and C."
+local url "https://github.com/lsms-worldbank/adodown"
+local con "jdoe@worldbank.org"
+
+* Set up adodown-styled package folder
+ad_setup, adfolder("`myfolder'") autoprompt    ///
+     name("`pkg'") author("`aut'") desc("`des'") ///
+     url("`url'") contact("`con'")</code></pre>
+</section>
+<section id="feedback-bug-reports-and-contributions" class="level1">
+<h1>Feedback, bug reports and contributions</h1>
+<p>Read more about the commands in this package on the <a href="https://github.com/lsms-worldbank/adodown">GitHub repository</a> for the <code>adodown</code> package.</p>
+<p>Please use the <a href="https://github.com/lsms-worldbank/adodown/issues">issues feature</a> e to communicate any feedback, report bugs, or to make feature requests.</p>
+<p>PRs with suggestions for improvements are also greatly appreciated.</p>
+</section>
+<section id="authors" class="level1">
+<h1>Authors</h1>
+<p>LSMS Team, The World Bank lsms@worldbank.org</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

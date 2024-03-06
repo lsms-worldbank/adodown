@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>adodown - mdhlp-syntax</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../images/logo.png" rel="icon" type="image/png">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../index.html">
+    <img src="../images/logo.png" alt="">
+    <span class="navbar-title">adodown</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../reference/index.html">Reference</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-articles" role="button" data-bs-toggle="dropdown" aria-expanded="false">Articles</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-articles">    
+        <li>
+    <a class="dropdown-item" href="../articles/adodown-workflow.html">
+ <span class="dropdown-text">adodown-workflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../articles/mdhlp-syntax.html">
+ <span class="dropdown-text">mdhlp-syntax</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../articles/web-documenation-using-github-actions.html">
+ <span class="dropdown-text">web-documenation-using-github-actions</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/lsms-worldbank/adodown"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#mdhlp-syntax-documentation" id="toc-mdhlp-syntax-documentation" class="nav-link active" data-scroll-target="#mdhlp-syntax-documentation">mdhlp syntax documentation</a>
+  <ul class="collapse">
+  <li><a href="#start-with-template" id="toc-start-with-template" class="nav-link" data-scroll-target="#start-with-template">Start with template</a></li>
+  <li><a href="#syntax-supported-when-rendering-.sthlp-files" id="toc-syntax-supported-when-rendering-.sthlp-files" class="nav-link" data-scroll-target="#syntax-supported-when-rendering-.sthlp-files">Syntax supported when rendering .sthlp files</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">mdhlp-syntax</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="mdhlp-syntax-documentation" class="level1">
+<h1>mdhlp syntax documentation</h1>
+<p>This article provides documentation for how to write helpfiles in an adodown styled Stata package using mdhlp files. The mdhlp files are used as source both when building web based documentation and when rendering Stata helpfiles in <code>.sthlp</code> format.</p>
+<section id="start-with-template" class="level2">
+<h2 class="anchored" data-anchor-id="start-with-template">Start with template</h2>
+<p>We recommend that you use a template and do not start with an empty file. Easiest is to use <code>ad_command</code> when starting a new command to create both the <code>.ado</code> in the ado-folder for the code of the command, and the <code>.md</code> in the mdhlp-folder for the documentation. If you for any reason can not, or do not want, to use <code>ad_command</code>, but still want use this workflow, then you can manually download the template from <a href="https://github.com/lsms-worldbank/adodown/blob/main/src/ado/templates/ad-cmd-command.md">here</a>.</p>
+</section>
+<section id="syntax-supported-when-rendering-.sthlp-files" class="level2">
+<h2 class="anchored" data-anchor-id="syntax-supported-when-rendering-.sthlp-files">Syntax supported when rendering .sthlp files</h2>
+<p>This is how <code>ad_sthlp</code> will render markdown syntax to the SMCL format that is used in Stata helpfiles.</p>
+<section id="overview" class="level4">
+<h4 class="anchored" data-anchor-id="overview">Overview</h4>
+<table class="table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Markdown syntax</th>
+<th>Description</th>
+<th>SMCL syntax</th>
+<th>Comment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td>Paragraph</td>
+<td>Using <code>{pstd}</code>/<code>{p_end}</code> tags</td>
+<td>In markdown a paragraph is not defined by a character. Instead, a paragraph is defined as text between empty lines with no other formatting (part from inline formatting). In the <em>Title</em> and <em>Syntax</em> sections the <code>{phang}</code> tag is used instead of <code>{pstd}</code>.</td>
+</tr>
+<tr class="even">
+<td><code>#</code></td>
+<td>Header level 1</td>
+<td>Using <code>{title:}</code> tag</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><code>##</code></td>
+<td>Header level 2</td>
+<td>Using <code>{dlgtab:}</code> tag</td>
+<td>No formatting applied if using more <code>#</code>. As in <code>###</code>, <code>####</code> etc.</td>
+</tr>
+<tr class="even">
+<td><code>__ __</code></td>
+<td>Inline bold font</td>
+<td>Using <code>{bf:}</code> tag</td>
+<td>Ignored within code formatting</td>
+</tr>
+<tr class="odd">
+<td><code>** **</code></td>
+<td>Inline underlined font</td>
+<td>Using <code>{ul:}</code> tag</td>
+<td>Ignored unless used for text already in bold font</td>
+</tr>
+<tr class="even">
+<td><code>_ _</code></td>
+<td>Inline italic font</td>
+<td>Using <code>{it:}</code> tag</td>
+<td>Ignored in bold font</td>
+</tr>
+<tr class="odd">
+<td><code>` `</code></td>
+<td>Inline code font</td>
+<td>Using <code>{inp:}</code> tag</td>
+<td>All other inline formatting is ignored within the <code>`</code> tags</td>
+</tr>
+<tr class="even">
+<td><code>```</code> / <code>```</code></td>
+<td>Multiline code block</td>
+<td>Using <code>{input}</code>/<code>{text}</code> tags</td>
+<td>Ignores all formatting within the <code>```</code> tags</td>
+</tr>
+<tr class="odd">
+<td><code>[ ]( )</code></td>
+<td>Hyperlinks</td>
+<td>Using <code>{browse link:text}</code> tags</td>
+<td>May not be combined with other types of formatting</td>
+</tr>
+<tr class="even">
+<td><code>\|   \|   \|</code> / <code>\|--\|--\|</code> / <code>\|   \|   \|</code></td>
+<td>Syntax tables</td>
+<td>Using <code>{synopt}</code> table syntax</td>
+<td>Only works for a two-column table in the <em>Syntax</em> section. The symbol <code>\|</code> is not allowed in a cell of a table.</td>
+</tr>
+<tr class="odd">
+<td><code>&lt;!--</code> / <code>--&gt;</code></td>
+<td>Comments</td>
+<td>Commented lines are ignored</td>
+<td>Supports both multi and single line comments</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="paragraphs" class="level4">
+<h4 class="anchored" data-anchor-id="paragraphs">Paragraphs</h4>
+<p>Text that are not formatted as tables, headers or code blocks that follows an empty line will be interpreted as a paragraph and the <code>{pstd}</code> will be used.</p>
+<p>The <code>{pstd}</code> tag will be added in the beginning of the first line of text, and <code>{p_end}</code> will added on it’s own line before the first subsequent empty line. This means that lines of text only separated by a line breaks will still be considered the same paragraph as long as there are no empty lines.</p>
+<p>In the <em>Title</em> and <em>Syntax</em> sections, the <code>{phang}</code> tag is used instead of <code>{pstd}</code>. This is to highlight the command name in the special paragraphs typically found in those sections.</p>
+</section>
+<section id="headers" class="level4">
+<h4 class="anchored" data-anchor-id="headers">Headers</h4>
+<p><code>ad_sthlp</code> has support for two header levels corresponding to markdowns header levels <code>#</code> for level 1 and <code>##</code> for level 2. Level 1 headers are formatted using the <code>{title}</code> tag when rendered to Stata helpfiles, and level 2 headers are formatted using the <code>{dlgtb}</code> tag.</p>
+<p>There is no established convention in the Stata community that <code>{title}</code> and <code>{dlgtb}</code> have a level 1 and 2 relation between each other. This is simply a subjective implementation of <code>ad_sthlp</code>.</p>
+<section id="level-1---title" class="level6">
+<h6 class="anchored" data-anchor-id="level-1---title">Level 1 - Title</h6>
+<p>Any line that starts with <code>#</code> will be treated as a level 1 heading and rendered as a title using the <code>{title}</code> tag. Everything that follows <code>#</code> will be used as the title text. Adding other types of formatting to the title text might work, but it is not supported, and therefore not recommended.</p>
+</section>
+<section id="level-2---dialogue-tab" class="level6">
+<h6 class="anchored" data-anchor-id="level-2---dialogue-tab">Level 2 - Dialogue Tab</h6>
+<p>Any line that starts with <code>##</code> will be treated as a level 2 heading and rendered as a dialogue tab using the <code>{dlgtab}</code> tag. Everything that follows <code>##</code> will be used as the dialogue tab text. Adding other types of formatting to the dialogue box text might work, but it is not supported, and therefore not recommended.</p>
+</section>
+</section>
+<section id="inline-text-formatting" class="level4">
+<h4 class="anchored" data-anchor-id="inline-text-formatting">Inline text formatting</h4>
+<section id="bold-inline-formatting" class="level6">
+<h6 class="anchored" data-anchor-id="bold-inline-formatting">Bold inline formatting</h6>
+<p>Text between <code>__</code> (two <code>_</code> underscores) tags, as in <code>__bold text__</code>, is formatted as <code>{bf:bold text}</code> when rendered to Stata helpfiles.</p>
+</section>
+<section id="italic-formatting" class="level6">
+<h6 class="anchored" data-anchor-id="italic-formatting">Italic formatting</h6>
+<p>Text between <code>_</code> (a single underscore) tags, as in <code>_italicized text_</code>, is formatted as <code>{it:italicized text}</code> when rendered to Stata helpfiles.</p>
+<p>It is not possible to italicize a word with <code>_</code>, as <code>_</code> in an italicized word will always be interpreted as the end of italic formatting.</p>
+<p>It is not possible to italicize bold font text. This is to make it possible to express as command name like <code>ad_sthlp</code> in bold font. <code>_</code> is therefore ignored in bold font.</p>
+</section>
+<section id="underlined-inline-formatting" class="level6">
+<h6 class="anchored" data-anchor-id="underlined-inline-formatting">Underlined inline formatting</h6>
+<p>Text between <code>** **</code> tags in bold font text, as in <code>__**underlined text**__</code>, is formatted as <code>{bf:{ul:italicized text}}</code> when rendered to Stata helpfiles.</p>
+<p>Note that underlined format is ignored unless it is applied to text already formatted with bold font. This is due to underlined formatting not existing in markdown, and markdown is used for the web documentation in the adodown workflow. The recommendation is therefore to use underlined formatting sparsely.</p>
+<p>However, underlined formatting has one important function in Stata helpfiles. It indicates the shortest allowed abbreviations of command and option names. Since abbreviations are only allowed for options in community written commands we will only focus on underlined formatting for abbreviations in option names.</p>
+<p>Option names are in bold font, and underline font should therefore only be used on text in bold font. This reduces the risk of relying too much on underlined formatting when writing Stata helpfiles and then realizing underlining is not supported in web documentation.</p>
+</section>
+<section id="suggested-formatting-of-command-and-option-names" class="level6">
+<h6 class="anchored" data-anchor-id="suggested-formatting-of-command-and-option-names">Suggested formatting of command and option names</h6>
+<p>Here are recommendations on how combine inline formatting to format syntax of command names and command option names.</p>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Example</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>__ad_sthlp__</code></td>
+<td>Command named <code>ad_sthlp</code>. Do not use underline in command names as abbreviations are not allowed in names of community written commands.</td>
+</tr>
+<tr class="even">
+<td><code>__option__</code></td>
+<td>Option named <code>option</code>. No parameter is allowed. No abbreviation is allowed.</td>
+</tr>
+<tr class="odd">
+<td><code>__**opt**ion__</code></td>
+<td>Option named <code>option</code>. No parameter is allowed. The option named is allowed to abbreviate to <code>opt</code>.</td>
+</tr>
+<tr class="even">
+<td><code>__option__(_string_)</code></td>
+<td>Option named <code>option</code>. A string parameter is expected. No abbreviation is allowed.</td>
+</tr>
+<tr class="odd">
+<td><code>__**opt**ion__(_string_)</code></td>
+<td>Option named <code>option</code>. A string parameter is expected. The option named is allowed to abbreviate to <code>opt</code>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="code-inline-formatting" class="level6">
+<h6 class="anchored" data-anchor-id="code-inline-formatting">Code inline formatting</h6>
+<p>Any text between two <code>`</code> on the same line will be formatted using the <code>{input}</code> tag. You may not split the two <code>`</code> across multiple lines. If unmatched <code>`</code> are found, then a warning will be issued.</p>
+<p>It is not possible to show a backtick <code>`</code> in an inline comment. For example when trying to show a local referenced as in <code>open `folder'/myfile.dta</code>. The <code>`</code> in the inline formatting will always be interpreted as the end of the inline code formatting when converted to Stata help files. It is still possible to show the backtick <code>`</code> in code blocks (see below).</p>
+<p>All other formatting will be ignored in text that is formatted as a code. This means that <code>cd</code> in <code>ab_cd_ef</code> will not be italicized. The <code>_</code> signs will be kept and formatted as code.</p>
+</section>
+</section>
+<section id="code-blocks-formatting" class="level4">
+<h4 class="anchored" data-anchor-id="code-blocks-formatting">Code blocks formatting</h4>
+<p>Any text between lines that starts with <code>```</code> (commonly referred to as a code block) will be formatted using the <code>{input}</code> tag. Any text following on the same line as <code>```</code> will be ignored when converting to Stata help files. Code blocks are suitable for longer examples of code.</p>
+<p>The initial <code>```</code> will be replaced with the <code>{input}</code> tag, and the ending <code>```</code> will be replaced with <code>{text}</code>. The text in-between is indented 8 blank spaces (twice the indent for <code>{pstd}</code>).</p>
+</section>
+<section id="hyperlinks" class="level4">
+<h4 class="anchored" data-anchor-id="hyperlinks">Hyperlinks</h4>
+<p>Markdown links on the format <code>[adodown](https://github.com/lsms-worldbank/adodown)</code> will be converted to SMCL links on the format <code>{browse "https://github.com/lsms-worldbank/adodown":adodown}</code>. Only links to internet URLs are supported. Creating hyperlinks to resources installed in the local Stata installation, for example <code>{help : generate}</code>, are currently not supported.</p>
+</section>
+<section id="syntax-option-tables" class="level4">
+<h4 class="anchored" data-anchor-id="syntax-option-tables">Syntax option tables</h4>
+<p>The only supported table is the syntax option table in the <em>Syntax</em> section. This is a table that list all the options in the first column and provide a short description in the second column. The table may only be exactly two columns wide. When rendered into a Stata helpfile the column titles will be “<em>options</em>” and “Description” which is the Stata defaults. Only “<em>options</em>” will be italicized.</p>
+<p>Tables in any other section than the <em>Syntax</em> section will be ignored in the current version of <code>ad_sthlp</code>. Until support for tables in other sections are implemented, the recommendation is to use vignette articles to document anything best described in a table.</p>
+</section>
+<section id="comments" class="level4">
+<h4 class="anchored" data-anchor-id="comments">Comments</h4>
+<p>Any line that starts with <code>&lt;!--</code> will be treated as a comment and be ignored when converting to <code>.sthlp</code> format. A comment ends with <code>--&gt;</code>. If <code>&lt;!--</code> and <code>--&gt;</code> are on multiple lines, then both those lines, as well as any lines in-between those lines, will be treated as comments.</p>
+<p>Anything on the same line as <code>--&gt;</code> will be treated as a comment even if it comes after <code>--&gt;</code>. A line with any text before <code>&lt;!--</code> will not be treated as a comment and a warning will be thrown. Due to these two behaviors it is not possible to do an inline comment where only part of a line is a comment. Hence, the line <code>Not a comment &lt;!-- comment --&gt; not a comment</code> will be converted verbatim and everything, including the <code>&lt;!--</code> and <code>--&gt;</code> tags, will be displayed when viewing the helpfile.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

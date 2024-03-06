@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>adodown – web-documenation-using-github-actions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<link href="../../images/logo.png" rel="icon" type="image/png">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../../index.html">
+    <img src="../../images/logo.png" alt="">
+    <span class="navbar-title">adodown</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../reference/index.html">Reference</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-articles" role="button" data-bs-toggle="dropdown" aria-expanded="false">Articles</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-articles">    
+        <li>
+    <a class="dropdown-item" href="../../articles/adodown-workflow.html">
+ <span class="dropdown-text">adodown-workflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../articles/mdhlp-syntax.html">
+ <span class="dropdown-text">mdhlp-syntax</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../articles/web-documenation-using-github-actions.html">
+ <span class="dropdown-text">web-documenation-using-github-actions</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/lsms-worldbank/adodown"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#build-and-deploy-web-documentation" id="toc-build-and-deploy-web-documentation" class="nav-link active" data-scroll-target="#build-and-deploy-web-documentation">Build and deploy web documentation</a>
+  <ul class="collapse">
+  <li><a href="#web-documentation-using-github-pages" id="toc-web-documentation-using-github-pages" class="nav-link" data-scroll-target="#web-documentation-using-github-pages">Web documentation using GitHub Pages</a>
+  <ul class="collapse">
+  <li><a href="#github-actions-pricing" id="toc-github-actions-pricing" class="nav-link" data-scroll-target="#github-actions-pricing">GitHub Actions pricing</a></li>
+  </ul></li>
+  <li><a href="#step-by-step-guide" id="toc-step-by-step-guide" class="nav-link" data-scroll-target="#step-by-step-guide">Step-by-step guide</a>
+  <ul class="collapse">
+  <li><a href="#a.1.-create-and-clone-a-repository-for-your-stata-package" id="toc-a.1.-create-and-clone-a-repository-for-your-stata-package" class="nav-link" data-scroll-target="#a.1.-create-and-clone-a-repository-for-your-stata-package">A.1. Create and clone a repository for your Stata package</a></li>
+  <li><a href="#a.2.-set-up-adodown-styled-stata-package" id="toc-a.2.-set-up-adodown-styled-stata-package" class="nav-link" data-scroll-target="#a.2.-set-up-adodown-styled-stata-package">A.2. Set up adodown styled Stata package</a></li>
+  <li><a href="#b.1-make-sure-github-actions-workflow-settings-exists" id="toc-b.1-make-sure-github-actions-workflow-settings-exists" class="nav-link" data-scroll-target="#b.1-make-sure-github-actions-workflow-settings-exists">B.1 Make sure GitHub Actions workflow settings exists</a></li>
+  <li><a href="#b.2.-allow-github-actions" id="toc-b.2.-allow-github-actions" class="nav-link" data-scroll-target="#b.2.-allow-github-actions">B.2. Allow GitHub Actions</a></li>
+  <li><a href="#b.3-make-one-commit-to-the-main-branch" id="toc-b.3-make-one-commit-to-the-main-branch" class="nav-link" data-scroll-target="#b.3-make-one-commit-to-the-main-branch">B.3 Make one commit to the <code>main</code> branch</a></li>
+  <li><a href="#b.4-set-up-github-pages" id="toc-b.4-set-up-github-pages" class="nav-link" data-scroll-target="#b.4-set-up-github-pages">B.4 Set up GitHub Pages</a></li>
+  <li><a href="#view-the-web-site" id="toc-view-the-web-site" class="nav-link" data-scroll-target="#view-the-web-site">View the web site</a></li>
+  </ul></li>
+  <li><a href="#optional-steps" id="toc-optional-steps" class="nav-link" data-scroll-target="#optional-steps">Optional steps</a>
+  <ul class="collapse">
+  <li><a href="#add-a-your-own-logo-icon" id="toc-add-a-your-own-logo-icon" class="nav-link" data-scroll-target="#add-a-your-own-logo-icon">Add a your own logo icon</a></li>
+  </ul></li>
+  <li><a href="#web-documentation-in-other-locations" id="toc-web-documentation-in-other-locations" class="nav-link" data-scroll-target="#web-documentation-in-other-locations">Web documentation in other locations</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="build-and-deploy-web-documentation" class="level1">
+<h1>Build and deploy web documentation</h1>
+<p>One of the main motivations for the <code>adodown</code> workflow is to make it easy to generate user-friendly web documentation. Web documentation creates a web site where users can browse documentation without first having to install the package from, for example, SSC. It also allows you to write supporting documentation that are not exactly help files. Such as this page you are reading right now.</p>
+<p>While encouraged, generating web documentation is optional in the <code>adodown</code> workflow. It is perfectly possible to use <code>adodown</code> to benefit from standardized Stata package practices without using web documentation. If you do not want to generate web documentation, then there is no need for you to follow the steps in this guide.</p>
+<section id="web-documentation-using-github-pages" class="level2">
+<h2 class="anchored" data-anchor-id="web-documentation-using-github-pages">Web documentation using GitHub Pages</h2>
+<p>This guide assumes you host your <code>adodown</code> styled Stata package in a GitHub repository and that you will publish your web documentation using GitHub Pages. If this does not apply to you, see the last section of this page for other options.</p>
+<p>This guide will show how to set up an automated workflow to build and deploy your web documentation using GitHub Actions. You do not need to know how to create GitHub Actions yourself, as you will be provided with all the templates you need. This page include a step-by-step guide for how to set it up, and it is not difficult.</p>
+<p>However, you do need to have admin access to the repository you use in order to enable GitHub Actions. If you are not the owner of the repository where you are setting this up, or the repository is hosted on an organization account, then we recommend that you talk to the owner or account admin before following this guide.</p>
+<section id="github-actions-pricing" class="level3">
+<h3 class="anchored" data-anchor-id="github-actions-pricing">GitHub Actions pricing</h3>
+<p>At the time of writing this guide, GitHub Action is free when used on public repositories, and has a small charge on private repositories if the usage exceeds a free quota. Therefore, in a typical case, using GitHub Actions in the <code>adodown</code> workflow will be free. GitHub may make changes to their GitHub Actions pricing at any time, so if this information is important to you, then please confirm costs at the <a href="https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions">GitHub Actions pricing page</a>.</p>
+</section>
+</section>
+<section id="step-by-step-guide" class="level2">
+<h2 class="anchored" data-anchor-id="step-by-step-guide">Step-by-step guide</h2>
+<p>If you already have an adodown styled package you can skip to section <code>B.1</code></p>
+<section id="a.1.-create-and-clone-a-repository-for-your-stata-package" class="level3">
+<h3 class="anchored" data-anchor-id="a.1.-create-and-clone-a-repository-for-your-stata-package">A.1. Create and clone a repository for your Stata package</h3>
+<p>Create a GitHub repository for the Stata package. Initiate the repository by creating a <code>README.md</code> file in the top directory. Feel free to populate this file with content at any point. The only other file that may be created manually is the <code>.gitignore</code> file.</p>
+<p>Clone the repository to your computer.</p>
+<p><strong>TODO:</strong> Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions.</p>
+</section>
+<section id="a.2.-set-up-adodown-styled-stata-package" class="level3">
+<h3 class="anchored" data-anchor-id="a.2.-set-up-adodown-styled-stata-package">A.2. Set up adodown styled Stata package</h3>
+<p>Use the command <code>ad_setup</code> to create an <code>adodown</code> styled Stata package in the clone.</p>
+</section>
+<section id="b.1-make-sure-github-actions-workflow-settings-exists" class="level3">
+<h3 class="anchored" data-anchor-id="b.1-make-sure-github-actions-workflow-settings-exists">B.1 Make sure GitHub Actions workflow settings exists</h3>
+<p>If you have set up your package with <code>ad_setup</code> using the <code>github</code> option then this step is already set up. You only need to follow these steps manually if this was not done. If you are not sure, then follow these instructions and make sure everything is setup.</p>
+<p>In the top directory of your clone, create a folder called <code>.github</code> (the <code>.</code> is important). In that folder create a folder called <code>workflows</code>. In that folder create a file called <code>build_adodown_site.yaml</code>. Copy the content of https://github.com/lsms-worldbank/adodown/blob/main/src/ado/templates/ad-build_adodown_site.yaml and paste the into the yaml-file you just created. Commit this file to the repository.</p>
+</section>
+<section id="b.2.-allow-github-actions" class="level3">
+<h3 class="anchored" data-anchor-id="b.2.-allow-github-actions">B.2. Allow GitHub Actions</h3>
+<p>While <code>build_adodown_site.yaml</code> includes all instructions needed to build and deploy the web site with the web documentation, you need to enable GitHub Actions in your repository for those instructions to be applied.</p>
+<p>To enable GitHub Actions, go to <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/actions</code>. You can also click yourself here by clicking on the <em>Settings</em> tab, then <em>Actions</em> in the menu to the left and then <em>General</em>. You only have access to these setting pages if you are the owner of the personal account hosting the repository, or if have admin access if the repository is hosted on an organization account.</p>
+<p>On this page, make the following two changes:</p>
+<ul>
+<li>In the <em>Actions permissions</em> section, make sure that “<em>Allow all actions and reusable workflows</em>” option is selected. This allows GitHub Actions to be run for this repository.</li>
+<li>In the <em>Workflow permissions</em> section, make sure that the “<em>Read and write permissions</em>” option is selected. This allow a GitHub Action to make changes to the repository.</li>
+</ul>
+<p>If your repository is hosted on an organization account, then these settings might be affected by global organization account settings. The organization account admin can set these changes globally at <code>https://github.com/organizations/&lt;account_name&gt;/settings/actions</code></p>
+</section>
+<section id="b.3-make-one-commit-to-the-main-branch" class="level3">
+<h3 class="anchored" data-anchor-id="b.3-make-one-commit-to-the-main-branch">B.3 Make one commit to the <code>main</code> branch</h3>
+<p>In this section we will refer to the default branch as <code>main</code>. This is synonymous with <code>master</code>, but we encourage everyone to use <code>main</code> over <code>master</code>. The <code>adodown</code> workflow will work with either of these names.</p>
+<p>The GitHub Actions work flow is set up to re-build and re-deploy the web documentation each time the <code>main</code> branch is updated. To build it the first time, make any commit to the <code>main</code> branch. This includes making a merge to the <code>main</code> branch.</p>
+<p>The GitHub Action workflow creates a new branch called <code>gh-pages</code>. This branch should never be modified manually.</p>
+</section>
+<section id="b.4-set-up-github-pages" class="level3">
+<h3 class="anchored" data-anchor-id="b.4-set-up-github-pages">B.4 Set up GitHub Pages</h3>
+<p>The last step is to tell GitHub there is a web site intended to be shown as a GitHub Pages site in the <code>gh-pages</code> branch. To do so, go to <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/pages</code>. You can also click yourself here by clicking on the <em>Settings</em> tab, and then <em>Pages</em> in the menu to the left. You only have access to these setting pages if you are the owner of the personal account hosting the repository, or if have admin access if the repository is hosted on an organization account.</p>
+<p>On this page, make the following changes:</p>
+<ul>
+<li>In the <em>Build and deployment</em> section:
+<ul>
+<li>In the sub-section “<em>Source</em>” make sure “<em>Deployed from a branch</em>” is selected.</li>
+<li>In the sub-section “<em>Branch</em>” make sure “<em>gh-pages</em>” is selected as branch and that “<em>/docs</em>” is selected as the root folder.</li>
+</ul></li>
+</ul>
+</section>
+<section id="view-the-web-site" class="level3">
+<h3 class="anchored" data-anchor-id="view-the-web-site">View the web site</h3>
+<p>Wait a minute or two after completing the previous step and then refresh the page <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/pages</code>. The URL to the web based documentation is then listed at the top of the page.</p>
+<p>From now on, this page is updated each time anything is pushed to the <code>main</code> branch. Not that a merge to the <code>main</code> branch is considered a push.</p>
+</section>
+</section>
+<section id="optional-steps" class="level2">
+<h2 class="anchored" data-anchor-id="optional-steps">Optional steps</h2>
+<section id="add-a-your-own-logo-icon" class="level3">
+<h3 class="anchored" data-anchor-id="add-a-your-own-logo-icon">Add a your own logo icon</h3>
+<p>The <a href="https://github.com/arthur-shaw/adodown">R tool adodownr</a> used to build this web documentation allows you to add a custom logo to the web browser tab of your web documentation. To do so, save the logo in a square sized <code>.png</code> file called <code>logo.png</code>. Save the file in <code>/src/dev/assets/logo.png</code>. Push the file to the repo and then the web documentation will be recreated with this logo in the web browser tab.</p>
+</section>
+</section>
+<section id="web-documentation-in-other-locations" class="level2">
+<h2 class="anchored" data-anchor-id="web-documentation-in-other-locations">Web documentation in other locations</h2>
+<p>It is possible to use the <code>adodown(r)</code> tools to generate web documentation even when not using a GitHub repository to host the code or when not using GitHub pages to host documentation. However, then you need to install the R-tool <code>adodownr</code> on your own computer, and run it yourself to build the website. See the documentation for adodownr for more <a href="https://github.com/lsms-worldbank/adodownr">details</a>.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
