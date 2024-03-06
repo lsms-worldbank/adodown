@@ -1,1 +1,1 @@
-# adodown-stata
+# adodown
