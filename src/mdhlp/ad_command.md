@@ -10,7 +10,7 @@ where _subcommand_ is either `create` or `remove` and _commandname_ is the name 
 
 | _options_ | Description |
 |------------------|-------------|
-| __**adf**older__(_string_) | Location where package folder already exists |
+| __**adf**older__(_string_) | Location of the adodown-styled package |
 | __**pkg**name__(_string_) | Name of package that exists in the location `adfolder()` points to. |
 | __**undoc**umented__ | used to create an undocumented command.
 
@@ -23,13 +23,11 @@ This command is only intended to be used in package folders set up in the `adodo
 This command creates new commands in the package or removes existing commands from it. When creating a command, a template for the ado-file is created in the ado folder, a template for the mdhlp-file is created in the mdhlp folder,
 and the ado-file and the sthlp file is addended to the pkg-file in that package folder.
 
-Note that the using `net install` will not work immediately after creating a command with this file as the pkg-file points to the sthlp-file that is not yet rendered. Use the command `ad_sthlp` to render that command.
-
 # Options
 
 _subcommand_ as specified in `ad_command <subcommand> <commandname>` can either be `create` or `remove`. `create` is used when creating a new command and `remove` when removing and existing command.
 
-_commandname_ as specified in `ad_command <subcommand> <commandname>` is the name of the command to be created or removed. If a command is created then an error is thrown if the name is already used by an existing command, and an error will be thrown when removing a command if the name is not used by any existing commands.
+_commandname_ as specified in `ad_command <subcommand> <commandname>` is the name of the command to be created or removed. An error is thrown if a command with this name already exists when using sub-command `create`, and an error will be thrown when removing a command if no command with name already exists.
 
 __**adf**older__(_string_) is used to indicate the location of where the adodown-styled package folder already exist.
 
@@ -38,7 +36,7 @@ __**pkg**name__(_string_) is the name of the package expected to be found in the
 __**undoc**umented__  is used to create an undocumented command.
 An undocumented command is a command that not intended to be used by the user,
 and only be used by other commands in the same package.
-In practice, this means that no helpfile is created for this command.
+In practice, this only means that no helpfile is created for this command.
 
 # Examples
 
