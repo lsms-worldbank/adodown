@@ -32,6 +32,17 @@ qui {
       exit
     }
 
+    * Test that the new Stata target version is a valid Stata version
+    if !missing("`newstataversion'") {
+      adodown validstataversion
+      local valid_stata_versions "`r(valid_stata_versions)'"
+      if (!`: list newstataversion in valid_stata_versions') {
+        noi di as error "{pstd}The new Stata target version provided in {opt newstataversion(`newstataversion')} is not in the list of supported valid Stata versions [{it:`valid_stata_versions'}]{p_end}"
+        error 99
+        exit
+      }
+    }
+
     * Test that pkgversion is either minor or major
     if !missing("`newpkgversion'") {
 
