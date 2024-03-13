@@ -1,10 +1,7 @@
 ########################################################################
 #
-# Based on DIME .gitignore template. Follow the instructions in the URL
-# below to set up this template in your own repository
+# Created using adodown https://lsms-worldbank.github.io/adodown/, based on DIME .gitignore template:
 # https://github.com/worldbank/dime-github-trainings/tree/main/GitHub-resources/DIME-GitHub-Templates
-#
-# This is version 2.0
 #
 ########################################################################
 
@@ -55,15 +52,16 @@
 
 # Markdown and web docs files
 !/**/*.md
-!src/dev/assets/*.png
-!src/dev/assets/*.css
+!src/dev/**/*.png
+!src/dev/**/*.css
 
 ####################################
 # Ignore ssc outputs
 src/dev/ssc
 
-# Ignore test outputs
-src/tests/outputs/
+# Ignore test inputs and outputs
+src/tests/**/inputs/
+src/tests/**/outputs/
 
 * Ignore the local dev env set up by repado
 src/tests/dev-env/
