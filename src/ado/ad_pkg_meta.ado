@@ -242,8 +242,6 @@ cap program drop   verify_package_version
       //Update to new verison if applicable
       if !missing("`newpkgversion'") local pkg_v "`newpkgversion'"
 
-      //TODO: test that version is valid
-
       //Return values
       return local pkg_v "`pkg_v'"
       local line = ustrtrim(stritrim("v `pkg_v'"))
@@ -294,8 +292,6 @@ cap program drop   verify_stata_version
 
       //Update to new verison if applicatble
       if !missing("`newstataversion'") local sta_v "`newstataversion'"
-
-      //TODO: test that version is valid
 
       //Return values
       return local sta_v "`sta_v'"
