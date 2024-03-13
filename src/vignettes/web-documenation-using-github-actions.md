@@ -51,7 +51,7 @@ so if this information is important to you, then please confirm costs at the
 
 ## Step-by-step guide
 
-If you already have an `adodown` styled package you can skip to section `B.1`
+If you already have an adodown styled package you can skip to section `B.1`
 
 ### A.1. Create and clone a repository for your Stata package
 
@@ -62,7 +62,7 @@ The only other file that may be created manually is the `.gitignore` file.
 
 Clone the repository to your computer.
 
-<!-- TODO: Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions. -->
+**TODO:** Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions.
 
 ### A.2. Set up adodown styled Stata package
 
