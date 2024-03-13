@@ -2,9 +2,20 @@
 *** version
 v 0.1
 *** title
-d 'ADODOWN': module to set up and manage Stata packages
+d 'ADODOWN': a module making Stata packages easier to develop and document using modern tools
 *** description
-d mydescription
+d For developers, adodown offers workflow commands that automate manual tasks at each stage of development.
+d At project's start, adodown creates the necessary scaffolding for the package (e.g., folders, `pkg` file, etc).
+d For each package command, it uses templates to create necessary files (i.e., ado, documentation, unit test) and
+d adds appropriate entries in the pkg file. For documentation, it allows developers draft in plain Markdown while
+d creating standard help files in SMCL. And for publication, adodown collects the required files, puts them in proper
+d format, and prepares a zip file for SSC submission.
+d
+d Also, adodown automatically deploys a package documentation website. For users, this provides an easy way to discover
+d packages, to understand what they do, and to explore how commands work--all without installing the package. For
+d developers, this provides packages with a welcome web presence and offers a home for additional documentation
+d (e.g., how-to guides, technical notes, FAQs), and keeps HTML documentation up to date with SMCL documentation through
+d continuous deployment via GitHub Actions.
 d
 *** stata
 d Requires: Stata version 14.1

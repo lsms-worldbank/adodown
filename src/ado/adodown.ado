@@ -8,8 +8,8 @@ qui {
     version 14.1
 
     * Do not manually edit these locals. They are updated with ad_publish in the adodown workflow
-    local version "0.1"
-    local versionDate "20240306"
+    local version "0.1" 
+    local versionDate "20240306" 
     local cmd         "adodown"
 
   	syntax [anything]
