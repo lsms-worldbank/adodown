@@ -20,8 +20,12 @@ Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_comma
 
 This command is only intended to be used in package folders set up in the `adodown` workflow using the command `ad_setup`.
 
-This command creates new commands in the package or removes existing commands from it. When creating a command, a template for the ado-file is created in the ado folder, a template for the mdhlp-file is created in the mdhlp folder,
-and the ado-file and the sthlp file is addended to the pkg-file in that package folder.
+This command creates new commands in the package or removes existing commands from it.
+When creating a command, a template for the `ado`-file is created in the `ado`-folder,
+a template for the `mdhlp`-file is created in the `mdhlp` folder,
+and the `ado`-file and the `sthlp` file is appended to the `pkg`-file in that package folder.
+
+See [this article](https://github.com/lsms-worldbank/adodown/issues/27) about valid syntax in the `mdhlp` files.
 
 # Options
 
