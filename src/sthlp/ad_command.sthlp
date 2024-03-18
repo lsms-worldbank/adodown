@@ -33,8 +33,13 @@
 {pstd}This command is only intended to be used in package folders set up in the {inp:adodown} workflow using the command {inp:ad_setup}. 
 {p_end}
 
-{pstd}This command creates new commands in the package or removes existing commands from it. When creating a command, a template for the ado-file is created in the ado folder, a template for the mdhlp-file is created in the mdhlp folder,
-and the ado-file and the sthlp file is addended to the pkg-file in that package folder.
+{pstd}This command creates new commands in the package or removes existing commands from it.
+When creating a command, a template for the {inp:ado}-file is created in the {inp:ado}-folder, 
+a template for the {inp:mdhlp}-file is created in the {inp:mdhlp} folder, 
+and the {inp:ado}-file and the {inp:sthlp} file is appended to the {inp:pkg}-file in that package folder. 
+{p_end}
+
+{pstd}See {browse "https://github.com/lsms-worldbank/adodown/issues/27":this article} about valid syntax in the {inp:mdhlp} files. 
 {p_end}
 
 {title:Options}
