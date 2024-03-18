@@ -25,7 +25,7 @@ When creating a command, a template for the `ado`-file is created in the `ado`-f
 a template for the `mdhlp`-file is created in the `mdhlp` folder,
 and the `ado`-file and the `sthlp` file is appended to the `pkg`-file in that package folder.
 
-See [this article](https://github.com/lsms-worldbank/adodown/issues/27) about valid syntax in the `mdhlp` files.
+See [this article](https://lsms-worldbank.github.io/adodown/articles/mdhlp-syntax.html) about valid syntax in the `mdhlp` files.
 
 # Options
 
