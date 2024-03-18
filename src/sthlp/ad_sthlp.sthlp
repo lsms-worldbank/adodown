@@ -28,13 +28,16 @@
 {title:Description}
 
 {pstd}This command renders Stata helpfiles in the {inp:.sthlp} format 
-written in the mdhlp-files written in markdown.
-The sthlp-files are then intended to be included instead
-of the mdhlp-files when distributing the command using
+written in the {inp:mdhlp}-files written in markdown. 
+The {inp:sthlp}-files are then intended to be included instead 
+of the {inp:mdhlp}-files when distributing the command using 
 either {inp:ssc install} or {inp:net install}. 
 {p_end}
 
-{pstd}In the {inp:adodown} workflow the mdhlp-files are expected to be stored in a folder {inp:mdhlp} in the folder that {bf:{ul:adf}older}({it:string}) points to, and the sthlp-files are expected to be written to a folder {inp:sthlp} in the same location. If the package folder was set up using {inp:ad_setup} and the commands were added to the package folder using {inp:ad_command}, then this is already the case. 
+{pstd}In the {inp:adodown} workflow the {inp:mdhlp}-files are expected to be stored in a folder {inp:mdhlp} in the folder that {bf:{ul:adf}older}({it:string}) points to, and the {inp:sthlp}-files are expected to be written to a folder {inp:sthlp} in the same location. If the package folder was set up using {inp:ad_setup} and the commands were added to the package folder using {inp:ad_command}, then this is already the case. 
+{p_end}
+
+{pstd}See {browse "https://github.com/lsms-worldbank/adodown/issues/27":this article} about valid syntax in the {inp:mdhlp} files. 
 {p_end}
 
 {title:Options}

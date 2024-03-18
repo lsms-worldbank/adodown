@@ -4,7 +4,7 @@ cap program drop   adodown
     program define adodown, rclass
 
 qui {
-  
+
     version 14.1
 
     * Do not manually edit these locals. They are updated with ad_publish in the adodown workflow
@@ -50,6 +50,13 @@ qui {
           local formatteddate: display %tdCCYYNNDD `= date("`c(current_date)'","DMY")'
           return local formatteddate "`formatteddate'"
       }
+
+
+      * Valid verison
+      else if ("`subcmd'" == "validstataversion") {
+          return local valid_stata_versions "12 12.0 12.1 13 13.0 13.1 14 14.0 14.1 14.2 15 15.0 15.1 16.0 16.1 17.0 18.0"
+      }
+
 
 
       else {

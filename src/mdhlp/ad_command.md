@@ -14,14 +14,18 @@ where _subcommand_ is either `create` or `remove` and _commandname_ is the name 
 | __**pkg**name__(_string_) | Name of package that exists in the location `adfolder()` points to. |
 | __**undoc**umented__ | used to create an undocumented command.
 
-Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_command.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
+Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 
 This command is only intended to be used in package folders set up in the `adodown` workflow using the command `ad_setup`.
 
-This command creates new commands in the package or removes existing commands from it. When creating a command, a template for the ado-file is created in the ado folder, a template for the mdhlp-file is created in the mdhlp folder,
-and the ado-file and the sthlp file is addended to the pkg-file in that package folder.
+This command creates new commands in the package or removes existing commands from it.
+When creating a command, a template for the `ado`-file is created in the `ado`-folder,
+a template for the `mdhlp`-file is created in the `mdhlp` folder,
+and the `ado`-file and the `sthlp` file is appended to the `pkg`-file in that package folder.
+
+See [this article](https://github.com/lsms-worldbank/adodown/issues/27) about valid syntax in the `mdhlp` files.
 
 # Options
 

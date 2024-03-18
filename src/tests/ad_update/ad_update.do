@@ -14,6 +14,9 @@
     cap net uninstall adodown
     net install adodown, from("${adwn_clone}/src") replace
 
+    * Load utility functions that delete old test putput and set up folders
+    run "`testfldr'/test_utils.do"
+    
     ************************
     * Run tests
 
@@ -41,4 +44,4 @@
 
     ad_update, adfolder("`mvp1_fldr'") pkgname("`name'") newpkgversion("major, samedayok")
 
-    ad_update, adfolder("`mvp1_fldr'") pkgname("`name'") newpkgversion("minor, samedayok")    
+    ad_update, adfolder("`mvp1_fldr'") pkgname("`name'") newpkgversion("minor, samedayok") newstataversion(15.1)  

@@ -12,17 +12,19 @@ __ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_) __nopkgmeta__]
 | __commands__(_string_) | List specific command to convert. Default is all in package |
 | __nopkgmeta__ | Do not look for a `.pkg` file for package metadata |
 
-Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
+Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 
 This command renders Stata helpfiles in the `.sthlp` format
-written in the mdhlp-files written in markdown.
-The sthlp-files are then intended to be included instead
-of the mdhlp-files when distributing the command using
+written in the `mdhlp`-files written in markdown.
+The `sthlp`-files are then intended to be included instead
+of the `mdhlp`-files when distributing the command using
 either `ssc install` or `net install`.
 
-In the `adodown` workflow the mdhlp-files are expected to be stored in a folder `mdhlp` in the folder that __**adf**older__(_string_) points to, and the sthlp-files are expected to be written to a folder `sthlp` in the same location. If the package folder was set up using `ad_setup` and the commands were added to the package folder using `ad_command`, then this is already the case.
+In the `adodown` workflow the `mdhlp`-files are expected to be stored in a folder `mdhlp` in the folder that __**adf**older__(_string_) points to, and the `sthlp`-files are expected to be written to a folder `sthlp` in the same location. If the package folder was set up using `ad_setup` and the commands were added to the package folder using `ad_command`, then this is already the case.
+
+See [this article](https://github.com/lsms-worldbank/adodown/issues/27) about valid syntax in the `mdhlp` files.
 
 # Options
 
