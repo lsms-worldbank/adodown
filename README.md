@@ -1,8 +1,7 @@
 # `adodown`
 
-Select variables by characteristic (char) or regular expression (regex)
+Utilities for streamlining Stata package development
 <img src='src/dev/assets/logo.png' align="right" height="139" />
-
 
 <!-- badges: start -->
 [![Lifecycle:
@@ -23,6 +22,17 @@ and to explore how commands work--all without installing the package.
 For developers, this provides packages with a welcome web presence and offers a home for additional documentation
 (e.g., how-to guides, technical notes, FAQs),
 and keeps HTML documentation up to date with SMCL documentation through continuous deployment via GitHub Actions.
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| [ad_command](https://lsms-worldbank.github.io/adodown/reference/ad_command.html) | Add new or remove existing command to the package |
+| [ad_publish](https://lsms-worldbank.github.io/adodown/reference/ad_publish.html) | Run all tasks intended to be done before publishing |
+| [ad_setup](https://lsms-worldbank.github.io/adodown/reference/ad_setup.html) | Create up a new `adodown`-styled package |
+| [ad_sthlp](https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html) | Convert the `mdhlp`-files to `SMCL` format and save in `sthlp`-files |
+| [ad_update](https://lsms-worldbank.github.io/adodown/reference/ad_update.html) | Update meta information stored in the `pkg`-file.
+| [adodown](https://lsms-worldbank.github.io/adodown/reference/adodown.html) | Package command with utilities for the rest of the package |
 
 ##  Installation
 
@@ -54,7 +64,7 @@ To install the version in a particular branch:
 local tag "dev"
 * download the code from that GitHub branch
 * install the package
-net install selector, ///
+net install adodown, ///
   from("https://raw.githubusercontent.com/lsms-worldbank/adodown/`tag'/src") replace
 ```
 
@@ -71,26 +81,15 @@ set the local `tag` to the target release you want to install in this code:
 local tag "v1.0"
 * download the code from that GitHub release
 * install the package
-net install selector, ///
+net install adodown, ///
   from("https://raw.githubusercontent.com/lsms-worldbank/adodown/`tag'/src") replace
 ```
-
-## Commands
-
-| Command | Description |
-| --- | --- |
-| [ad_command](https://lsms-worldbank.github.io/adodown/reference/ad_command.html) | Add new or remove existing command to the package |
-| [ad_publish](https://lsms-worldbank.github.io/adodown/reference/ad_publish.html) | Run all tasks intended to be done before publishing |
-| [ad_setup](https://lsms-worldbank.github.io/adodown/reference/ad_setup.html) | Create up a new `adodown`-styled package |
-| [ad_sthlp](https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html) | Convert the `mdhlp`-files to `SMCL` format and save in `sthlp`-files |
-| [ad_update](https://lsms-worldbank.github.io/adodown/reference/ad_update.html) | Update meta information stored in the `pkg`-file.
-| [adodown](https://lsms-worldbank.github.io/adodown/reference/adodown.html) | Package command with utilities for the rest of the package |
 
 ## Learn more
 
 To learn more about the package:
 
-- Consult the reference documentation
+- Consult the [reference documentation](https://lsms-worldbank.github.io/adodown/reference/)
 - Read how-to articles
 
 ## Contact
