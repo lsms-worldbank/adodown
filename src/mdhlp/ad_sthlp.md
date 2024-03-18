@@ -12,7 +12,7 @@ __ad_sthlp__ , __**adf**older__(_string_) [__commands__(_string_) __nopkgmeta__]
 | __commands__(_string_) | List specific command to convert. Default is all in package |
 | __nopkgmeta__ | Do not look for a `.pkg` file for package metadata |
 
-Read [this helpfile](https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html) in the `adodown`'s package web-documentation where you also find articles with guides and best practices related to the commands in this package.
+Read the `adodown` package's [web-documentation]((https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 
