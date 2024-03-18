@@ -13,7 +13,7 @@ __ad_publish__ , __**adf**older__(_string_) [__**und**ocumented__(_string_) __ss
 | __ssczip__ | Generates a Zip-archive ready to send to SSC  |
 | __nogen_sthlp__ | Do not run `ad_sthlp` on the package   |
 
-Read the `adodown` package's [web-documentation]((https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
+Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 

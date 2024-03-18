@@ -17,7 +17,7 @@ __ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newti
 | __**newcon**tact__(_string_) | Update the contact information for support |
 | __newurl__(_string_) | Update the URL for this package |
 
-Read the `adodown` package's [web-documentation]((https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
+Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 

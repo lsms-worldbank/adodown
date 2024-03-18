@@ -17,7 +17,7 @@ __ad_setup__ , __**adf**older__(_string_) [ __**n**ame__(_string_) __**d**escrip
 | __**auto**prompt__            | Suppress the prompt for missing non-required input  |
 | __**git**hub__                | Add GitHub files without prompting  |
 
-Read the `adodown` package's [web-documentation]((https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
+Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 

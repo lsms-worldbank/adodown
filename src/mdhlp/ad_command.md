@@ -14,7 +14,7 @@ where _subcommand_ is either `create` or `remove` and _commandname_ is the name 
 | __**pkg**name__(_string_) | Name of package that exists in the location `adfolder()` points to. |
 | __**undoc**umented__ | used to create an undocumented command.
 
-Read the `adodown` package's [web-documentation]((https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
+Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.io/adodown/) where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package.
 
 # Description
 
