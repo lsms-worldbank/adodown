@@ -34,7 +34,7 @@ the SMCL format that is used in Stata helpfiles.
 | `` ` ` `` | Inline code font | Using `{inp:}` tag | All other inline formatting is ignored within the `` ` `` tags |
 | ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tags | Ignores all formatting within the ```` ``` ```` tags  |
 | ` [ ]( ) ` | Hyperlinks | Using `{browse link:text}` tags | May not be combined with other types of formatting |
-| `\|   \|   \|` / `\|--\|--\|` / `\|   \|   \|`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section. The symbol `\|` is not allowed in a cell of a table. |
+| `|   |   |` / `|--|--|` / `|   |   |`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section. The symbol `\|` is not allowed in a cell of a table. |
 | `<!--` / `-->` | Comments | Commented lines are ignored | Supports both multi and single line comments  |
 
 #### Paragraphs
