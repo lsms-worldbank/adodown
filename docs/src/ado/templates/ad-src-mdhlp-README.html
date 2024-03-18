@@ -126,8 +126,9 @@ ul.task-list{list-style: none;}
 
 <section id="markdown-help-files" class="level1">
 <h1>Markdown help files</h1>
-<p>In the <code>adodown</code> workflow you should not create any of the files in this folder using the command <code>adnewcommand</code>. The markdown files here are then rendered into Stata help files saved in the folder <code>stlhp</code>. The content in this folder is also used to render a documentation website using the R-tool <code>adodown</code>.</p>
-<p>For syntax rules on how to write Stata helpfiles in markdown in the <code>adodown</code> workflow, see this article (<em>link to adodown vignette</em>).</p>
+<p>In the <code>adodown</code> workflow you should not create any files in this folder. Files in this folder is intended to be created using the command <code>ad_command</code>. The markdown files here are then converted into Stata help files in <code>.sthlp</code> format using <code>ad_publish</code> or <code>ad_sthlp</code>. Those commands saves the converted helpfiles in the <code>stlhp</code> folder.</p>
+<p>For syntax rules on how to write Stata helpfiles in markdown syntax in the <code>adodown</code> workflow, see <a href="https://lsms-worldbank.github.io/adodown/articles/mdhlp-syntax.html">this article</a>.</p>
+<p>The content in this folder is also used to render a documentation website using the R-tool <a href="https://github.com/lsms-worldbank/adodownr"><code>adodownr</code></a>.</p>
 
 
 </section>
