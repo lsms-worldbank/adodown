@@ -47,8 +47,7 @@ To update the package:
 
 ```stata
 * check if any updates are available.
-* If updates are availably,
-* follow Stata's prompt to apply them
+* if updates are available, follow Stata's prompt to apply them
 adoupdate adodown
 ```
 
