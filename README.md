@@ -46,8 +46,9 @@ ssc install adodown
 To update the package:
 
 ```stata
-* check for updates
-* if any are available, apply them
+* check if any updates are available.
+* If updates are availably,
+* follow Stata's prompt to apply them
 adoupdate adodown
 ```
 
