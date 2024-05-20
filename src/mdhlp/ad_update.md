@@ -4,7 +4,7 @@ __ad_update__ - This command is used for short description.
 
 # Syntax
 
-__ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newtit**le__(_string_) __**newpkg**version__({_minor_/_major_}[,_samedayok_]) __**newsta**taversion__(_stata_ _version_) __**newaut**hor__(_string_) __**newcon**tact__(_string_) __newurl__(_string_)]
+__ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newtit**le__(_string_) __**newpkg**version__({_minor_/_major_} [, _samedayok_]) __**newsta**taversion__(_stata_ _version_) __**newaut**hor__(_string_) __**newcon**tact__(_string_) __newurl__(_string_) ]
 
 | _options_ | Description |
 |-----------|-------------|
@@ -48,9 +48,23 @@ __newurl__(_string_) updates the URL listed for this package. Typically this is 
 
 # Examples
 
-## Example 1
+## Example 2
 
-This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to. Then the title is update to `'<pkgname>': module to do great data work"`, the minor version is incremented by 1 and the Stata target version is set to 14.1.
+This example assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to. This example shows the most common usage of this command which is to update the minor version by 1.
+
+```
+* point a local to the folder where the package is located
+local myfolder "path/to/folder"
+* Package meta info
+local pkg "my_package"
+
+* Add command mycmd to the package folder
+ad_update , adfolder("`myfolder'") pkg("`pkg'") newpkgversion(minor)
+```
+
+## Example 2
+
+This example again assumes that there is already a adodown-styled package folder at the location the local `myfolder` is pointing to. Then the title is update to `'<pkgname>': module to do great data work"`, the manjor version is incremented by 1 (which resets minor version to 0) and the Stata target version is set to 14.1.
 
 ```
 * point a local to the folder where the package is located
@@ -60,7 +74,7 @@ local pkg "my_package"
 
 * Add command mycmd to the package folder
 ad_update , adfolder("`myfolder'") pkg("`pkg'") ///
-  newtitle("module to do great data work") newpkgversion(minor) newstataversion(14.1)
+  newtitle("module to do great data work") newpkgversion(major) newstataversion(14.1)
 ```
 
 # Feedback, bug reports and contributions

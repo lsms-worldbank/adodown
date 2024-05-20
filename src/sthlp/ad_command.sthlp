@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1 20240306}{...}
+{* *! version 0.2 20240520}{...}
 {hline}
 {pstd}help file for {hi:ad_command}{p_end}
 {hline}
@@ -25,7 +25,7 @@
 {synopt: {bf:{ul:undoc}umented}}used to create an undocumented command.{p_end}
 {synoptline}
 
-{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_command.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{phang}Read the {inp:adodown} package{c 39}s {browse "https://lsms-worldbank.github.io/adodown/":web-documentation} where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package. 
 {p_end}
 
 {title:Description}
@@ -39,7 +39,7 @@ a template for the {inp:mdhlp}-file is created in the {inp:mdhlp} folder,
 and the {inp:ado}-file and the {inp:sthlp} file is appended to the {inp:pkg}-file in that package folder. 
 {p_end}
 
-{pstd}See {browse "https://github.com/lsms-worldbank/adodown/issues/27":this article} about valid syntax in the {inp:mdhlp} files. 
+{pstd}See {browse "https://lsms-worldbank.github.io/adodown/articles/mdhlp-syntax.html":this article} about valid syntax in the {inp:mdhlp} files. 
 {p_end}
 
 {title:Options}

@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.1 20240306}{...}
+{* *! version 0.2 20240520}{...}
 {hline}
 {pstd}help file for {hi:ad_publish}{p_end}
 {hline}
@@ -23,7 +23,7 @@
 {synopt: {bf:nogen_sthlp}}Do not run {inp:ad_sthlp} on the package{p_end}
 {synoptline}
 
-{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_publish.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{phang}Read the {inp:adodown} package{c 39}s {browse "https://lsms-worldbank.github.io/adodown/":web-documentation} where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package. 
 {p_end}
 
 {title:Description}

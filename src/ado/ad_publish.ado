@@ -1,4 +1,4 @@
-*! version 0.1 20240306 - LSMS Team, World Bank - lsms@worldbank.org
+*! version 0.2 20240520 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_publish
     program define ad_publish
