@@ -604,7 +604,7 @@ end
 * If a hyperlink is identified, then there should be no smcl formatting in it
 * Most common is _ as in "[sel_add_metadata]" that
 * becomes "[sel{it:add}metadata"
-cap program drop 	hype]rlink_sanitize_smcl
+cap program drop 	hyperlink_sanitize_smcl
 	program define	hyperlink_sanitize_smcl, rclass
 
   syntax , link(string) text(string)
