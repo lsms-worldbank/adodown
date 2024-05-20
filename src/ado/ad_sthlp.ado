@@ -14,6 +14,8 @@ qui {
         debug ///
       ]
 
+    noi di ""
+
     *******************************************************
     * Create locals
 
@@ -217,7 +219,7 @@ qui {
               }
               * End of table - write the table and reset table locals
               else if (`table' == 1) {
-                write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
+                noi write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
                 local table = 0
                 local tbl_str = ""
                 local last_line_empty 1
@@ -392,12 +394,23 @@ cap program drop   	apply_inline_formatting
         }
         * ITALIC SPAN
         else if (substr("`line'",`i',1) == "_") {
-            * Ignore _ for italic in code spans or in block spans
+
+            * Get next character to see if it is a single italized _word_ or a word _with_underscore_
+            local next_char = substr("`line'",`i'+1,1)
+
+            * Ignore _ for italic in code spans or in bold spans
             if (`code_span') | (`bold_span') local i = `i' + 1
-            else {
+
+            * Italic span only ends on "_" if followed by " ", ")", ",", "." or ":"
+            else if (!`ital_span' | inlist("`next_char'"," ", ")", ",", ".",":")) {
+
                 local line "`pre'`itag'`post1'"
                 local ital_span !`ital_span'
                 local i = `i' + strlen("`itag'")
+            }
+            else {
+              *Just go to next char, _ was in the middle of the word as in _code_list_
+              local i = `i' + 1
             }
         }
 
@@ -478,20 +491,116 @@ cap program drop   	write_table
 
     }
     else {
-      //TODO: implement support for other tables
+      parse_nonsyntax_table, md_tblstr(`"`tbl_str'"')
+      local smcl_table `"`r(smcl_tblstr)'"'
 
-      // * Get header row from md table str
-      // local header : word 1 of `tbl_str'
-      //
-      // * Parse header to get expecte number of columns
-      // parse_table_row, row("`header'")
-      // local c_exp_count = `r(c_count)'
-      //
-      // forvalues col = 1/`r(c_count)' {
-      //     local c`col'_title  "`r(c`col')'"
-      //     local c`col'_max_l "`r(c`col'_l)'"
-      // }
+      foreach row of local smcl_table {
+         file write `handle' "`row'" _n
+      }
+      file write `handle' "" _n
     }
+
+end
+
+cap program drop   	parse_nonsyntax_table
+  	program define	parse_nonsyntax_table, rclass
+
+    syntax, md_tblstr(string)
+
+    * Initiate locals
+    local header 1
+    local r_count = -1 //start at -1 row to account for |---|---| rows
+    local smcl_tblstr ""
+
+    **********************************
+    * Parse row
+
+    * Loop over the marksdown string
+    foreach tablerow of local md_tblstr {
+       * Parste the markdown string
+       parse_table_row, row("`tablerow'")
+       * If the first header row
+       if `header' {
+         * Save number of columns in the header row
+         local c_count = `r(c_count)'
+         * For each column:
+         forvalue c = 1/`c_count' {
+            * Column length is length of text + 2 for space before and after
+            local lmax_`c' = `r(c`c'_l)' + 2
+            * Get title value
+            local h_`c' = "`r(c`c')'"
+         }
+         * Remaining rows are non-header
+         local header 0
+       }
+       * Non header rows
+       else {
+         * Keep a count of number of rows
+         local r_count = `r_count' + 1
+         * For each column:
+         forvalue c = 1/`c_count' {
+            * For each row, take this value lenght if it is the longest
+            local lmax_`c' = max(`lmax_`c'',`r(c`c'_l)' + 2)
+            * Get the value for this cell
+            local r`r_count'_`c' = "`r(c`c')'"
+         }
+       }
+    }
+
+    **********************************
+    * Calculate column width and position
+
+    * Set indent and calculate cummulative columns
+    local indent = 4
+    local col = `indent'
+    forvalue c = 1/`c_count' {
+      * Calculate cummulative column
+      local col = `col' + `lmax_`c'' + 1
+      * Save cummulative column for this column
+      local col`c' = `col'
+    }
+
+    **********************************
+    * Genereate the smcl table tring
+
+    * Top border
+    local row = "{col `indent'}{c TLC}{hline `lmax_1'}"
+    forvalue c = 2/`c_count' {
+      local row = "`row'{c TT}{hline `lmax_`c''}"
+    }
+    local smcl_tblstr `"`smcl_tblstr' "`row'{c TRC}""'
+
+    * Title row
+    local row = "{col `indent'}{c |}"
+    forvalue c = 1/`c_count' {
+      local row = "`row' `h_`c''{col `col`c''}{c |}"
+    }
+    local smcl_tblstr `"`smcl_tblstr' "`row'""'
+
+    * Below title border
+    local row = "{col `indent'}{c LT}{hline `lmax_1'}"
+    forvalue c = 2/`c_count' {
+      local row = "`row'{c +}{hline `lmax_`c''}"
+    }
+    local smcl_tblstr `"`smcl_tblstr' "`row'{c RT}""'
+
+    * Generate all data rows
+    forvalue r = 1/`r_count' {
+      local row = "{col `indent'}{c |}"
+      forvalue c = 1/`c_count' {
+        local row = "`row' `r`r'_`c''{col `col`c''}{c |}"
+      }
+      local smcl_tblstr `"`smcl_tblstr' "`row'""'
+    }
+
+    * Generate end boarder
+    local row = "{col `indent'}{c BLC}{hline `lmax_1'}"
+    forvalue c = 2/`c_count' {
+      local row = "`row'{c BT}{hline `lmax_`c''}"
+    }
+    local smcl_tblstr `"`smcl_tblstr' "`row'{c BRC}""'
+
+    return local smcl_tblstr `"`smcl_tblstr'"'
 
 end
 
@@ -604,7 +713,7 @@ end
 * If a hyperlink is identified, then there should be no smcl formatting in it
 * Most common is _ as in "[sel_add_metadata]" that
 * becomes "[sel{it:add}metadata"
-cap program drop 	hype]rlink_sanitize_smcl
+cap program drop 	hyperlink_sanitize_smcl
 	program define	hyperlink_sanitize_smcl, rclass
 
   syntax , link(string) text(string)

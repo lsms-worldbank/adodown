@@ -12,8 +12,8 @@ Read the `adodown` package's [web-documentation](https://lsms-worldbank.github.i
 
 This command only returns the version number and version data to the user.
 This command has little application for a typical user.
-For packages installed on SSC it is important that a there is a command
-in the package that has the same name as the package.
+For packages installed on SSC it is important that there is a command
+in the package that has the same name as the package itself.
 That is the main purpose of this command.
 
 # Options
