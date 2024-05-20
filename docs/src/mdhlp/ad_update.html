@@ -121,7 +121,8 @@ ul.task-list{list-style: none;}
   <li><a href="#options" id="toc-options" class="nav-link" data-scroll-target="#options">Options</a></li>
   <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
   <ul class="collapse">
-  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1">Example 1</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2">Example 2</a></li>
+  <li><a href="#example-2-1" id="toc-example-2-1" class="nav-link" data-scroll-target="#example-2-1">Example 2</a></li>
   </ul></li>
   <li><a href="#feedback-bug-reports-and-contributions" id="toc-feedback-bug-reports-and-contributions" class="nav-link" data-scroll-target="#feedback-bug-reports-and-contributions">Feedback, bug reports and contributions</a></li>
   <li><a href="#authors" id="toc-authors" class="nav-link" data-scroll-target="#authors">Authors</a></li>
@@ -139,7 +140,7 @@ ul.task-list{list-style: none;}
 </section>
 <section id="syntax" class="level1">
 <h1>Syntax</h1>
-<p><strong>ad_update</strong> , <strong><strong>adf</strong>older</strong>(<em>string</em>) <strong><strong>pkg</strong>name</strong>(<em>string</em>) [ <strong><strong>newtit</strong>le</strong>(<em>string</em>) <strong><strong>newpkg</strong>version</strong>({<em>minor</em>/<em>major</em>}[,<em>samedayok</em>]) <strong><strong>newsta</strong>taversion</strong>(<em>stata</em> <em>version</em>) <strong><strong>newaut</strong>hor</strong>(<em>string</em>) <strong><strong>newcon</strong>tact</strong>(<em>string</em>) <strong>newurl</strong>(<em>string</em>)]</p>
+<p><strong>ad_update</strong> , <strong><strong>adf</strong>older</strong>(<em>string</em>) <strong><strong>pkg</strong>name</strong>(<em>string</em>) [ <strong><strong>newtit</strong>le</strong>(<em>string</em>) <strong><strong>newpkg</strong>version</strong>({<em>minor</em>/<em>major</em>} [, <em>samedayok</em>]) <strong><strong>newsta</strong>taversion</strong>(<em>stata</em> <em>version</em>) <strong><strong>newaut</strong>hor</strong>(<em>string</em>) <strong><strong>newcon</strong>tact</strong>(<em>string</em>) <strong>newurl</strong>(<em>string</em>) ]</p>
 <table class="table">
 <colgroup>
 <col style="width: 45%">
@@ -206,9 +207,20 @@ ul.task-list{list-style: none;}
 </section>
 <section id="examples" class="level1">
 <h1>Examples</h1>
-<section id="example-1" class="level2">
-<h2 class="anchored" data-anchor-id="example-1">Example 1</h2>
-<p>This example assumes that there is already a adodown-styled package folder at the location the local <code>myfolder</code> is pointing to. Then the title is update to <code>'&lt;pkgname&gt;': module to do great data work"</code>, the minor version is incremented by 1 and the Stata target version is set to 14.1.</p>
+<section id="example-2" class="level2">
+<h2 class="anchored" data-anchor-id="example-2">Example 2</h2>
+<p>This example assumes that there is already a adodown-styled package folder at the location the local <code>myfolder</code> is pointing to. This example shows the most common usage of this command which is to update the minor version by 1.</p>
+<pre><code>* point a local to the folder where the package is located
+local myfolder "path/to/folder"
+* Package meta info
+local pkg "my_package"
+
+* Add command mycmd to the package folder
+ad_update , adfolder("`myfolder'") pkg("`pkg'") newpkgversion(minor)</code></pre>
+</section>
+<section id="example-2-1" class="level2">
+<h2 class="anchored" data-anchor-id="example-2-1">Example 2</h2>
+<p>This example again assumes that there is already a adodown-styled package folder at the location the local <code>myfolder</code> is pointing to. Then the title is update to <code>'&lt;pkgname&gt;': module to do great data work"</code>, the manjor version is incremented by 1 (which resets minor version to 0) and the Stata target version is set to 14.1.</p>
 <pre><code>* point a local to the folder where the package is located
 local myfolder "path/to/folder"
 * Package meta info
@@ -216,7 +228,7 @@ local pkg "my_package"
 
 * Add command mycmd to the package folder
 ad_update , adfolder("`myfolder'") pkg("`pkg'") ///
-  newtitle("module to do great data work") newpkgversion(minor) newstataversion(14.1)</code></pre>
+  newtitle("module to do great data work") newpkgversion(major) newstataversion(14.1)</code></pre>
 </section>
 </section>
 <section id="feedback-bug-reports-and-contributions" class="level1">

@@ -212,9 +212,9 @@ ul.task-list{list-style: none;}
 </tr>
 <tr class="even">
 <td><code>|   |   |</code> / <code>|--|--|</code> / <code>|   |   |</code></td>
-<td>Syntax tables</td>
-<td>Using <code>{synopt}</code> table syntax</td>
-<td>Only works for a two-column table in the <em>Syntax</em> section. The symbol <code>\|</code> is not allowed in a cell of a table.</td>
+<td>Tables</td>
+<td>Uses <code>{synopt}</code> or <code>{c |}{col X}{c TT}{hline Y}</code> type syntax.</td>
+<td>The two-column <code>{synopt}</code> syntax is used in the Syntax section. In all other sections the table is built using SMCL’s low level table syntax. The symbol <code>\|</code> is not allowed in a cell of a table.</td>
 </tr>
 <tr class="odd">
 <td><code>&lt;!--</code> / <code>--&gt;</code></td>
@@ -253,8 +253,8 @@ ul.task-list{list-style: none;}
 <section id="italic-formatting" class="level6">
 <h6 class="anchored" data-anchor-id="italic-formatting">Italic formatting</h6>
 <p>Text between <code>_</code> (a single underscore) tags, as in <code>_italicized text_</code>, is formatted as <code>{it:italicized text}</code> when rendered to Stata helpfiles.</p>
-<p>It is not possible to italicize a word with <code>_</code>, as <code>_</code> in an italicized word will always be interpreted as the end of italic formatting.</p>
 <p>It is not possible to italicize bold font text. This is to make it possible to express as command name like <code>ad_sthlp</code> in bold font. <code>_</code> is therefore ignored in bold font.</p>
+<p>An italicized word can have a an underscore, such as in <code>_hello_world_</code>. An underscore is only interpreted as the end of an italicized span if it is followed by one of the following character <code></code> (a blank space), <code>)</code>, <code>,</code>, <code>.</code>, <code>:</code>, <code>/</code>, <code>{</code>, <code>}</code>, <code>[</code> or <code>]</code>. so in <code>label(_label_name_)</code> the first underscore is interpreted as the beginning of the italic span. The second underscore is interpreted as part of the italic span as it is followed by the regular letter <code>n</code>. The third underscore is interpreted as the end of the italic span as it is followed by one of the special characters listed above.</p>
 </section>
 <section id="underlined-inline-formatting" class="level6">
 <h6 class="anchored" data-anchor-id="underlined-inline-formatting">Underlined inline formatting</h6>
@@ -317,10 +317,17 @@ ul.task-list{list-style: none;}
 <h4 class="anchored" data-anchor-id="hyperlinks">Hyperlinks</h4>
 <p>Markdown links on the format <code>[adodown](https://github.com/lsms-worldbank/adodown)</code> will be converted to SMCL links on the format <code>{browse "https://github.com/lsms-worldbank/adodown":adodown}</code>. Only links to internet URLs are supported. Creating hyperlinks to resources installed in the local Stata installation, for example <code>{help : generate}</code>, are currently not supported.</p>
 </section>
-<section id="syntax-option-tables" class="level4">
-<h4 class="anchored" data-anchor-id="syntax-option-tables">Syntax option tables</h4>
-<p>The only supported table is the syntax option table in the <em>Syntax</em> section. This is a table that list all the options in the first column and provide a short description in the second column. The table may only be exactly two columns wide. When rendered into a Stata helpfile the column titles will be “<em>options</em>” and “Description” which is the Stata defaults. Only “<em>options</em>” will be italicized.</p>
-<p>Tables in any other section than the <em>Syntax</em> section will be ignored in the current version of <code>ad_sthlp</code>. Until support for tables in other sections are implemented, the recommendation is to use vignette articles to document anything best described in a table.</p>
+<section id="tables" class="level4">
+<h4 class="anchored" data-anchor-id="tables">Tables</h4>
+<section id="syntax-tables" class="level6">
+<h6 class="anchored" data-anchor-id="syntax-tables">Syntax tables</h6>
+<p>In the <em>Syntax</em> section the only table supported is the <code>{synopt}</code> table. This is a table that list all the options in the first column and provide a short description in the second column. The table may only be exactly two columns wide. When rendered into a Stata helpfile the column titles will be “<em>options</em>” and “Description” which is the Stata defaults. Only “<em>options</em>” will be italicized.</p>
+<p>There is no way to have more than two columns in a <code>{synopt}</code> table. A <code>{synopt}</code> table has support for line breaks in the second column. It is possible to have multiple tables in the <em>Syntax</em> section. All of them will still be <code>{synopt}</code> tables.</p>
+</section>
+<section id="other-tables" class="level6">
+<h6 class="anchored" data-anchor-id="other-tables">Other tables</h6>
+<p>In all other sections tables are generated using SMCL’s low level support for tables: <code>{c |}{col X}{c TT}{hline Y}</code> etc. There is no limit on the number of columns in these tables. However, there is no support for line breaks within a table cell. All columns will be as wide as the longest value in that column.</p>
+</section>
 </section>
 <section id="comments" class="level4">
 <h4 class="anchored" data-anchor-id="comments">Comments</h4>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>adodown – test_all_syntax</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<link href="../../../images/logo.png" rel="icon" type="image/png">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <a class="navbar-brand" href="../../../index.html">
+    <img src="../../../images/logo.png" alt="">
+    <span class="navbar-title">adodown</span>
+  </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../reference/index.html">Reference</a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-articles" role="button" data-bs-toggle="dropdown" aria-expanded="false">Articles</a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-articles">    
+        <li>
+    <a class="dropdown-item" href="../../../articles/adodown-workflow.html">
+ <span class="dropdown-text">adodown-workflow</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../articles/mdhlp-syntax.html">
+ <span class="dropdown-text">mdhlp-syntax</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../../../articles/web-documenation-using-github-actions.html">
+ <span class="dropdown-text">web-documenation-using-github-actions</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/lsms-worldbank/adodown"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#title" id="toc-title" class="nav-link active" data-scroll-target="#title">Title</a></li>
+  <li><a href="#syntax" id="toc-syntax" class="nav-link" data-scroll-target="#syntax">Syntax</a>
+  <ul class="collapse">
+  <li><a href="#required-options" id="toc-required-options" class="nav-link" data-scroll-target="#required-options">Required options</a></li>
+  <li><a href="#column-and-row-option" id="toc-column-and-row-option" class="nav-link" data-scroll-target="#column-and-row-option">Column and row option</a></li>
+  </ul></li>
+  <li><a href="#description" id="toc-description" class="nav-link" data-scroll-target="#description">Description</a></li>
+  <li><a href="#options" id="toc-options" class="nav-link" data-scroll-target="#options">Options</a>
+  <ul class="collapse">
+  <li><a href="#statistics-display-options" id="toc-statistics-display-options" class="nav-link" data-scroll-target="#statistics-display-options">Statistics display options</a></li>
+  </ul></li>
+  <li><a href="#estimationstatistics-definitions" id="toc-estimationstatistics-definitions" class="nav-link" data-scroll-target="#estimationstatistics-definitions">Estimation/statistics definitions</a></li>
+  <li><a href="#examples" id="toc-examples" class="nav-link" data-scroll-target="#examples">Examples</a>
+  <ul class="collapse">
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1">Example 1</a></li>
+  <li><a href="#example-5" id="toc-example-5" class="nav-link" data-scroll-target="#example-5">Example 5</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="title" class="level1">
+<h1>Title</h1>
+<p><strong>iebaltab</strong> - produces balance tables with multiple groups or treatment arms</p>
+</section>
+<section id="syntax" class="level1">
+<h1>Syntax</h1>
+<p><strong>iebaltab</strong> <em>balance_varlist</em> [if] [in] [weight], <strong><strong>group</strong>var</strong>(<em>varname</em>) [ <em>column/row_options</em> <em>estimation_options</em> <em>stat_display_options</em> <em>labe/notel_options</em> <em>export_options</em> <em>latex_options</em> ]</p>
+<section id="required-options" class="level2">
+<h2 class="anchored" data-anchor-id="required-options">Required options</h2>
+<table class="table">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 54%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><em>options</em></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><strong>group</strong>var</strong>(<em>varname</em>)</td>
+<td>Variable indicating the groups (ex. treatment arms) to test across</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="column-and-row-option" class="level2">
+<h2 class="anchored" data-anchor-id="column-and-row-option">Column and row option</h2>
+<table class="table">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 54%">
+</colgroup>
+<thead>
+<tr class="header">
+<th><em>options</em></th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong><strong>co</strong>ntrol</strong>(<em>groupcode</em>)</td>
+<td>Indicate a single group that all other groups are tested against. Default is all groups are tested against each other</td>
+</tr>
+<tr class="even">
+<td><strong><strong>or</strong>der</strong>(<em>groupcodelist</em>)</td>
+<td>Manually set the order the groups appear in the table. Default is ascending. See details on <em>groupcodelist</em> below</td>
+</tr>
+<tr class="odd">
+<td><strong><strong>tot</strong>al</strong></td>
+<td>Include descriptive stats on all observations included in the table</td>
+</tr>
+<tr class="even">
+<td><strong>onerow</strong></td>
+<td>Write number of observations (and number of clusters if applicable) in one row at the bottom of the table</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p><code>iebaltab</code> is a command that generates balance tables (difference-in-means tables).</p>
+<p>See the <em>Estimation/Statistics Definitions</em> section below for a detailed documentation of what statistics this command calculates and how they are calculated.</p>
+</section>
+<section id="options" class="level1">
+<h1>Options</h1>
+<p><strong><strong>or</strong>der</strong>( <em>group_codelist</em> ) manually sets the column order of the groups in the table. <em>group_codelist</em> may be any or all of the values in the group variable specified in <code>groupvar()</code>.</p>
+<p><strong><strong>tot</strong>al</strong> includes a column with descriptive statistics on the full sample. This column still exclude observations with missing values in <code>groupvar()</code> ,<code>robust</code>, <code>cluster _clustervar_</code> or <code>bootstrap</code>. See the estimation definition section for exact definitions on how these</p>
+<section id="statistics-display-options" class="level2">
+<h2 class="anchored" data-anchor-id="statistics-display-options">Statistics display options</h2>
+<p><strong>stats</strong>(<em>stats_string</em>) indicates which statistics to be displayed in the table. The <em>stats_string</em> is expected to be on this format (where at least one of the sub-arguments <code>desc</code>, <code>pair</code>, <code>f</code> and <code>feq</code> are required):</p>
+<pre><code>stats(desc(descstats) pair(pairstats) f(fstats) feq(feqstats))</code></pre>
+<p>The table below lists the valid values for <em>descstats</em>, <em>pairstats</em>, <em>fstats</em> and <em>feqstats</em>. See the estimation definition section for exact definitions of these values and how they are estimated/calculated.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Options</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>descstats</em></td>
+<td><code>se</code> <code>var</code> <code>sd</code></td>
+</tr>
+<tr class="even">
+<td><em>pairstats</em></td>
+<td><code>diff</code> <code>beta</code> <code>t</code> <code>p</code> <code>nrmd</code> <code>nrmb</code> <code>se</code> <code>sd</code> <code>none</code></td>
+</tr>
+<tr class="odd">
+<td><em>fstats</em></td>
+<td><code>f</code> <code>p</code></td>
+</tr>
+<tr class="even">
+<td><em>feqstats</em></td>
+<td><code>f</code> <code>p</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>texcolwidth</strong>(<em>string</em>) limits the width of table’s first column so that a line break is added when a variable’s name or label is too long. {it:string} must consist of a numeric value with one of the following units: “cm”, “mm”, “pt”, “in”, “ex” or “em”. For more information on these units, <a href="https://en.wikibooks.org/wiki/LaTeX/Lengths">check LaTeX length’s manual</a>.</p>
+</section>
+</section>
+<section id="estimationstatistics-definitions" class="level1">
+<h1>Estimation/statistics definitions</h1>
+<p>This section details the regressions that are used to estimate the statistics displayed in the balance tables generated by this command. For each test there is a “basic form” example to highlight the core of the test, and an “all options” example that shows exactly how all options are applied. Here is a glossary for the terms used in this section:</p>
+<table class="table">
+<colgroup>
+<col style="width: 45%">
+<col style="width: 54%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Definition</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><em>balance variable</em></td>
+<td>The variables listed as <em>balancevarlist</em></td>
+</tr>
+<tr class="even">
+<td><em>groupvar</em></td>
+<td>The variable specified in <code>groupvar()</code></td>
+</tr>
+<tr class="odd">
+<td><em>groupcode</em></td>
+<td>Each value in <em>groupvar</em></td>
+</tr>
+<tr class="even">
+<td><em>testpair</em></td>
+<td>Combination of <em>group codes</em> to be used in pair wise tests</td>
+</tr>
+<tr class="odd">
+<td><em>tp_dummy</em></td>
+<td>A dummy variable where the first <em>group code</em> in a <em>test pair</em> has the value 1 and the second <em>group code</em> has the value 0, and all other observations has missing values</td>
+</tr>
+</tbody>
+</table>
+<p>Each section below has a table that shows how the stats are estimated/calculated for each type of statistics. This is what each column means. A star (*) in the <em>Stat</em> column indicate that is the optional statistics displayed by default if the <code>stats()</code> option is not used. The <em>Display option</em> column shows what sub-option to use in <code>stats()</code> to display this statistic. The <em>Mat col</em> column shows what the column name in the result matrix for the column that stores this stat. See more about the result matrices in the <em>Result matrices</em> section.</p>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stat</th>
+<th>Display option</th>
+<th>Mat col</th>
+<th>Estimation/calculation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td># obs</td>
+<td>Always displayed</td>
+<td><code>n_gc</code></td>
+<td><code>e(N)</code> after <code>reg</code></td>
+</tr>
+<tr class="even">
+<td>cluster</td>
+<td>Displayed if used</td>
+<td><code>cl_gc</code></td>
+<td><code>e(N_clust)</code> after <code>reg</code></td>
+</tr>
+<tr class="odd">
+<td>mean</td>
+<td>Always displayed</td>
+<td><code>mean_gc</code></td>
+<td><code>_b[cons]</code> after <code>reg</code></td>
+</tr>
+<tr class="even">
+<td>se *</td>
+<td><code>stats(desc(se))</code></td>
+<td><code>se_gc</code></td>
+<td><code>_se[cons]</code> after <code>reg</code></td>
+</tr>
+<tr class="odd">
+<td>var</td>
+<td><code>stats(desc(var))</code></td>
+<td><code>var_gc</code></td>
+<td><code>e(rss)/e(df_r)</code> after <code>reg</code></td>
+</tr>
+<tr class="even">
+<td>sd</td>
+<td><code>stats(desc(sd))</code></td>
+<td><code>sd_gc</code></td>
+<td><code>_se[_cons]*sqrt(e(N))</code> after <code>reg</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples" class="level1">
+<h1>Examples</h1>
+<section id="example-1" class="level2">
+<h2 class="anchored" data-anchor-id="example-1">Example 1</h2>
+<pre><code>sysuse census
+gen group = runiform() &lt; .5
+iebaltab pop medage, groupvar(group) browse
+browse</code></pre>
+<p>In the example above, Stata’s built in census data is used. First a dummy variable is created at random. Using this random group variable a balance table is created testing for differences in <em>pop</em> and <em>medage</em>. By using <code>browse</code> the data in memory is replaced with the table so that the table can be used in the browse window. You most likely never should use the <code>browse</code> option in your final code but it is convenient in examples like this and when first testing the command. See examples on how to save the table to a file on disk below.</p>
+<p>For statistics where the direction matters (for example <em>diff</em> or <em>beta</em>) the order is changed so that the test is (<em>other_group</em> - <em>control</em>) such that a positive value indicates that the other group has a higher mean in the balance variable.</p>
+</section>
+<section id="example-5" class="level2">
+<h2 class="anchored" data-anchor-id="example-5">Example 5</h2>
+<pre><code>sysuse census
+local outfld "path/to/folder"
+iebaltab pop medage, groupvar(region) control(4) ///
+  stats(desc(var) pair(p)) replace ///
+  savecsv("`outfld'/iebtb.csv") savexlsx("`outfld'/iebtb.xlsx") ///
+  savetex("`outfld'/iebtb.tex") texnotefile("`outfld'/iebtb_note.tex")</code></pre>
+<p>This example shows how to export the tables to the three formats supported. CSV, Excel and LaTeX. To run this code you must update the path <em>“path/to/folder”</em> to point to a folder on your computer where the tables can be exported to. It makes it easier to align the note with the table when LaTeX adjust the size of the table to fit a page.</p>
+<pre><code>\begin{table}
+  \centering
+  \caption{Balance table}
+  \begin{adjustbox}{max width=\textwidth}
+    \begin{threeparttable}[!h]
+      \input{./balancetable.tex}
+      \begin{tablenotes}[flushleft]
+        \item\hspace{-.25em}\input{./balancetable_note.tex}
+      \end{tablenotes}
+    \end{threeparttable}
+  \end{adjustbox}
+\end{table}</code></pre>
+<p>You can also see the code, make comments to the code, see the version history of the code, and submit additions or edits to the code through <a href="https://github.com/worldbank/ietoolkit">GitHub repository</a> for <code>ietoolkit</code>.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
