@@ -34,7 +34,7 @@ the SMCL format that is used in Stata helpfiles.
 | `` ` ` `` | Inline code font | Using `{inp:}` tag | All other inline formatting is ignored within the `` ` `` tags |
 | ```` ``` ```` / ```` ``` ```` | Multiline code block | Using `{input}`/`{text}` tags | Ignores all formatting within the ```` ``` ```` tags  |
 | ` [ ]( ) ` | Hyperlinks | Using `{browse link:text}` tags | May not be combined with other types of formatting |
-| `|   |   |` / `|--|--|` / `|   |   |`  | Syntax tables | Using `{synopt}` table syntax | Only works for a two-column table in the _Syntax_ section. The symbol `\|` is not allowed in a cell of a table. |
+| `|   |   |` / `|--|--|` / `|   |   |`  | Tables | Uses `{synopt}` or `{c |}{col X}{c TT}{hline Y}` type syntax.  | The two-column `{synopt}` syntax is used in the Syntax section. In all other sections the table is built using SMCL's low level table syntax. The symbol `\|` is not allowed in a cell of a table. |
 | `<!--` / `-->` | Comments | Commented lines are ignored | Supports both multi and single line comments  |
 
 #### Paragraphs
@@ -183,9 +183,11 @@ Only links to internet URLs are supported.
 Creating hyperlinks to resources installed in the local Stata installation,
 for example `{help : generate}`, are currently not supported.
 
-#### Syntax option tables
+#### Tables
 
-The only supported table is the syntax option table in the _Syntax_ section.
+###### Syntax tables
+
+In the _Syntax_ section the only table supported is the `{synopt}` table.
 This is a table that list all the options in the first column and
 provide a short description in the second column.
 The table may only be exactly two columns wide.
@@ -193,11 +195,18 @@ When rendered into a Stata helpfile the column titles will be
 "_options_" and "Description" which is the Stata defaults.
 Only "_options_" will be italicized.
 
-Tables in any other section than the _Syntax_ section
-will be ignored in the current version of `ad_sthlp`.
-Until support for tables in other sections are implemented,
-the recommendation is to use vignette articles to document anything
-best described in a table.
+There is no way to have more than two columns in a `{synopt}` table.
+A `{synopt}` table has support for line breaks in the second column.
+It is possible to have multiple tables in the _Syntax_ section.
+All of them will still be `{synopt}` tables.
+
+###### Other tables
+
+In all other sections tables are generated using
+SMCL's low level support for tables: `{c |}{col X}{c TT}{hline Y}` etc.
+There is no limit on the number of columns in these tables.
+However, there is no support for line breaks within a table cell.
+All columns will be as wide as the longest value in that column.
 
 #### Comments
 
