@@ -394,12 +394,23 @@ cap program drop   	apply_inline_formatting
         }
         * ITALIC SPAN
         else if (substr("`line'",`i',1) == "_") {
-            * Ignore _ for italic in code spans or in block spans
+
+            * Get next character to see if it is a single italized _word_ or a word _with_underscore_
+            local next_char = substr("`line'",`i'+1,1)
+
+            * Ignore _ for italic in code spans or in bold spans
             if (`code_span') | (`bold_span') local i = `i' + 1
-            else {
+
+            * Italic span only ends on "_" if followed by " ", ")", "," or "."
+            else if (!`ital_span' | inlist("`next_char'"," ", ")", ",", ".")) {
+
                 local line "`pre'`itag'`post1'"
                 local ital_span !`ital_span'
                 local i = `i' + strlen("`itag'")
+            }
+            else {
+              *Just go to next char, _ was in the middle of the word as in _code_list_
+              local i = `i' + 1
             }
         }
 
