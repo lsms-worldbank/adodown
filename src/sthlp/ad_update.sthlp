@@ -11,7 +11,7 @@
 
 {title:Syntax}
 
-{phang}{bf:ad_update} , {bf:{ul:adf}older}({it:string}) {bf:{ul:pkg}name}({it:string}) [ {bf:{ul:newtit}le}({it:string}) {bf:{ul:newpkg}version}({c -(}{it:minor}/{it:major}{c )-}[,{it:samedayok}]) {bf:{ul:newsta}taversion}({it:stata} {it:version}) {bf:{ul:newaut}hor}({it:string}) {bf:{ul:newcon}tact}({it:string}) {bf:newurl}({it:string})]
+{phang}{bf:ad_update} , {bf:{ul:adf}older}({it:string}) {bf:{ul:pkg}name}({it:string}) [ {bf:{ul:newtit}le}({it:string}) {bf:{ul:newpkg}version}({c -(}{it:minor}/{it:major}{c )-} [, {it:samedayok}]) {bf:{ul:newsta}taversion}({it:stata} {it:version}) {bf:{ul:newaut}hor}({it:string}) {bf:{ul:newcon}tact}({it:string}) {bf:newurl}({it:string}) ]
 {p_end}
 
 {synoptset 50}{...}
@@ -27,7 +27,7 @@
 {synopt: {bf:newurl}({it:string})}Update the URL for this package{p_end}
 {synoptline}
 
-{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_update.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{phang}Read the {inp:adodown} package{c 39}s {browse "https://lsms-worldbank.github.io/adodown/":web-documentation} where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package. 
 {p_end}
 
 {title:Description}
@@ -69,9 +69,22 @@ Therefore, that file should only be edited using this command {inp:ad_update}.
 
 {title:Examples}
 
-{dlgtab:Example 1}
+{dlgtab:Example 2}
 
-{pstd}This example assumes that there is already a adodown-styled package folder at the location the local {inp:myfolder} is pointing to. Then the title is update to {inp:{c 39}<pkgname>{c 39}: module to do great data work{c 34}}, the minor version is incremented by 1 and the Stata target version is set to 14.1. 
+{pstd}This example assumes that there is already a adodown-styled package folder at the location the local {inp:myfolder} is pointing to. This example shows the most common usage of this command which is to update the minor version by 1. 
+{p_end}
+
+{input}{space 8}* point a local to the folder where the package is located
+{space 8}local myfolder "path/to/folder"
+{space 8}* Package meta info
+{space 8}local pkg "my_package"
+{space 8}
+{space 8}* Add command mycmd to the package folder
+{space 8}ad_update , adfolder("`myfolder'") pkg("`pkg'") newpkgversion(minor) 
+{text}
+{dlgtab:Example 2}
+
+{pstd}This example again assumes that there is already a adodown-styled package folder at the location the local {inp:myfolder} is pointing to. Then the title is update to {inp:{c 39}<pkgname>{c 39}: module to do great data work{c 34}}, the manjor version is incremented by 1 (which resets minor version to 0) and the Stata target version is set to 14.1. 
 {p_end}
 
 {input}{space 8}* point a local to the folder where the package is located
@@ -81,7 +94,7 @@ Therefore, that file should only be edited using this command {inp:ad_update}.
 {space 8}
 {space 8}* Add command mycmd to the package folder
 {space 8}ad_update , adfolder("`myfolder'") pkg("`pkg'") /// 
-{space 8}  newtitle("module to do great data work") newpkgversion(minor) newstataversion(14.1)
+{space 8}  newtitle("module to do great data work") newpkgversion(major) newstataversion(14.1)
 {text}
 {title:Feedback, bug reports and contributions}
 

@@ -4,7 +4,7 @@ __ad_update__ - This command is used for short description.
 
 # Syntax
 
-__ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newtit**le__(_string_) __**newpkg**version__({_minor_/_major_}[,_samedayok_]) __**newsta**taversion__(_stata_ _version_) __**newaut**hor__(_string_) __**newcon**tact__(_string_) __newurl__(_string_)]
+__ad_update__ , __**adf**older__(_string_) __**pkg**name__(_string_) [ __**newtit**le__(_string_) __**newpkg**version__({_minor_/_major_} [, _samedayok_]) __**newsta**taversion__(_stata_ _version_) __**newaut**hor__(_string_) __**newcon**tact__(_string_) __newurl__(_string_) ]
 
 | _options_ | Description |
 |-----------|-------------|
