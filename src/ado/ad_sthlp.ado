@@ -402,7 +402,7 @@ cap program drop   	apply_inline_formatting
             if (`code_span') | (`bold_span') local i = `i' + 1
 
             * Italic span only ends on "_" if followed by " ", ")", ",", "." or ":"
-            else if (!`ital_span' | inlist("`next_char'"," ", ")", ",", ".",":")) {
+            else if (!`ital_span' | inlist("`next_char'"," ", ")", ",", ".", ":", "/", "{", "}", "[") | inlist("`next_char'", "]")) {
 
                 local line "`pre'`itag'`post1'"
                 local ital_span !`ital_span'
