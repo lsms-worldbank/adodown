@@ -92,14 +92,18 @@ is formatted as `{bf:bold text}` when rendered to Stata helpfiles.
 Text between `_` (a single underscore) tags, as in `_italicized text_`,
 is formatted as `{it:italicized text}` when rendered to Stata helpfiles.
 
-It is not possible to italicize a word with `_`,
-as `_` in an italicized word will always be interpreted as
-the end of italic formatting.
-
 It is not possible to italicize bold font text.
 This is to make it possible to express as command name like
 `ad_sthlp` in bold font.
 `_` is therefore ignored in bold font.
+
+An italicized word can have a an underscore, such as in `_hello_world_`.
+An underscore is only interpreted as the end of an italicized span if it is
+followed by one of the following character ` ` (a blank space), `)`, `,`, `.`, `:`, `/`, `{`, `}`, `[` or `]`.
+so in `label(_label_name_)` the first underscore is interpreted as the beginning of the italic span.
+The second underscore is interpreted as part of the italic span as it is followed by the regular letter `n`.
+The third underscore is interpreted as the end of the italic span
+as it is followed by one of the special characters listed above.
 
 ###### Underlined inline formatting
 
