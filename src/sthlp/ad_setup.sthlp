@@ -27,7 +27,7 @@
 {synopt: {bf:{ul:git}hub}}Add GitHub files without prompting{p_end}
 {synoptline}
 
-{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_setup.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{phang}Read the {inp:adodown} package{c 39}s {browse "https://lsms-worldbank.github.io/adodown/":web-documentation} where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package. 
 {p_end}
 
 {title:Description}

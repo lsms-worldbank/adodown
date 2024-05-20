@@ -22,7 +22,7 @@
 {synopt: {bf:nopkgmeta}}Do not look for a {inp:.pkg} file for package metadata{p_end}
 {synoptline}
 
-{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/ad_sthlp.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{phang}Read the {inp:adodown} package{c 39}s {browse "https://lsms-worldbank.github.io/adodown/":web-documentation} where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package. 
 {p_end}
 
 {title:Description}
@@ -37,7 +37,7 @@ either {inp:ssc install} or {inp:net install}.
 {pstd}In the {inp:adodown} workflow the {inp:mdhlp}-files are expected to be stored in a folder {inp:mdhlp} in the folder that {bf:{ul:adf}older}({it:string}) points to, and the {inp:sthlp}-files are expected to be written to a folder {inp:sthlp} in the same location. If the package folder was set up using {inp:ad_setup} and the commands were added to the package folder using {inp:ad_command}, then this is already the case. 
 {p_end}
 
-{pstd}See {browse "https://github.com/lsms-worldbank/adodown/issues/27":this article} about valid syntax in the {inp:mdhlp} files. 
+{pstd}See {browse "https://lsms-worldbank.github.io/adodown/articles/mdhlp-syntax.html":this article} about valid syntax in the {inp:mdhlp} files. 
 {p_end}
 
 {title:Options}

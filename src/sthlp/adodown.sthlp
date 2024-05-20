@@ -14,15 +14,15 @@
 {phang}{bf:adodown}
 {p_end}
 
-{phang}Read {browse "https://lsms-worldbank.github.io/adodown/reference/adodown.html":this helpfile} in the {inp:adodown}{c 39}s package web-documentation where you also find articles with guides and best practices related to the commands in this package. 
+{phang}Read the {inp:adodown} package{c 39}s {browse "https://lsms-worldbank.github.io/adodown/":web-documentation} where you find all helpfiles for the commands in this package, as well as articles with guides and best-practices related to the commands in this package. 
 {p_end}
 
 {title:Description}
 
 {pstd}This command only returns the version number and version data to the user.
 This command has little application for a typical user.
-For packages installed on SSC it is important that a there is a command
-in the package that has the same name as the package.
+For packages installed on SSC it is important that there is a command
+in the package that has the same name as the package itself.
 That is the main purpose of this command.
 {p_end}
 
