@@ -154,7 +154,7 @@ qui {
         else {
 
           * Replace Stata tricky markdown syntax with smcl escapes
-          escape_tricky_characters, line(`"`macval(line)'"')
+          noi escape_tricky_characters, line(`"`macval(line)'"') table(`table')
           local line `"`r(escaped_line)'"'
 
           *Switch back to ` - This is now safe as all ' are escaped and none of them will pair up with a ' to be interpreted as a local
@@ -299,8 +299,8 @@ end
 * ` is not handled here as it means something in md formatting
 cap program drop   	escape_tricky_characters
   	program define	escape_tricky_characters, rclass
-
-    syntax, [line(string)]
+qui {
+    syntax, [line(string) table(string)]
 
     local esc_line ""
 
@@ -311,6 +311,9 @@ cap program drop   	escape_tricky_characters
         * Get next character
         local c = substr(`"`macval(line)'"',`i',1)
 
+        * Get next 2 characters
+        local c2 = substr(`"`macval(line)'"',`i',2)
+
         * escape ', $ and "
         local c : subinstr local c "'"   "{c 39}"
         local c : subinstr local c "$"   "{c S|}"
@@ -318,9 +321,18 @@ cap program drop   	escape_tricky_characters
 
         * Since { and } are used in the escapes above,
         * we need to test if c is longer than 1,
-        * which is only willbe if it was escaped above
+        * and only replace { and } if c still has lenth 1
         if strlen("`c'") == 1 local c : subinstr local c "{" "{c -(}"
         if strlen("`c'") == 1 local c : subinstr local c "}" "{c )-}"
+
+        * Allow escaping of | in tables
+        if (`table' & `"`c'"' == "\") {
+          if (`"`c2'"' == "\|") {
+            local c "{c 124}"
+            * skip one extra character as two characters were replaces
+            local `++i'
+          }
+        }
 
         * Add charchter with escape if needed
         local esc_line "`esc_line'`c'"
@@ -329,6 +341,7 @@ cap program drop   	escape_tricky_characters
 
     * Return escape
     return local escaped_line `"`macval(esc_line)'"'
+}
 end
 
 * Splits a file name into its name and its extension
@@ -447,7 +460,7 @@ end
 * write smcl tables from md strings
 cap program drop   	write_table
   	program define	write_table, rclass
-
+qui {
     syntax, handle(string) tbl_str(string) section(string)
 
     if ("`section'" == "Syntax") {
@@ -465,7 +478,7 @@ cap program drop   	write_table
           * Skip header and |---|---| row
           if (`++md_row_i') > 2 {
 
-             parse_table_row, row("`row'")
+             noi parse_table_row, row("`row'")
              local row_`++sy_row_i' "{synopt: `r(c1)'}`r(c2)'{p_end}"
              * Test the the number of columns are as expected
              if (`r(c_count)' != `c_exp_count') {
@@ -499,7 +512,7 @@ cap program drop   	write_table
       }
       file write `handle' "" _n
     }
-
+}
 end
 
 cap program drop   	parse_nonsyntax_table
@@ -606,7 +619,7 @@ end
 
 cap program drop   	parse_table_row
   	program define	parse_table_row, rclass
-
+qui {
     syntax, row(string)
 
     tokenize "`row'", parse("|")
@@ -623,7 +636,7 @@ cap program drop   	parse_table_row
         }
     }
     return local c_count `col_i'
-
+}
 end
 
 cap program drop   	parse_hyperlinks
@@ -752,9 +765,18 @@ cap program drop 	display_len
     else {
       local str_len = strlen("`str'")
       local tag_len = 0
+      * For each tag "{bf:my string}" etc, count number of such tage and
+      * remove the lenght of "{bf:}" and count only the lenght of "my string"
       foreach tag in inp bf ul it {
         local str : subinstr local str "{`tag':" "", all count(local count)
         local tag_len = `tag_len' + (`count' * strlen("{`tag':}"))
+      }
+      * For each tag "{c 124}" etc, remove 1 less thatn the length
+      * of "{c 124}". 1 less as it will be replaced with a character
+      * with lengt 1
+      foreach tag in "{c 124}" "{c 39}" "{c S|}" "{c 34}" "{c -(}" "{c )-}"  {
+        local str : subinstr local str "`tag'" "", all count(local count)
+        local tag_len = `tag_len' + (`count' * (strlen("`tag'")-1))
       }
       return local dlen = (`str_len' - `tag_len')
     }
