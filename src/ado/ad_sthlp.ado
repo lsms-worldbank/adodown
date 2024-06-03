@@ -219,7 +219,7 @@ qui {
               }
               * End of table - write the table and reset table locals
               else if (`table' == 1) {
-                noi write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
+                noi write_table, handle(`st_fh') tbl_str(`"`tbl_str'"')
                 local table = 0
                 local tbl_str = ""
                 local last_line_empty 1
@@ -461,64 +461,83 @@ end
 cap program drop   	write_table
   	program define	write_table, rclass
 qui {
-    syntax, handle(string) tbl_str(string) section(string)
+    syntax, handle(string) tbl_str(string)
 
-    if ("`section'" == "Syntax") {
+    * Get the count of columns in this table
+    local title_row : word 1 of `tbl_str'
+    noi parse_table_row, row("`title_row'")
+    local c_count = `r(c_count)'
 
-      * Syntax table always has exectly two columns
-      local c_exp_count 2
-      local c1_max_l    0
-      local c2_max_l    0
-
-      * Initiate locals and loop over all table rows
-      local md_row_i 0
-      local sy_row_i 0
-      foreach row of local tbl_str {
-
-          * Skip header and |---|---| row
-          if (`++md_row_i') > 2 {
-
-             noi parse_table_row, row("`row'")
-             local row_`++sy_row_i' "{synopt: `r(c1)'}`r(c2)'{p_end}"
-             * Test the the number of columns are as expected
-             if (`r(c_count)' != `c_exp_count') {
-                 noi di as error "Not the correct amounts of cols in row `row_i'"
-                 exit
-             }
-             * Keep track of longest value in each column
-             forvalues col = 1/`r(c_count)' {
-                  local c`col'_max_l = max(`c`col'_max_l',`r(c`col'_l)')
-             }
-          }
-      }
-      local r_exp_count = `sy_row_i'
-
-      * Write syntax option table to file
-      file write `handle' "{synoptset `c1_max_l'}{...}" _n
-      file write `handle' "{synopthdr:options}" _n
-      file write `handle' "{synoptline}" _n
-      forvalues row = 1/`r_exp_count' {
-         file write `handle' "`row_`row''" _n
-      }
-      file write `handle' "{synoptline}" _n _n
-
+    * Parse synopt table - used when there are two columns
+    if (`c_count' == 2) {
+      parse_synopt_table, md_tblstr(`"`tbl_str'"') handle(`handle')
     }
+    * For all other columns, use manually created table
     else {
-      parse_nonsyntax_table, md_tblstr(`"`tbl_str'"')
-      local smcl_table `"`r(smcl_tblstr)'"'
-
-      foreach row of local smcl_table {
-         file write `handle' "`row'" _n
-      }
-      file write `handle' "" _n
+      parse_nonsynopt_table, md_tblstr(`"`tbl_str'"') handle(`handle')
     }
 }
 end
 
-cap program drop   	parse_nonsyntax_table
-  	program define	parse_nonsyntax_table, rclass
+cap program drop   	parse_synopt_table
+  	program define	parse_synopt_table, rclass
 
-    syntax, md_tblstr(string)
+    syntax, md_tblstr(string) handle(string)
+
+    * Prepare titles
+    local title_row : word 1 of `md_tblstr'
+    noi parse_table_row, row("`title_row'")
+    local title1 = "`r(c1)'"
+    local title2 = "`r(c2)'"
+
+    if (lower("`title1'") == "options" & lower("`title2'") == "description") {
+      local title1 = "{it:`title1'}"
+    }
+
+    * Syntax table always has exectly two columns
+    local c_exp_count 2
+    local c1_max_l    0
+    local c2_max_l    0
+
+    * Initiate locals and loop over all table rows
+    local md_row_i 0
+    local sy_row_i 0
+    foreach row of local md_tblstr {
+
+        * Skip header and |---|---| row
+        if (`++md_row_i') > 2 {
+
+           noi parse_table_row, row("`row'")
+           local row_`++sy_row_i' "{synopt: `r(c1)'}`r(c2)'{p_end}"
+           * Test the the number of columns are as expected
+           if (`r(c_count)' != `c_exp_count') {
+               noi di as error "Not the correct amounts of cols in row `row_i'"
+               exit
+           }
+           * Keep track of longest value in each column
+           forvalues col = 1/`r(c_count)' {
+                local c`col'_max_l = max(`c`col'_max_l',`r(c`col'_l)')
+           }
+        }
+    }
+    local r_exp_count = `sy_row_i'
+
+    * Write syntax option table to file
+    file write `handle' "{synoptset `c1_max_l'}{...}" _n
+    //file write `handle' "{synopthdr:options}" _n
+    file write `handle' "{p2coldent:`title1'}`title2'{p_end}" _n
+    file write `handle' "{synoptline}" _n
+    forvalues row = 1/`r_exp_count' {
+       file write `handle' "`row_`row''" _n
+    }
+    file write `handle' "{synoptline}" _n _n
+
+end
+
+cap program drop   	parse_nonsynopt_table
+  	program define	parse_nonsynopt_table, rclass
+
+    syntax, md_tblstr(string) handle(string)
 
     * Initiate locals
     local header 1
@@ -613,7 +632,11 @@ cap program drop   	parse_nonsyntax_table
     }
     local smcl_tblstr `"`smcl_tblstr' "`row'{c BRC}""'
 
-    return local smcl_tblstr `"`smcl_tblstr'"'
+    * Write the table
+    foreach row of local smcl_tblstr {
+       file write `handle' "`row'" _n
+    }
+    file write `handle' "" _n
 
 end
 
