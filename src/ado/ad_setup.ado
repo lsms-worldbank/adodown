@@ -1,4 +1,4 @@
-*! version 0.2 20240520 - LSMS Team, World Bank - lsms@worldbank.org
+*! version 0.3 20240606 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_setup
     program define ad_setup

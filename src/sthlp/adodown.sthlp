@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.2 20240520}{...}
+{* *! version 0.3 20240606}{...}
 {hline}
 {pstd}help file for {hi:adodown}{p_end}
 {hline}

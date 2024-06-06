@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.2 20240520}{...}
+{* *! version 0.3 20240606}{...}
 {hline}
 {pstd}help file for {hi:ad_sthlp}{p_end}
 {hline}
@@ -15,7 +15,7 @@
 {p_end}
 
 {synoptset 16}{...}
-{synopthdr:options}
+{p2coldent:{it:options}}Description{p_end}
 {synoptline}
 {synopt: {bf:{ul:adf}older}({it:string})}Location of the adodown-styled package{p_end}
 {synopt: {bf:commands}({it:string})}List specific command to convert. Default is all in package{p_end}

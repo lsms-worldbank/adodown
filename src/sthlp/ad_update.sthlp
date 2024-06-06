@@ -1,5 +1,5 @@
 {smcl}
-{* *! version 0.2 20240520}{...}
+{* *! version 0.3 20240606}{...}
 {hline}
 {pstd}help file for {hi:ad_update}{p_end}
 {hline}
@@ -14,8 +14,8 @@
 {phang}{bf:ad_update} , {bf:{ul:adf}older}({it:string}) {bf:{ul:pkg}name}({it:string}) [ {bf:{ul:newtit}le}({it:string}) {bf:{ul:newpkg}version}({c -(}{it:minor}/{it:major}{c )-} [, {it:samedayok}]) {bf:{ul:newsta}taversion}({it:stata} {it:version}) {bf:{ul:newaut}hor}({it:string}) {bf:{ul:newcon}tact}({it:string}) {bf:newurl}({it:string}) ]
 {p_end}
 
-{synoptset 50}{...}
-{synopthdr:options}
+{synoptset 40}{...}
+{p2coldent:{it:options}}Description{p_end}
 {synoptline}
 {synopt: {bf:{ul:adf}older}({it:string})}Location of the adodown-styled package{p_end}
 {synopt: {bf:{ul:pkg}name}({it:string})}Name of package that exists in the location {inp:adfolder()} points to.{p_end}
