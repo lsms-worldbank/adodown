@@ -12,6 +12,6 @@
 
   //ad_update , adf("${adwn_clone}") pkg("adodown") newpkgversion(minor)
   
-  ad_sthlp , adf("${adwn_clone}") //pkg("adodown") 
+  ad_sthlp , adf("${adwn_clone}")
     
- // ad_publish, adf("${adwn_clone}") undocumented(ad_pkg_meta) ssczip
+  ad_publish, adf("${adwn_clone}") undocumented(ad_pkg_meta) ssczip
