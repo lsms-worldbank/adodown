@@ -8,7 +8,7 @@ d '<UPPERNAME>': <TITLE>
 d <DESC>
 d
 *** stata
-d Requires: Stata version 0.0
+d Requires: Stata version 14.0
 d
 *** author
 d Author: <AUTHOR>
