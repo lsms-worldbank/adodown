@@ -15,7 +15,7 @@ standardized Stata package practices without using web documentation.
 If you do not want to generate web documentation,
 then there is no need for you to follow the steps in this guide.
 
-## Web documentation using GitHub Pages
+## GitHub requirements
 
 This guide assumes you host
 your `adodown` styled Stata package in a GitHub repository
@@ -23,138 +23,87 @@ and that you will publish your web documentation using GitHub Pages.
 If this does not apply to you,
 see the last section of this page for other options.
 
-This guide will show how to set up an automated workflow
-to build and deploy your web documentation using GitHub Actions.
-You do not need to know how to create GitHub Actions yourself,
-as you will be provided with all the templates you need.
-This page include a step-by-step guide for how to set it up,
-and it is not difficult.
-
-However, you do need to have admin access to
-the repository you use in order to enable GitHub Actions.
-If you are not the owner of the repository where you are setting this up,
-or the repository is hosted on an organization account,
-then we recommend that you talk to the owner or account admin
-before following this guide.
-
-### GitHub Actions pricing
-
-At the time of writing this guide,
-GitHub Action is free when used on public repositories,
-and has a small charge on private repositories
-if the usage exceeds a free quota.
-Therefore, in a typical case,
-using GitHub Actions in the `adodown` workflow will be free.
-GitHub may make changes to their GitHub Actions pricing at any time,
-so if this information is important to you, then please confirm costs at the
+On GitHub this workflow use GitHub actions to publish the GitHub page.
+At the time of writing this documentation,
+GitHub actions were free on public repositories.
+But please confirm this at
 [GitHub Actions pricing page](https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions).
 
-## Step-by-step guide
+## adodown - GitHub pages - step-by-step guide
 
-If you already have an adodown styled package you can skip to section `B.1`
+To enable `adodown` to publish web documentation you need to complete three steps.
+There is no requirement on the order you do the steps,
+but unless the order below is used,
+you will get error notifications until all steps are completed.
 
-### A.1. Create and clone a repository for your Stata package
+### Step 1 - Enable GitHub Pages
 
-Create a GitHub repository for the Stata package.
-Initiate the repository by creating a `README.md` file in the top directory.
-Feel free to populate this file with content at any point.
-The only other file that may be created manually is the `.gitignore` file.
+You typically need admin access to your repo to complete these step.
+Click on the repository _Settings_ tab or go to
+`https://github.com/<account_name>/<repo_name>/settings`.
+If you cannot access this page you do not have admin access to this repo.
 
-Clone the repository to your computer.
+Then go to _Pages_ >> _Build and Deployment_ >> _Source_.
+Then select _GitHub Actions_ in the drop-down.
 
-**TODO:** Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions.
+### Step 2 - Authenticate GitHub Actions
 
-### A.2. Set up adodown styled Stata package
+You need to create a personal access token to allow
+a GitHub Action to publish a GitHub Page.
 
-Use the command `ad_setup` to create an
-`adodown` styled Stata package in the clone.
+Go to your GitHub profile settings by
+clicking your profile picture and then select _Settings_.
+Then navigate to _Developer settings_ >> _Personal access tokens_ >>
+_Fine-grained tokens_ >> _Generate new token_.
+Select _Generate New Token (Classic)_.
 
-### B.1 Make sure GitHub Actions workflow settings exists
+You can name this token anything but name it something that
+makes you know what it is used for.
+In the GitHub Action this token will be called _ACTIONS_DEPLOY_KEY_
+so you can use the same name (_Note_) here.
+You also need to generate an expiration date for this token.
+After the token expires, you need to come back and repeat this step.
 
-If you have set up your package with `ad_setup` using the `github` option then this step is already set up.
-You only need to follow these steps manually if this was not done.
-If you are not sure, then follow these instructions and make sure everything is setup.
+You then have to define a scope for this token. You can select "Repo".
+Then click generate token.
 
-In the top directory of your clone, create a folder called `.github`
-(the `.` is important).
-In that folder create a folder called `workflows`.
-In that folder create a file called `build_adodown_site.yaml`.
-Copy the content of
-https://github.com/lsms-worldbank/adodown/blob/main/src/ado/templates/ad-build_adodown_site.yaml
-and paste the into the yaml-file you just created.
-Commit this file to the repository.
+Store this token in a secure place like a password manager.
+If someone gets access to your key, then they can impersonate you on GitHub.
+You will never again be able to make GitHub to show it to you.
+If you lose access to the key,
+then you will have to repeat this step and generate a new key.
 
-### B.2. Allow GitHub Actions
+### Step 3 - Add the GitHub Action Workflow
 
-While `build_adodown_site.yaml` includes all instructions needed to
-build and deploy the web site with the web documentation,
-you need to enable GitHub Actions in your repository for those instructions to be applied.
+If you are starting a new `adodown` project then, run `ad_setup` and
+say yes when asked if you want to set up GitHub templates.
+Once this is done you only need to push a commit
+and the web documentation will be published.
+The web documentation will then be updated each time you
+push anything to the `main`/`master` branch.
 
-To enable GitHub Actions,
-go to `https://github.com/<account_name>/<repo_name>/settings/actions`.
-You can also click yourself here by clicking on the _Settings_ tab,
-then _Actions_ in the menu to the left and then _General_.
-You only have access to these setting pages
-if you are the owner of the personal account hosting the repository,
-or if have admin access if the repository is hosted on an organization account.
+If you had already set up your `adodown` package,
+and if you opt-in to create the GitHub templates,
+then the web documentation will update each time you
+push anything to the `main`/`master` branch.
 
-On this page, make the following two changes:
-
-* In the _Actions permissions_ section,
-make sure that "_Allow all actions and reusable workflows_" option is selected.
-This allows GitHub Actions to be run for this repository.
-* In the _Workflow permissions_ section,
-make sure that the "_Read and write permissions_" option is selected.
-This allow a GitHub Action to make changes to the repository.
-
-If your repository is hosted on an organization account,
-then these settings might be affected by global organization account settings.
-The organization account admin can set these changes globally at
-`https://github.com/organizations/<account_name>/settings/actions`
-
-### B.3 Make one commit to the `main` branch
-
-In this section we will refer to the default branch as `main`.
-This is synonymous with `master`,
-but we encourage everyone to use `main` over `master`.
-The `adodown` workflow will work with either of these names.
-
-The GitHub Actions work flow is set up to re-build and re-deploy
-the web documentation each time the `main` branch is updated.
-To build it the first time, make any commit to the `main` branch.
-This includes making a merge to the `main` branch.
-
-The GitHub Action workflow creates a new branch called `gh-pages`.
-This branch should never be modified manually.
-
-### B.4 Set up GitHub Pages
-
-The last step is to tell GitHub there is a web site intended to be shown
-as a GitHub Pages site in the `gh-pages` branch.
-To do so, go to
-`https://github.com/<account_name>/<repo_name>/settings/pages`.
-You can also click yourself here by clicking on the _Settings_ tab,
-and then _Pages_ in the menu to the left.
-You only have access to these setting pages
-if you are the owner of the personal account hosting the repository,
-or if have admin access if the repository is hosted on an organization account.
-
-On this page, make the following changes:
-
-* In the _Build and deployment_ section:
-  * In the sub-section "_Source_" make sure "_Deployed from a branch_" is selected.
-  * In the sub-section "_Branch_" make sure "_gh-pages_" is selected as branch and that "_/docs_" is selected as the root folder.
+If you had already set up your `adodown` package,
+but you did not opt-in for the GitHub templates,
+then you need to set up the workflow file manually.
+To do so, copy the content on
+[this page](https://raw.githubusercontent.com/lsms-worldbank/adodown/main/src/ado/templates/ad-gh-workflows.yaml)
+into a file you save under the exact path
+`.github/workflows/build_adodown_site.yaml`.
+Then push this in a commit
+and the web documentation will be published.
+The web documentation will then be updated each time you
+push anything to the `main`/`master` branch.
 
 ### View the web site
 
-Wait a minute or two after completing the previous step
-and then refresh the page
+Wait a minute or two after completing all the three steps above and then go to
 `https://github.com/<account_name>/<repo_name>/settings/pages`.
 The URL to the web based documentation is then listed at the top of the page.
-
-From now on, this page is updated each time
-anything is pushed to the `main` branch.
-Not that a merge to the `main` branch is considered a push.
 
 ## Optional steps
 
@@ -173,4 +122,4 @@ even when not using a GitHub repository to host the code or
 when not using GitHub pages to host documentation.
 However, then you need to install the R-tool `adodownr` on your own computer,
 and run it yourself to build the website.
-See the documentation for adodownr for more [details](https://github.com/lsms-worldbank/adodownr).
+See the documentation for `adodownr` for more [details](https://github.com/lsms-worldbank/adodownr).
