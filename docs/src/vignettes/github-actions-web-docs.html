@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>adodown – web-documenation-using-github-actions</title>
+<title>adodown – github-actions-web-docs</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -84,12 +84,12 @@ ul.task-list{list-style: none;}
  <span class="dropdown-text">adodown-workflow</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../articles/mdhlp-syntax.html">
- <span class="dropdown-text">mdhlp-syntax</span></a>
+    <a class="dropdown-item" href="../../articles/github-actions-web-docs.html">
+ <span class="dropdown-text">github-actions-web-docs</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../articles/web-documenation-using-github-actions.html">
- <span class="dropdown-text">web-documenation-using-github-actions</span></a>
+    <a class="dropdown-item" href="../../articles/mdhlp-syntax.html">
+ <span class="dropdown-text">mdhlp-syntax</span></a>
   </li>  
     </ul>
   </li>
@@ -117,18 +117,12 @@ ul.task-list{list-style: none;}
   <ul>
   <li><a href="#build-and-deploy-web-documentation" id="toc-build-and-deploy-web-documentation" class="nav-link active" data-scroll-target="#build-and-deploy-web-documentation">Build and deploy web documentation</a>
   <ul class="collapse">
-  <li><a href="#web-documentation-using-github-pages" id="toc-web-documentation-using-github-pages" class="nav-link" data-scroll-target="#web-documentation-using-github-pages">Web documentation using GitHub Pages</a>
+  <li><a href="#github-requirements" id="toc-github-requirements" class="nav-link" data-scroll-target="#github-requirements">GitHub requirements</a></li>
+  <li><a href="#adodown---github-pages---step-by-step-guide" id="toc-adodown---github-pages---step-by-step-guide" class="nav-link" data-scroll-target="#adodown---github-pages---step-by-step-guide">adodown - GitHub pages - step-by-step guide</a>
   <ul class="collapse">
-  <li><a href="#github-actions-pricing" id="toc-github-actions-pricing" class="nav-link" data-scroll-target="#github-actions-pricing">GitHub Actions pricing</a></li>
-  </ul></li>
-  <li><a href="#step-by-step-guide" id="toc-step-by-step-guide" class="nav-link" data-scroll-target="#step-by-step-guide">Step-by-step guide</a>
-  <ul class="collapse">
-  <li><a href="#a.1.-create-and-clone-a-repository-for-your-stata-package" id="toc-a.1.-create-and-clone-a-repository-for-your-stata-package" class="nav-link" data-scroll-target="#a.1.-create-and-clone-a-repository-for-your-stata-package">A.1. Create and clone a repository for your Stata package</a></li>
-  <li><a href="#a.2.-set-up-adodown-styled-stata-package" id="toc-a.2.-set-up-adodown-styled-stata-package" class="nav-link" data-scroll-target="#a.2.-set-up-adodown-styled-stata-package">A.2. Set up adodown styled Stata package</a></li>
-  <li><a href="#b.1-make-sure-github-actions-workflow-settings-exists" id="toc-b.1-make-sure-github-actions-workflow-settings-exists" class="nav-link" data-scroll-target="#b.1-make-sure-github-actions-workflow-settings-exists">B.1 Make sure GitHub Actions workflow settings exists</a></li>
-  <li><a href="#b.2.-allow-github-actions" id="toc-b.2.-allow-github-actions" class="nav-link" data-scroll-target="#b.2.-allow-github-actions">B.2. Allow GitHub Actions</a></li>
-  <li><a href="#b.3-make-one-commit-to-the-main-branch" id="toc-b.3-make-one-commit-to-the-main-branch" class="nav-link" data-scroll-target="#b.3-make-one-commit-to-the-main-branch">B.3 Make one commit to the <code>main</code> branch</a></li>
-  <li><a href="#b.4-set-up-github-pages" id="toc-b.4-set-up-github-pages" class="nav-link" data-scroll-target="#b.4-set-up-github-pages">B.4 Set up GitHub Pages</a></li>
+  <li><a href="#step-1---enable-github-pages" id="toc-step-1---enable-github-pages" class="nav-link" data-scroll-target="#step-1---enable-github-pages">Step 1 - Enable GitHub Pages</a></li>
+  <li><a href="#step-2---authenticate-github-actions" id="toc-step-2---authenticate-github-actions" class="nav-link" data-scroll-target="#step-2---authenticate-github-actions">Step 2 - Authenticate GitHub Actions</a></li>
+  <li><a href="#step-3---add-the-github-action-workflow" id="toc-step-3---add-the-github-action-workflow" class="nav-link" data-scroll-target="#step-3---add-the-github-action-workflow">Step 3 - Add the GitHub Action Workflow</a></li>
   <li><a href="#view-the-web-site" id="toc-view-the-web-site" class="nav-link" data-scroll-target="#view-the-web-site">View the web site</a></li>
   </ul></li>
   <li><a href="#optional-steps" id="toc-optional-steps" class="nav-link" data-scroll-target="#optional-steps">Optional steps</a>
@@ -149,67 +143,36 @@ ul.task-list{list-style: none;}
 <h1>Build and deploy web documentation</h1>
 <p>One of the main motivations for the <code>adodown</code> workflow is to make it easy to generate user-friendly web documentation. Web documentation creates a web site where users can browse documentation without first having to install the package from, for example, SSC. It also allows you to write supporting documentation that are not exactly help files. Such as this page you are reading right now.</p>
 <p>While encouraged, generating web documentation is optional in the <code>adodown</code> workflow. It is perfectly possible to use <code>adodown</code> to benefit from standardized Stata package practices without using web documentation. If you do not want to generate web documentation, then there is no need for you to follow the steps in this guide.</p>
-<section id="web-documentation-using-github-pages" class="level2">
-<h2 class="anchored" data-anchor-id="web-documentation-using-github-pages">Web documentation using GitHub Pages</h2>
+<section id="github-requirements" class="level2">
+<h2 class="anchored" data-anchor-id="github-requirements">GitHub requirements</h2>
 <p>This guide assumes you host your <code>adodown</code> styled Stata package in a GitHub repository and that you will publish your web documentation using GitHub Pages. If this does not apply to you, see the last section of this page for other options.</p>
-<p>This guide will show how to set up an automated workflow to build and deploy your web documentation using GitHub Actions. You do not need to know how to create GitHub Actions yourself, as you will be provided with all the templates you need. This page include a step-by-step guide for how to set it up, and it is not difficult.</p>
-<p>However, you do need to have admin access to the repository you use in order to enable GitHub Actions. If you are not the owner of the repository where you are setting this up, or the repository is hosted on an organization account, then we recommend that you talk to the owner or account admin before following this guide.</p>
-<section id="github-actions-pricing" class="level3">
-<h3 class="anchored" data-anchor-id="github-actions-pricing">GitHub Actions pricing</h3>
-<p>At the time of writing this guide, GitHub Action is free when used on public repositories, and has a small charge on private repositories if the usage exceeds a free quota. Therefore, in a typical case, using GitHub Actions in the <code>adodown</code> workflow will be free. GitHub may make changes to their GitHub Actions pricing at any time, so if this information is important to you, then please confirm costs at the <a href="https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions">GitHub Actions pricing page</a>.</p>
+<p>On GitHub this workflow use GitHub actions to publish the GitHub page. At the time of writing this documentation, GitHub actions were free on public repositories. But please confirm this at <a href="https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions">GitHub Actions pricing page</a>.</p>
 </section>
+<section id="adodown---github-pages---step-by-step-guide" class="level2">
+<h2 class="anchored" data-anchor-id="adodown---github-pages---step-by-step-guide">adodown - GitHub pages - step-by-step guide</h2>
+<p>To enable <code>adodown</code> to publish web documentation you need to complete three steps. There is no requirement on the order you do the steps, but unless the order below is used, you will get error notifications until all steps are completed.</p>
+<section id="step-1---enable-github-pages" class="level3">
+<h3 class="anchored" data-anchor-id="step-1---enable-github-pages">Step 1 - Enable GitHub Pages</h3>
+<p>You typically need admin access to your repo to complete these step. Click on the repository <em>Settings</em> tab or go to <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings</code>. If you cannot access this page you do not have admin access to this repo.</p>
+<p>Then go to <em>Pages</em> &gt;&gt; <em>Build and Deployment</em> &gt;&gt; <em>Source</em>. Then select <em>GitHub Actions</em> in the drop-down.</p>
 </section>
-<section id="step-by-step-guide" class="level2">
-<h2 class="anchored" data-anchor-id="step-by-step-guide">Step-by-step guide</h2>
-<p>If you already have an adodown styled package you can skip to section <code>B.1</code></p>
-<section id="a.1.-create-and-clone-a-repository-for-your-stata-package" class="level3">
-<h3 class="anchored" data-anchor-id="a.1.-create-and-clone-a-repository-for-your-stata-package">A.1. Create and clone a repository for your Stata package</h3>
-<p>Create a GitHub repository for the Stata package. Initiate the repository by creating a <code>README.md</code> file in the top directory. Feel free to populate this file with content at any point. The only other file that may be created manually is the <code>.gitignore</code> file.</p>
-<p>Clone the repository to your computer.</p>
-<p><strong>TODO:</strong> Move this step into a general vignette for how to set up a adodown styled Stata package. As this is not specific to how to set up Github Actions.</p>
+<section id="step-2---authenticate-github-actions" class="level3">
+<h3 class="anchored" data-anchor-id="step-2---authenticate-github-actions">Step 2 - Authenticate GitHub Actions</h3>
+<p>You need to create a personal access token to allow a GitHub Action to publish a GitHub Page.</p>
+<p>Go to your GitHub profile settings by clicking your profile picture and then select <em>Settings</em>. Then navigate to <em>Developer settings</em> &gt;&gt; <em>Personal access tokens</em> &gt;&gt; <em>Fine-grained tokens</em> &gt;&gt; <em>Generate new token</em>. Select <em>Generate New Token (Classic)</em>.</p>
+<p>You can name this token anything but name it something that makes you know what it is used for. In the GitHub Action this token will be called <em>ACTIONS_DEPLOY_KEY</em> so you can use the same name (<em>Note</em>) here. You also need to generate an expiration date for this token. After the token expires, you need to come back and repeat this step.</p>
+<p>You then have to define a scope for this token. You can select “Repo”. Then click generate token.</p>
+<p>Store this token in a secure place like a password manager. If someone gets access to your key, then they can impersonate you on GitHub. You will never again be able to make GitHub to show it to you. If you lose access to the key, then you will have to repeat this step and generate a new key.</p>
 </section>
-<section id="a.2.-set-up-adodown-styled-stata-package" class="level3">
-<h3 class="anchored" data-anchor-id="a.2.-set-up-adodown-styled-stata-package">A.2. Set up adodown styled Stata package</h3>
-<p>Use the command <code>ad_setup</code> to create an <code>adodown</code> styled Stata package in the clone.</p>
-</section>
-<section id="b.1-make-sure-github-actions-workflow-settings-exists" class="level3">
-<h3 class="anchored" data-anchor-id="b.1-make-sure-github-actions-workflow-settings-exists">B.1 Make sure GitHub Actions workflow settings exists</h3>
-<p>If you have set up your package with <code>ad_setup</code> using the <code>github</code> option then this step is already set up. You only need to follow these steps manually if this was not done. If you are not sure, then follow these instructions and make sure everything is setup.</p>
-<p>In the top directory of your clone, create a folder called <code>.github</code> (the <code>.</code> is important). In that folder create a folder called <code>workflows</code>. In that folder create a file called <code>build_adodown_site.yaml</code>. Copy the content of https://github.com/lsms-worldbank/adodown/blob/main/src/ado/templates/ad-build_adodown_site.yaml and paste the into the yaml-file you just created. Commit this file to the repository.</p>
-</section>
-<section id="b.2.-allow-github-actions" class="level3">
-<h3 class="anchored" data-anchor-id="b.2.-allow-github-actions">B.2. Allow GitHub Actions</h3>
-<p>While <code>build_adodown_site.yaml</code> includes all instructions needed to build and deploy the web site with the web documentation, you need to enable GitHub Actions in your repository for those instructions to be applied.</p>
-<p>To enable GitHub Actions, go to <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/actions</code>. You can also click yourself here by clicking on the <em>Settings</em> tab, then <em>Actions</em> in the menu to the left and then <em>General</em>. You only have access to these setting pages if you are the owner of the personal account hosting the repository, or if have admin access if the repository is hosted on an organization account.</p>
-<p>On this page, make the following two changes:</p>
-<ul>
-<li>In the <em>Actions permissions</em> section, make sure that “<em>Allow all actions and reusable workflows</em>” option is selected. This allows GitHub Actions to be run for this repository.</li>
-<li>In the <em>Workflow permissions</em> section, make sure that the “<em>Read and write permissions</em>” option is selected. This allow a GitHub Action to make changes to the repository.</li>
-</ul>
-<p>If your repository is hosted on an organization account, then these settings might be affected by global organization account settings. The organization account admin can set these changes globally at <code>https://github.com/organizations/&lt;account_name&gt;/settings/actions</code></p>
-</section>
-<section id="b.3-make-one-commit-to-the-main-branch" class="level3">
-<h3 class="anchored" data-anchor-id="b.3-make-one-commit-to-the-main-branch">B.3 Make one commit to the <code>main</code> branch</h3>
-<p>In this section we will refer to the default branch as <code>main</code>. This is synonymous with <code>master</code>, but we encourage everyone to use <code>main</code> over <code>master</code>. The <code>adodown</code> workflow will work with either of these names.</p>
-<p>The GitHub Actions work flow is set up to re-build and re-deploy the web documentation each time the <code>main</code> branch is updated. To build it the first time, make any commit to the <code>main</code> branch. This includes making a merge to the <code>main</code> branch.</p>
-<p>The GitHub Action workflow creates a new branch called <code>gh-pages</code>. This branch should never be modified manually.</p>
-</section>
-<section id="b.4-set-up-github-pages" class="level3">
-<h3 class="anchored" data-anchor-id="b.4-set-up-github-pages">B.4 Set up GitHub Pages</h3>
-<p>The last step is to tell GitHub there is a web site intended to be shown as a GitHub Pages site in the <code>gh-pages</code> branch. To do so, go to <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/pages</code>. You can also click yourself here by clicking on the <em>Settings</em> tab, and then <em>Pages</em> in the menu to the left. You only have access to these setting pages if you are the owner of the personal account hosting the repository, or if have admin access if the repository is hosted on an organization account.</p>
-<p>On this page, make the following changes:</p>
-<ul>
-<li>In the <em>Build and deployment</em> section:
-<ul>
-<li>In the sub-section “<em>Source</em>” make sure “<em>Deployed from a branch</em>” is selected.</li>
-<li>In the sub-section “<em>Branch</em>” make sure “<em>gh-pages</em>” is selected as branch and that “<em>/docs</em>” is selected as the root folder.</li>
-</ul></li>
-</ul>
+<section id="step-3---add-the-github-action-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="step-3---add-the-github-action-workflow">Step 3 - Add the GitHub Action Workflow</h3>
+<p>If you are starting a new <code>adodown</code> project then, run <code>ad_setup</code> and say yes when asked if you want to set up GitHub templates. Once this is done you only need to push a commit and the web documentation will be published. The web documentation will then be updated each time you push anything to the <code>main</code>/<code>master</code> branch.</p>
+<p>If you had already set up your <code>adodown</code> package, and if you opt-in to create the GitHub templates, then the web documentation will update each time you push anything to the <code>main</code>/<code>master</code> branch.</p>
+<p>If you had already set up your <code>adodown</code> package, but you did not opt-in for the GitHub templates, then you need to set up the workflow file manually. To do so, copy the content on <a href="https://raw.githubusercontent.com/lsms-worldbank/adodown/main/src/ado/templates/ad-gh-workflows.yaml">this page</a> into a file you save under the exact path <code>.github/workflows/build_adodown_site.yaml</code>. Then push this in a commit and the web documentation will be published. The web documentation will then be updated each time you push anything to the <code>main</code>/<code>master</code> branch.</p>
 </section>
 <section id="view-the-web-site" class="level3">
 <h3 class="anchored" data-anchor-id="view-the-web-site">View the web site</h3>
-<p>Wait a minute or two after completing the previous step and then refresh the page <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/pages</code>. The URL to the web based documentation is then listed at the top of the page.</p>
-<p>From now on, this page is updated each time anything is pushed to the <code>main</code> branch. Not that a merge to the <code>main</code> branch is considered a push.</p>
+<p>Wait a minute or two after completing all the three steps above and then go to <code>https://github.com/&lt;account_name&gt;/&lt;repo_name&gt;/settings/pages</code>. The URL to the web based documentation is then listed at the top of the page.</p>
 </section>
 </section>
 <section id="optional-steps" class="level2">
@@ -221,7 +184,7 @@ ul.task-list{list-style: none;}
 </section>
 <section id="web-documentation-in-other-locations" class="level2">
 <h2 class="anchored" data-anchor-id="web-documentation-in-other-locations">Web documentation in other locations</h2>
-<p>It is possible to use the <code>adodown(r)</code> tools to generate web documentation even when not using a GitHub repository to host the code or when not using GitHub pages to host documentation. However, then you need to install the R-tool <code>adodownr</code> on your own computer, and run it yourself to build the website. See the documentation for adodownr for more <a href="https://github.com/lsms-worldbank/adodownr">details</a>.</p>
+<p>It is possible to use the <code>adodown(r)</code> tools to generate web documentation even when not using a GitHub repository to host the code or when not using GitHub pages to host documentation. However, then you need to install the R-tool <code>adodownr</code> on your own computer, and run it yourself to build the website. See the documentation for <code>adodownr</code> for more <a href="https://github.com/lsms-worldbank/adodownr">details</a>.</p>
 
 
 </section>
