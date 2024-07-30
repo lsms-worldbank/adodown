@@ -1,4 +1,4 @@
-*! version 0.2 20240520 - LSMS Team, World Bank - lsms@worldbank.org
+*! version 0.4 20240730 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_pkg_meta
     program define ad_pkg_meta, rclass

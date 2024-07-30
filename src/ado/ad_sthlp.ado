@@ -1,4 +1,4 @@
-*! version 0.2 20240520 - LSMS Team, World Bank - lsms@worldbank.org
+*! version 0.4 20240730 - LSMS Team, World Bank - lsms@worldbank.org
 
 cap program drop   ad_sthlp
     program define ad_sthlp
@@ -154,7 +154,7 @@ qui {
         else {
 
           * Replace Stata tricky markdown syntax with smcl escapes
-          escape_tricky_characters, line(`"`macval(line)'"')
+          noi escape_tricky_characters, line(`"`macval(line)'"') table(`table')
           local line `"`r(escaped_line)'"'
 
           *Switch back to ` - This is now safe as all ' are escaped and none of them will pair up with a ' to be interpreted as a local
@@ -219,7 +219,7 @@ qui {
               }
               * End of table - write the table and reset table locals
               else if (`table' == 1) {
-                noi write_table, handle(`st_fh') tbl_str(`"`tbl_str'"') section("`title1'")
+                noi write_table, handle(`st_fh') tbl_str(`"`tbl_str'"')
                 local table = 0
                 local tbl_str = ""
                 local last_line_empty 1
@@ -299,8 +299,8 @@ end
 * ` is not handled here as it means something in md formatting
 cap program drop   	escape_tricky_characters
   	program define	escape_tricky_characters, rclass
-
-    syntax, [line(string)]
+qui {
+    syntax, [line(string) table(string)]
 
     local esc_line ""
 
@@ -311,6 +311,9 @@ cap program drop   	escape_tricky_characters
         * Get next character
         local c = substr(`"`macval(line)'"',`i',1)
 
+        * Get next 2 characters
+        local c2 = substr(`"`macval(line)'"',`i',2)
+
         * escape ', $ and "
         local c : subinstr local c "'"   "{c 39}"
         local c : subinstr local c "$"   "{c S|}"
@@ -318,9 +321,18 @@ cap program drop   	escape_tricky_characters
 
         * Since { and } are used in the escapes above,
         * we need to test if c is longer than 1,
-        * which is only willbe if it was escaped above
+        * and only replace { and } if c still has lenth 1
         if strlen("`c'") == 1 local c : subinstr local c "{" "{c -(}"
         if strlen("`c'") == 1 local c : subinstr local c "}" "{c )-}"
+
+        * Allow escaping of | in tables
+        if (`table' & `"`c'"' == "\") {
+          if (`"`c2'"' == "\|") {
+            local c "{c 124}"
+            * skip one extra character as two characters were replaces
+            local `++i'
+          }
+        }
 
         * Add charchter with escape if needed
         local esc_line "`esc_line'`c'"
@@ -329,6 +341,7 @@ cap program drop   	escape_tricky_characters
 
     * Return escape
     return local escaped_line `"`macval(esc_line)'"'
+}
 end
 
 * Splits a file name into its name and its extension
@@ -447,65 +460,84 @@ end
 * write smcl tables from md strings
 cap program drop   	write_table
   	program define	write_table, rclass
+qui {
+    syntax, handle(string) tbl_str(string)
 
-    syntax, handle(string) tbl_str(string) section(string)
+    * Get the count of columns in this table
+    local title_row : word 1 of `tbl_str'
+    noi parse_table_row, row("`title_row'")
+    local c_count = `r(c_count)'
 
-    if ("`section'" == "Syntax") {
-
-      * Syntax table always has exectly two columns
-      local c_exp_count 2
-      local c1_max_l    0
-      local c2_max_l    0
-
-      * Initiate locals and loop over all table rows
-      local md_row_i 0
-      local sy_row_i 0
-      foreach row of local tbl_str {
-
-          * Skip header and |---|---| row
-          if (`++md_row_i') > 2 {
-
-             parse_table_row, row("`row'")
-             local row_`++sy_row_i' "{synopt: `r(c1)'}`r(c2)'{p_end}"
-             * Test the the number of columns are as expected
-             if (`r(c_count)' != `c_exp_count') {
-                 noi di as error "Not the correct amounts of cols in row `row_i'"
-                 exit
-             }
-             * Keep track of longest value in each column
-             forvalues col = 1/`r(c_count)' {
-                  local c`col'_max_l = max(`c`col'_max_l',`r(c`col'_l)')
-             }
-          }
-      }
-      local r_exp_count = `sy_row_i'
-
-      * Write syntax option table to file
-      file write `handle' "{synoptset `c1_max_l'}{...}" _n
-      file write `handle' "{synopthdr:options}" _n
-      file write `handle' "{synoptline}" _n
-      forvalues row = 1/`r_exp_count' {
-         file write `handle' "`row_`row''" _n
-      }
-      file write `handle' "{synoptline}" _n _n
-
+    * Parse synopt table - used when there are two columns
+    if (`c_count' == 2) {
+      parse_synopt_table, md_tblstr(`"`tbl_str'"') handle(`handle')
     }
+    * For all other columns, use manually created table
     else {
-      parse_nonsyntax_table, md_tblstr(`"`tbl_str'"')
-      local smcl_table `"`r(smcl_tblstr)'"'
-
-      foreach row of local smcl_table {
-         file write `handle' "`row'" _n
-      }
-      file write `handle' "" _n
+      parse_nonsynopt_table, md_tblstr(`"`tbl_str'"') handle(`handle')
     }
+}
+end
+
+cap program drop   	parse_synopt_table
+  	program define	parse_synopt_table, rclass
+
+    syntax, md_tblstr(string) handle(string)
+
+    * Prepare titles
+    local title_row : word 1 of `md_tblstr'
+    noi parse_table_row, row("`title_row'")
+    local title1 = "`r(c1)'"
+    local title2 = "`r(c2)'"
+
+    if (lower("`title1'") == "options" & lower("`title2'") == "description") {
+      local title1 = "{it:`title1'}"
+    }
+
+    * Syntax table always has exectly two columns
+    local c_exp_count 2
+    local c1_max_l    0
+    local c2_max_l    0
+
+    * Initiate locals and loop over all table rows
+    local md_row_i 0
+    local sy_row_i 0
+    foreach row of local md_tblstr {
+
+        * Skip header and |---|---| row
+        if (`++md_row_i') > 2 {
+
+           noi parse_table_row, row("`row'")
+           local row_`++sy_row_i' "{synopt: `r(c1)'}`r(c2)'{p_end}"
+           * Test the the number of columns are as expected
+           if (`r(c_count)' != `c_exp_count') {
+               noi di as error "Not the correct amounts of cols in row `row_i'"
+               exit
+           }
+           * Keep track of longest value in each column
+           forvalues col = 1/`r(c_count)' {
+                local c`col'_max_l = max(`c`col'_max_l',`r(c`col'_l)')
+           }
+        }
+    }
+    local r_exp_count = `sy_row_i'
+
+    * Write syntax option table to file
+    file write `handle' "{synoptset `c1_max_l'}{...}" _n
+    //file write `handle' "{synopthdr:options}" _n
+    file write `handle' "{p2coldent:`title1'}`title2'{p_end}" _n
+    file write `handle' "{synoptline}" _n
+    forvalues row = 1/`r_exp_count' {
+       file write `handle' "`row_`row''" _n
+    }
+    file write `handle' "{synoptline}" _n _n
 
 end
 
-cap program drop   	parse_nonsyntax_table
-  	program define	parse_nonsyntax_table, rclass
+cap program drop   	parse_nonsynopt_table
+  	program define	parse_nonsynopt_table, rclass
 
-    syntax, md_tblstr(string)
+    syntax, md_tblstr(string) handle(string)
 
     * Initiate locals
     local header 1
@@ -600,13 +632,17 @@ cap program drop   	parse_nonsyntax_table
     }
     local smcl_tblstr `"`smcl_tblstr' "`row'{c BRC}""'
 
-    return local smcl_tblstr `"`smcl_tblstr'"'
+    * Write the table
+    foreach row of local smcl_tblstr {
+       file write `handle' "`row'" _n
+    }
+    file write `handle' "" _n
 
 end
 
 cap program drop   	parse_table_row
   	program define	parse_table_row, rclass
-
+qui {
     syntax, row(string)
 
     tokenize "`row'", parse("|")
@@ -623,7 +659,7 @@ cap program drop   	parse_table_row
         }
     }
     return local c_count `col_i'
-
+}
 end
 
 cap program drop   	parse_hyperlinks
@@ -752,9 +788,18 @@ cap program drop 	display_len
     else {
       local str_len = strlen("`str'")
       local tag_len = 0
+      * For each tag "{bf:my string}" etc, count number of such tage and
+      * remove the lenght of "{bf:}" and count only the lenght of "my string"
       foreach tag in inp bf ul it {
         local str : subinstr local str "{`tag':" "", all count(local count)
         local tag_len = `tag_len' + (`count' * strlen("{`tag':}"))
+      }
+      * For each tag "{c 124}" etc, remove 1 less thatn the length
+      * of "{c 124}". 1 less as it will be replaced with a character
+      * with lengt 1
+      foreach tag in "{c 124}" "{c 39}" "{c S|}" "{c 34}" "{c -(}" "{c )-}"  {
+        local str : subinstr local str "`tag'" "", all count(local count)
+        local tag_len = `tag_len' + (`count' * (strlen("`tag'")-1))
       }
       return local dlen = (`str_len' - `tag_len')
     }

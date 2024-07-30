@@ -15,7 +15,7 @@
     reproot, project("ADPKGNAME") roots("clone") prefix("ADPKGNAME_")
 
     * Use locals for all non-root paths
-    local testfldr "${adwn_clone}/src/tests"
+    local testfldr "${ADPKGNAME_clone}/src/tests"
 
     * Use the /dev-env folder as a dev environment
     cap mkdir    "`testfldr'/dev-env"
@@ -25,7 +25,7 @@
     cap which repkit
     if _rc == 111 ssc install repkit
 
-    * Make sure the version of ADPKGNAME in the dev environment us up to date with all edits.
+    * Make sure the version of ADPKGNAME in the dev environment is up to date with all edits.
     cap net uninstall ADPKGNAME
     net install ADPKGNAME, from("${ADPKGNAME_clone}/src") replace
 
