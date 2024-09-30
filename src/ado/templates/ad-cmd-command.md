@@ -1,6 +1,7 @@
 # Title
 
 __ADCOMMANDNAME__ - This command is used for short description.
+<!-- Short description of the package. This section is used for the table on the reference page and may therefore not include anything else than the command name and a short description on the format above -->
 
 # Syntax
 
